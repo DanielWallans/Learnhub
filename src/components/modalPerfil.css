@@ -1,0 +1,88 @@
+.modal-perfil-bg {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(44, 62, 80, 0.65);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-perfil {
+  background: #fff;
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(44, 62, 80, 0.18);
+  padding: 32px 36px 24px 36px;
+  min-width: 340px;
+  max-width: 95vw;
+  animation: modalFadeIn 0.3s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-30px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+.modal-perfil h3 {
+  font-size: 1.5rem;
+  color: #4c6ef5;
+  margin-bottom: 18px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.modal-perfil-info {
+  width: 100%;
+  margin-bottom: 18px;
+}
+
+.modal-perfil-info div {
+  font-size: 1.08rem;
+  margin-bottom: 7px;
+  color: #222;
+  display: flex;
+  align-items: center;
+}
+
+.modal-perfil-info strong {
+  min-width: 150px;
+  color: #4c6ef5;
+  font-weight: 600;
+  margin-right: 8px;
+}
+
+.modal-perfil-avatar {
+  margin: 18px 0 10px 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.modal-perfil-avatar img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+  border: 2.5px solid #4c6ef5;
+  box-shadow: 0 2px 8px rgba(44,62,80,0.10);
+  object-fit: cover;
+}
+
+.dashboard-logout-btn {
+  background: #e64980;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 22px;
+  font-size: 1rem;
+  font-weight: 600;
+  margin-top: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.dashboard-logout-btn:hover {
+  background: #be3570;
+}

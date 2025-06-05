@@ -1,0 +1,130 @@
+/* Container principal */
+.login-aluno-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f7fb;
+  min-height: 100vh;
+  padding: 25px;
+  width: 97%;
+  transition: background-color 0.5s ease;
+}
+
+/* Caixa de login */
+.login-aluno-box {
+  background: linear-gradient(135deg, #ffffff, #f4f7fb);
+  border-radius: 15px;
+  padding: 40px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease;
+  transition: transform 0.3s ease-in-out;
+}
+
+.login-aluno-box:hover {
+  transform: scale(1.02);
+}
+
+/* Título do login */
+.login-aluno-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #4c6ef5;
+  margin-bottom: 20px;
+}
+
+/* Campos de input */
+.login-aluno-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.login-aluno-input:focus {
+  border-color: #6f42c1;
+  outline: none;
+}
+
+/* Estilo para os botões */
+.login-aluno-button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #4c6ef5, #6f42c1);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px; /* Espaçamento entre os botões */
+}
+
+.login-aluno-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: linear-gradient(135deg, #365ac1, #5a2ebc);
+}
+
+.login-aluno-button:active {
+  transform: scale(0.95);
+}
+
+/* Botão de voltar para o home */
+.login-aluno-button.secondary {
+  background: #f4f7fb;
+  color: #4c6ef5;
+  font-weight: 500;
+  box-shadow: none;
+  border: 2px solid #4c6ef5;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-aluno-button.secondary:hover {
+  background-color: #e3e8f9;
+  transform: translateY(-3px);
+}
+
+.login-aluno-button.secondary:active {
+  transform: scale(0.95);
+}
+
+/* Animação de fundo */
+@keyframes gradientBackground {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .login-aluno-box {
+    padding: 30px;
+  }
+
+  .login-aluno-title {
+    font-size: 22px;
+  }
+
+  .login-aluno-input {
+    font-size: 14px;
+  }
+
+  .login-aluno-button {
+    font-size: 14px;
+  }
+}

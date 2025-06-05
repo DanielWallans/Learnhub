@@ -1,0 +1,213 @@
+/* Header Principal */
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  background: linear-gradient(45deg, #4c6ef5, #6f42c1); /* Gradiente moderno */
+  color: white;
+  padding: 20px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.50);
+  transition: background 0.5s ease;
+  position: relative;
+}
+
+.header-left h1 {
+  font-size: 30px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  background: linear-gradient(135deg, #f4f5fa, #f39c12);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  transition: transform 0.3s ease;
+}
+
+.header-left h1:hover {
+  transform: scale(1.1); /* Animação de escala no título */
+}
+
+/* Botões e navegação */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 40px; /* Aumentar o espaçamento entre os botões */
+}
+
+.home-button, .back-button, .logout-button {
+  background-color: transparent;
+  border: 2px solid white;
+  color: white;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.home-button:hover, .back-button:hover, .logout-button:hover {
+  background-color: white;
+  color: #4c6ef5;
+  transform: translateY(-3px); /* Elevação no hover */
+}
+
+.home-button:active, .back-button:active, .logout-button:active {
+  transform: translateY(2px); /* Efeito de pressão no botão */
+}
+
+/* Estilo específico para o botão de voltar */
+.back-button {
+  display: flex;
+  align-items: center;
+}
+
+.back-icon {
+  margin-right: 8px;
+  font-size: 18px;
+}
+
+/* Efeito de desligamento geral */
+.shutdown-effect {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9); /* Tela escura no final */
+  backdrop-filter: blur(10px);
+  opacity: 0;
+  animation: shutdown 2s ease-in forwards;
+  z-index: 999;
+}
+
+/* Efeito de desligamento progressivo */
+@keyframes shutdown {
+  0% {
+    opacity: 1;
+    backdrop-filter: blur(0);
+  }
+  50% {
+    opacity: 0.8;
+    backdrop-filter: blur(5px);
+  }
+  100% {
+    opacity: 1;
+    backdrop-filter: blur(15px);
+  }
+}
+
+/* Desligamento da logo e botões */
+.fade-out {
+  animation: fadeOutElements 1.5s ease-in forwards;
+}
+
+@keyframes fadeOutElements {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+}
+
+/* Efeito de fade-out da tela */
+.header-container.fade-out {
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+/* Estilização da mensagem de logout */
+.logout-message {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 20px 40px;
+  border-radius: 10px;
+  opacity: 1;
+  animation: fadeOutMessage 1.5s ease-in-out forwards;
+}
+
+@keyframes fadeOutMessage {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.header-aluno {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #4CAF50;
+  color: white;
+}
+
+.header-logo h1 {
+  margin: 0;
+}
+
+.header-menu ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+  margin: 0;
+  padding: 0;
+}
+
+.header-menu a {
+  color: white;
+  text-decoration: none;
+}
+
+.header-user {
+  font-size: 14px;
+}
+
+.perfil-info {
+  margin-top: 10px;
+  font-size: 14px;
+  color: #555;
+}
+
+.notificacoes {
+  position: relative;
+}
+
+.notificacoes-button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.notificacoes-list {
+  position: absolute;
+  top: 30px;
+  right: 0;
+  background-color: white;
+  border: 1px solid #ddd;
+  padding: 10px;
+  list-style: none;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: none;
+}
+
+.notificacoes:hover .notificacoes-list {
+  display: block;
+}

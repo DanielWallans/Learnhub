@@ -1,0 +1,210 @@
+/* ============================== */
+/* Cores principais */
+:root {
+  --bg-color: #f4f4f9;
+  --text-color: #333;
+  --card-bg: #ffffff;
+  --shadow-color: rgba(0, 0, 0, 0.50);
+  --button-primary: linear-gradient(135deg, #6a11cb, #2575fc);
+  --button-secondary: linear-gradient(135deg, #ff9800, #e65100);
+}
+
+/* ============================== */
+/* Container Principal */
+.container {
+  font-family: 'Roboto', sans-serif;
+  background-color: var(--bg-color);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 40px var(--shadow-color);
+  margin-top: 20px;
+}
+
+/* Títulos das Seções */
+.sectionTitle {
+  font-size: 2rem;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  text-shadow: 1px 1px 6px var(--shadow-color);
+}
+
+/* ============================== */
+/* Grids de Cards */
+.cardGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 25px;
+}
+
+/* Estilo dos Cards */
+.card {
+  background-color: var(--card-bg);
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 6px 25px var(--shadow-color);
+  transition: all 0.3s ease-in-out;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px var(--shadow-color);
+}
+
+/* Texto dentro dos Cards */
+.cardText {
+  font-size: 1.2rem;
+  color: var(--text-color);
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+/* Efeito de riscar quando concluído */
+.lineThrough {
+  text-decoration: line-through;
+  color: #bbb;
+}
+
+/* ============================== */
+/* Botões */
+.button {
+  background: var(--button-primary);
+  border: none;
+  color: #fff;
+  padding: 12px 20px;
+  font-size: 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+.button:hover {
+  background: linear-gradient(135deg, #2575fc, #6a11cb);
+  transform: translateY(-5px);
+}
+
+/* ============================== */
+/* Inputs */
+.input {
+  padding: 15px;
+  border-radius: 8px;
+  border: 2px solid #ccc;
+  font-size: 1.2rem;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  width: 100%;
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.input:focus {
+  border-color: #4a1488;
+  outline: none;
+  box-shadow: 0 0 10px rgba(182, 12, 224, 0.5);
+}
+
+/* ============================== */
+/* Alert Section */
+.alertSection {
+  background-color: var(--card-bg);
+  padding: 30px;
+  margin-top: 40px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px var(--shadow-color);
+  text-align: center;
+}
+
+.alertTitle {
+  font-size: 1.8rem;
+  color: var(--text-color);
+}
+
+.alertText {
+  font-size: 1.2rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* ============================== */
+/* Transição de Hover para Cards de Lembretes */
+.reminderText {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  transition: color 0.3s ease;
+}
+
+.reminderText:hover {
+  color: #4CAF50;
+}
+
+.reminderDate {
+  font-size: 1rem;
+  color: #777;
+}
+
+/* ============================== */
+/* Entrada de Texto para Cada Seção */
+.inputGroup {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+/* ============================== */
+/* Botões de Concluir e Desfazer */
+.cardButton {
+  background: var(--button-primary);
+  border: none;
+  color: white;
+  padding: 12px 25px;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(33, 150, 243, 0.4);
+  transition: all 0.3s ease-in-out;
+  position: relative;
+  overflow: hidden;
+}
+
+.cardButton:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
+  background: linear-gradient(135deg, #64B5F6, #1E88E5);
+}
+
+.cardButton:active {
+  transform: scale(0.95);
+  box-shadow: 0 3px 10px rgba(33, 150, 243, 0.4);
+}
+
+/* Botão de Desfazer */
+.cardButton.desfazer {
+  background: var(--button-secondary);
+  box-shadow: 0 4px 15px rgba(255, 152, 0, 0.4);
+}
+
+.cardButton.desfazer:hover {
+  background: linear-gradient(135deg, #FFB74D, #F57C00);
+  box-shadow: 0 6px 20px rgba(255, 152, 0, 0.5);
+}
+
+.welcomeSection {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.welcomeTitle {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #2d3748;
+}
+
+.welcomeText {
+  font-size: 1.125rem;
+  color: #4a5568;
+  margin-top: 0.5rem;
+}

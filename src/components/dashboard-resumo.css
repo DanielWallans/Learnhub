@@ -1,0 +1,18 @@
+.dashboard-resumo {
+  background: #f8fafc;
+  border-radius: 10px;
+  padding: 24px 20px;
+  margin-bottom: 24px;
+  box-shadow: 0 1px 6px rgba(76, 110, 245, 0.06);
+  text-align: center;
+}
+
+.dashboard-resumo h2 {
+  color: #4c6ef5;
+  margin-bottom: 10px;
+}
+
+.dashboard-resumo p {
+  color: #495057;
+  font-size: 1.1em;
+}

@@ -1,0 +1,141 @@
+/* Container principal do cadastro */
+.cadastro-aluno-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f4f7fb;
+  min-height: 100vh;
+  padding: 25px;
+  width: 97%;
+  transition: background-color 0.5s ease;
+}
+
+/* Caixa de cadastro */
+.cadastro-aluno-box {
+  background: linear-gradient(135deg, #ffffff, #f4f7fb);
+  border-radius: 15px;
+  padding: 40px;
+  width: 90%;
+  max-width: 450px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 1s ease;
+  transition: transform 0.3s ease-in-out;
+}
+
+.cadastro-aluno-box:hover {
+  transform: scale(1.02);
+}
+
+/* Título do cadastro */
+.cadastro-aluno-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: #4c6ef5;
+  margin-bottom: 20px;
+}
+
+/* Campos de input */
+.cadastro-aluno-input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: 12px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.cadastro-aluno-input:focus {
+  border-color: #6f42c1;
+  outline: none;
+}
+
+/* Botão de cadastro */
+.cadastro-aluno-button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #4c6ef5, #6f42c1);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+.cadastro-aluno-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: linear-gradient(135deg, #365ac1, #5a2ebc);
+}
+
+.cadastro-aluno-button:active {
+  transform: scale(0.95);
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .cadastro-aluno-box {
+    padding: 30px;
+  }
+
+  .cadastro-aluno-title {
+    font-size: 22px;
+  }
+
+  .cadastro-aluno-input {
+    font-size: 14px;
+  }
+
+  .cadastro-aluno-button {
+    font-size: 14px;
+  }
+}
+
+/* Botão de cadastro */
+.cadastro-aluno-button {
+  width: 100%;
+  padding: 12px;
+  background: linear-gradient(135deg, #4c6ef5, #6f42c1);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  margin-bottom: 10px; /* Adiciona um espaçamento entre os botões */
+}
+
+.cadastro-aluno-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  background: linear-gradient(135deg, #365ac1, #5a2ebc);
+}
+
+.cadastro-aluno-button:active {
+  transform: scale(0.95);
+}
+
+/* Estilo para os botões adicionais (ex: "Voltar para o Home", "Já é cadastrado?") */
+.cadastro-aluno-button.secondary {
+  background: #f4f7fb;
+  color: #4c6ef5;
+  font-weight: 500;
+  box-shadow: none;
+  border: 2px solid #4c6ef5;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.cadastro-aluno-button.secondary:hover {
+  background-color: #e3e8f9;
+  transform: translateY(-3px);
+}
+
+.cadastro-aluno-button.secondary:active {
+  transform: scale(0.95);
+}

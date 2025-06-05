@@ -1,0 +1,367 @@
+/* Container principal */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6f42c1, #4c6ef5);
+  background-size: 400% 400%;
+  animation: gradientBackground 5s ease infinite;
+}
+
+/* Animação de fundo */
+@keyframes gradientBackground {
+  0% {
+      background-position: 100% 50%;
+  }
+  50% {
+      background-position: 0 50%;
+  }
+  100% {
+      background-position: 100% 50%;
+  }
+}
+
+/* Caixa de login */
+.login-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 40px;
+  width: 350px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.8s ease;
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+      transform: translateY(-30px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Logo do LearnHub */
+.login-logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: #6f42c1;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  animation: slideIn 1s ease-out;
+}
+
+/* Animação da logo */
+@keyframes slideIn {
+  0% {
+      transform: translateX(-50%);
+  }
+  100% {
+      transform: translateX(0);
+  }
+}
+
+/* Título do login */
+.login-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Campos de input */
+.login-input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.login-input:focus {
+  border-color: #4c6ef5;
+  outline: none;
+}
+
+/* Botão de login */
+.login-entrar {
+  width: 100%;
+  padding: 12px;
+  background-color: #4c6ef5;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.login-entrar:hover {
+  background-color: #365ac1;
+  transform: translateY(-3px); /* Efeito de elevação */
+}
+
+.login-entrar:active {
+  transform: translateY(2px); /* Efeito de pressão */
+}
+
+/* Botão "Esqueci minha senha" */
+.login-forgot-password {
+  background: none;
+  border: none;
+  color: #4c6ef5;
+  font-size: 14px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+
+.login-forgot-password:hover {
+  color: #2a3ff2;
+  transform: scale(1.05);
+}
+
+.login-forgot-password:active {
+  transform: scale(0.95);
+}
+
+/* Link para cadastro */
+.login-link-register {
+  text-decoration: none;
+  font-size: 14px;
+  color: #4c6ef5;
+  margin-top: 15px;
+  transition: color 0.3s ease;
+}
+
+.login-link-register:hover {
+  color: #2a3ff2;
+}
+
+/* Container principal - Página de redefinição de senha */
+.forgot-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6f42c1, #4c6ef5);
+  background-size: 400% 400%;
+  animation: gradientBackground 5s ease infinite;
+}
+
+/* Caixa de redefinição de senha */
+.forgot-password-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 40px;
+  width: 350px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.8s ease;
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+      transform: translateY(-30px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Container principal - Página de redefinição de senha */
+.forgot-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6f42c1, #4c6ef5);
+  background-size: 400% 400%;
+  animation: gradientBackground 5s ease infinite;
+}
+
+/* Caixa de redefinição de senha */
+.forgot-password-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 40px;
+  width: 350px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.8s ease;
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+      transform: translateY(-30px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Container principal - Página de redefinição de senha */
+.forgot-password-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6f42c1, #4c6ef5);
+  background-size: 400% 400%;
+  animation: gradientBackground 5s ease infinite;
+}
+
+/* Animação de fundo */
+@keyframes gradientBackground {
+  0% {
+      background-position: 100% 50%;
+  }
+  50% {
+      background-position: 0 50%;
+  }
+  100% {
+      background-position: 100% 50%;
+  }
+}
+
+/* Caixa de redefinição de senha */
+.forgot-password-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 40px;
+  width: 350px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.8s ease;
+}
+
+/* Animação de fade-in */
+@keyframes fadeIn {
+  0% {
+      opacity: 0;
+      transform: translateY(-30px);
+  }
+  100% {
+      opacity: 1;
+      transform: translateY(0);
+  }
+}
+
+/* Título da página de redefinição de senha */
+.forgot-password-box h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+/* Subtítulo da página de redefinição de senha */
+.forgot-password-box p {
+  font-size: 16px;
+  color: #666;
+  margin-bottom: 25px;
+  text-align: center;
+}
+
+/* Campos de input */
+.forgot-password-input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+/* Estilo quando o input é focado */
+.forgot-password-input:focus {
+  border-color: #4c6ef5;
+  outline: none;
+}
+
+/* Estilo do botão de envio de e-mail */
+.forgot-password-submit {
+  width: 100%;
+  padding: 12px;
+  background-color: #4c6ef5;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+/* Hover e active do botão de envio */
+.forgot-password-submit:hover {
+  background-color: #365ac1;
+  transform: translateY(-3px); /* Efeito de elevação */
+}
+
+.forgot-password-submit:active {
+  transform: translateY(2px); /* Efeito de pressão */
+}
+
+/* Mensagem de feedback (erro ou sucesso) */
+.mensagem {
+  font-size: 14px;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.mensagem.success {
+  color: #4caf50; /* Verde para sucesso */
+}
+
+.mensagem.error {
+  color: #f44336; /* Vermelho para erro */
+}
+
+/* Botão de voltar ao login */
+.back-btn {
+  width: 100%;
+  padding: 12px;
+  background-color: #ccc;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  margin-top: 15px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.back-btn:hover {
+  background-color: #888;
+  transform: translateY(-3px); /* Efeito de elevação */
+}
+
+.back-btn:active {
+  transform: translateY(2px); /* Efeito de pressão */
+}

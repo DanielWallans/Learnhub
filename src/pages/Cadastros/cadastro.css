@@ -1,0 +1,133 @@
+/* Container principal */
+.cadastro-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #6f42c1, #4c6ef5);
+  background-size: 400% 400%;
+  animation: gradientBackground 5s ease infinite;
+}
+
+/* Animação de fundo */
+@keyframes gradientBackground {
+  0% {
+    background-position: 100% 50%;
+  }
+  50% {
+    background-position: 0 50%;
+  }
+  100% {
+    background-position: 100% 50%;
+  }
+}
+
+/* Caixa de cadastro */
+.cadastro-box {
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 15px;
+  padding: 40px;
+  width: 350px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Logo do LearnHub */
+.cadastro-logo {
+  font-size: 32px;
+  font-weight: 700;
+  color: #6f42c1;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  animation: slideIn 1s ease-out;
+}
+
+@keyframes slideIn {
+  0% {
+    transform: translateX(-50%);
+  }
+  100% {
+    transform: translateX(0);
+  }
+}
+
+/* Título do cadastro */
+.cadastro-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+/* Campos de input */
+.cadastro-input {
+  width: 90%;
+  padding: 12px;
+  margin-bottom: 15px;
+  border: 2px solid #ccc;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.3s ease;
+}
+
+.cadastro-input:focus {
+  border-color: #ff7e5f;
+  outline: none;
+}
+
+/* Botão de cadastro */
+.cadastro-button {
+  width: 100%;
+  padding: 12px;
+  background-color: #4c6ef5;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.cadastro-button:hover {
+  background-color: #365ac1;
+  transform: translateY(-3px); /* Efeito de elevação */
+}
+
+.cadastro-button:active {
+  transform: translateY(2px); /* Efeito de pressão */
+}
+
+/* Redirecionamento para login */
+.cadastro-login-redirect {
+  font-size: 14px;
+  color: #333;
+  margin-top: 20px;
+}
+
+.cadastro-link-login {
+  text-decoration: none;
+  font-size: 14px;
+  color: #6f42c1;
+  transition: color 0.3s ease;
+}
+
+.cadastro-link-login:hover {
+  color: #feb47b;
+}
+

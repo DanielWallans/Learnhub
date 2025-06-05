@@ -1,0 +1,24 @@
+.dashboard-nav {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin: 20px 0;
+  flex-wrap: wrap;
+}
+
+.dashboard-nav a {
+  text-decoration: none;
+  color: #4c6ef5;
+  background: #f1f3f5;
+  padding: 10px 18px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 4px rgba(76, 110, 245, 0.05);
+}
+
+.dashboard-nav a:hover {
+  background: #4c6ef5;
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(76, 110, 245, 0.15);
+}
