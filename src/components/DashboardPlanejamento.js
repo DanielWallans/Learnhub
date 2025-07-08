@@ -1,7 +1,7 @@
 import { useState } from "react";
 import styles from "./ConvidadoPlanejamento.module.css"; // Importando o CSS modular
 
-function ConvidadoPlanejamento() {
+function DashboardPlanejamento() {
   const [metas, setMetas] = useState([]);
   const [novaMeta, setNovaMeta] = useState("");
 
@@ -53,9 +53,9 @@ function ConvidadoPlanejamento() {
     <div className={styles.container}>
       {/* Mensagem de boas-vindas e descrição */}
       <div className={styles.welcomeSection}>
-        <h2 className={styles.welcomeTitle}>Bem-vindo, Convidado!</h2>
+        <h2 className={styles.welcomeTitle}>Bem-vindo ao seu Dashboard!</h2>
         <p className={styles.welcomeText}>
-          Você está explorando a plataforma como convidado. Cadastre-se como aluno para salvar suas tarefas e acessar recursos avançados.
+          Organize suas atividades acadêmicas de forma simples e eficiente. Adicione metas, matérias, tarefas e lembretes para manter tudo sob controle.
         </p>
       </div>
 
@@ -172,21 +172,21 @@ function ConvidadoPlanejamento() {
         </div>
       </div>
 
-      {/* Incentivo para se Cadastrar */}
+      {/* Seção de recursos adicionais */}
       <div className={styles.alertSection}>
-        <h3 className={styles.alertTitle}>Quer mais?</h3>
+        <h3 className={styles.alertTitle}>Explore mais recursos!</h3>
         <p className={styles.alertText}>
-          Cadastre-se como aluno para salvar suas metas, matérias, tarefas e lembretes, além de acessar recursos avançados como sincronização de calendário e lembretes permanentes!
+          Descubra funcionalidades avançadas como sincronização de calendário, relatórios de produtividade, lembretes automáticos e muito mais para potencializar seus estudos!
         </p>
         <button
-          onClick={() => alert("Cadastre-se como aluno para acessar todos os recursos!")}
+          onClick={() => alert("Explore todas as funcionalidades do LearnHub!")}
           className={styles.button}
         >
-          Cadastre-se como Aluno
+          Descobrir Recursos
         </button>
       </div>
     </div>
   );
 }
 
-export default ConvidadoPlanejamento;
+export default DashboardPlanejamento;

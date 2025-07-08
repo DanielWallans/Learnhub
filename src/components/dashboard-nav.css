@@ -22,3 +22,29 @@
   color: #fff;
   box-shadow: 0 2px 8px rgba(76, 110, 245, 0.15);
 }
+
+/* Dark Mode */
+.dashboard-bg.dark-mode .dashboard-nav a {
+  color: #94a3b8;
+  background: #1e293b;
+  border: 1px solid #334155;
+}
+
+.dashboard-bg.dark-mode .dashboard-nav a:hover {
+  background: #4f46e5;
+  color: #fff;
+  border-color: #4f46e5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard-nav {
+    gap: 12px;
+    margin: 16px 0;
+  }
+  
+  .dashboard-nav a {
+    padding: 8px 14px;
+    font-size: 0.875rem;
+  }
+}

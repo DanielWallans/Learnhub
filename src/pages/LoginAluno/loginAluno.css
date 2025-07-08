@@ -1,51 +1,361 @@
+/* ========================================
+   LOGIN ALUNO - DESIGN MODERNO
+   ======================================== */
+
 /* Container principal */
 .login-aluno-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: #f4f7fb;
   min-height: 100vh;
-  padding: 25px;
-  width: 97%;
-  transition: background-color 0.5s ease;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+}
+
+/* Wrapper principal */
+.login-aluno-wrapper {
+  width: 100%;
+  max-width: 420px;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+/* Header com logo */
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.logo-icon {
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.logo-text {
+  color: #ffffff;
+  font-size: 28px;
+  font-weight: 700;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.login-aluno-title {
+  color: #ffffff;
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  letter-spacing: -0.5px;
+}
+
+.login-subtitle {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 16px;
+  margin: 0;
+  font-weight: 400;
 }
 
 /* Caixa de login */
 .login-aluno-box {
-  background: linear-gradient(135deg, #ffffff, #f4f7fb);
-  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
   padding: 40px;
-  width: 90%;
-  max-width: 450px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.1),
+    0 0 0 1px rgba(255, 255, 255, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+/* Formulário */
+.login-form {
   display: flex;
   flex-direction: column;
+  gap: 24px;
+}
+
+/* Grupos de input */
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.input-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.input-wrapper {
+  position: relative;
+  display: flex;
   align-items: center;
-  animation: fadeIn 1s ease;
-  transition: transform 0.3s ease-in-out;
 }
 
-.login-aluno-box:hover {
-  transform: scale(1.02);
-}
-
-/* Título do login */
-.login-aluno-title {
-  font-size: 26px;
-  font-weight: 700;
-  color: #4c6ef5;
-  margin-bottom: 20px;
+.input-icon {
+  position: absolute;
+  left: 16px;
+  color: #9CA3AF;
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* Campos de input */
 .login-aluno-input {
   width: 100%;
-  padding: 12px;
-  margin-bottom: 15px;
-  border: 2px solid #ccc;
+  padding: 16px 16px 16px 48px;
+  border: 2px solid #E5E7EB;
   border-radius: 12px;
   font-size: 16px;
-  transition: border-color 0.3s ease;
+  background: #ffffff;
+  transition: all 0.2s ease;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.login-aluno-input:focus {
+  border-color: #667eea;
+  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.login-aluno-input::placeholder {
+  color: #9CA3AF;
+}
+
+/* Botão de toggle da senha */
+.password-toggle {
+  position: absolute;
+  right: 16px;
+  background: none;
+  border: none;
+  color: #9CA3AF;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.password-toggle:hover {
+  color: #667eea;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+/* Mensagem de erro */
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 12px;
+  color: #DC2626;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* Botão principal */
+.login-aluno-button {
+  width: 100%;
+  padding: 16px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 56px;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-aluno-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+}
+
+.login-aluno-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-aluno-button:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.login-aluno-button.loading {
+  pointer-events: none;
+}
+
+/* Spinner */
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid #ffffff;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Footer do login */
+.login-footer {
+  margin-top: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+
+/* Divisor */
+.divider {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+  color: #9CA3AF;
+  font-size: 14px;
+}
+
+.divider::before,
+.divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: #E5E7EB;
+}
+
+/* Botões secundários */
+.secondary-button {
+  width: 100%;
+  padding: 14px 24px;
+  background: #ffffff;
+  color: #374151;
+  border: 2px solid #E5E7EB;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.secondary-button:hover {
+  border-color: #D1D5DB;
+  background: #F9FAFB;
+}
+
+/* Link buttons */
+.link-button {
+  background: none;
+  border: none;
+  color: #667eea;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: underline;
+  transition: color 0.2s ease;
+}
+
+.link-button:hover {
+  color: #764ba2;
+}
+
+.link-button.inline {
+  font-size: inherit;
+  margin-left: 4px;
+}
+
+/* Rodapé */
+.login-bottom {
+  text-align: center;
+  margin-top: 32px;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 14px;
+}
+
+/* Animações */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .login-aluno-container {
+    padding: 16px;
+  }
+  
+  .login-aluno-wrapper {
+    max-width: 100%;
+  }
+  
+  .login-aluno-box {
+    padding: 32px 24px;
+  }
+  
+  .login-aluno-title {
+    font-size: 28px;
+  }
+  
+  .logo-text {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  .login-aluno-box {
+    padding: 24px 20px;
+  }
+  
+  .login-aluno-title {
+    font-size: 24px;
+  }
+  
+  .login-subtitle {
+    font-size: 14px;
+  }
 }
 
 .login-aluno-input:focus {

@@ -1,0 +1,61 @@
+/* estilo simples para o loading */
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 40px 20px;
+}
+
+.loading-container.small {
+  padding: 20px 10px;
+  gap: 8px;
+}
+
+.loading-container.large {
+  padding: 60px 20px;
+  gap: 24px;
+  min-height: 200px;
+}
+
+.loading-spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid #4c6ef5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+.loading-container.small .loading-spinner {
+  width: 20px;
+  height: 20px;
+  border-width: 2px;
+}
+
+.loading-container.large .loading-spinner {
+  width: 48px;
+  height: 48px;
+  border-width: 4px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-message {
+  color: #6c757d;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.loading-container.small .loading-message {
+  font-size: 0.9rem;
+}
+
+.loading-container.large .loading-message {
+  font-size: 1.1rem;
+}
