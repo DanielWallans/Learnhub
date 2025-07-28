@@ -742,7 +742,7 @@ function CadastroAluno() {
           </p>
           <button
             type="button"
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/home')}
             className="link-button"
           >
             Voltar ao início

@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
 import {
   collection,
-  getDocs,
   addDoc,
   deleteDoc,
   updateDoc,
@@ -40,7 +39,6 @@ function Financas({ darkMode = false }) {
 
   // Metas financeiras - INICIANDO VAZIO
   const [metas, setMetas] = useState([]);
-  const [editandoMeta, setEditandoMeta] = useState(null);
   const [novaMeta, setNovaMeta] = useState({
     nome: '',
     valor: '',
@@ -51,7 +49,6 @@ function Financas({ darkMode = false }) {
 
   // Orçamentos - INICIANDO VAZIO
   const [orcamentos, setOrcamentos] = useState([]);
-  const [editandoOrcamento, setEditandoOrcamento] = useState(null);
   const [novoOrcamento, setNovoOrcamento] = useState({
     categoria: 'Alimentação',
     limite: '',
@@ -239,6 +236,7 @@ function Financas({ darkMode = false }) {
   }
 
   return (
+    <>
     <div className={`carreira-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
       {/* Cabeçalho */}
       <div className="carreira-header">
@@ -325,6 +323,7 @@ function Financas({ darkMode = false }) {
         {renderTabContent()}
       </div>
     </div>
+    </>
   );
 
   function renderTabContent() {

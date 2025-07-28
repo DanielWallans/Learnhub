@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebaseConfig';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import './dashboard-resumo.css';
 
 function Resumo() {
   const [dadosResumo, setDadosResumo] = useState({
@@ -104,15 +103,27 @@ function Resumo() {
       dataVerificar.setDate(inicioSemana.getDate() + i);
       const dataString = dataVerificar.toISOString().split('T')[0];
       
-      habitos.forEach(doc => {
-        const habito = doc.data();
-        if (habito.ativo !== false) { // Só contar hábitos ativos
-          totalHabitos++;
-          if (habito.diasConcluidos && habito.diasConcluidos.includes(dataString)) {
-            habitosConcluidos++;
+      // Extract function to avoid unsafe references in loop
+      const processarHabitos = (currentTotalHabitos, currentHabitosConcluidos) => {
+        let newTotal = currentTotalHabitos;
+        let newConcluidos = currentHabitosConcluidos;
+        
+        habitos.forEach(doc => {
+          const habito = doc.data();
+          if (habito.ativo !== false) { // Só contar hábitos ativos
+            newTotal++;
+            if (habito.diasConcluidos && habito.diasConcluidos.includes(dataString)) {
+              newConcluidos++;
+            }
           }
-        }
-      });
+        });
+        
+        return { total: newTotal, concluidos: newConcluidos };
+      };
+      
+      const resultado = processarHabitos(totalHabitos, habitosConcluidos);
+      totalHabitos = resultado.total;
+      habitosConcluidos = resultado.concluidos;
     }
     
     return totalHabitos > 0 ? Math.round((habitosConcluidos / totalHabitos) * 100) : 0;

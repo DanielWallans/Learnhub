@@ -268,6 +268,7 @@ function Leituras({ darkMode = false }) {
   };
 
   return (
+    <>
     <div className={`leituras-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
       {/* Cabeçalho */}
       <div className="carreira-header">
@@ -889,6 +890,7 @@ function Leituras({ darkMode = false }) {
         </div>
       )}
     </div>
+    </>
   );
 }
 

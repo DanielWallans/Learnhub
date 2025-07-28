@@ -6,7 +6,6 @@ import {
   doc, 
   addDoc, 
   updateDoc, 
-  deleteDoc, 
   getDocs, 
   query, 
   where, 
@@ -1641,6 +1640,7 @@ function Carreira({ darkMode = false }) {
   }
 
   return (
+    <>
     <section className={`carreira-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
       <div className="carreira-header">
         <h3>
@@ -1758,6 +1758,7 @@ function Carreira({ darkMode = false }) {
         {activeTab === 'journal' && renderJournal()}
       </div>
     </section>
+    </>
   );
 }
 

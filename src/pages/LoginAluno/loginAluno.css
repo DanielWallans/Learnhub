@@ -1,106 +1,206 @@
-/* ========================================
-   LOGIN ALUNO - DESIGN MODERNO
-   ======================================== */
+/* ==========================================
+   LOGIN ALUNO FUTURISTA 2025
+   ========================================== */
 
-/* Container principal */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --secondary-gradient: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  --accent-gradient: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  --dark-gradient: linear-gradient(135deg, #0c0c0c 0%, #1a1a1a 100%);
+  --glass-bg: rgba(255, 255, 255, 0.08);
+  --glass-border: rgba(255, 255, 255, 0.18);
+  --glass-strong: rgba(255, 255, 255, 0.12);
+  --text-primary: #ffffff;
+  --text-secondary: #b8c5d6;
+  --shadow-glow: 0 0 40px rgba(102, 126, 234, 0.3);
+  --shadow-strong: 0 20px 60px rgba(0, 0, 0, 0.4);
+}
+
+body, html {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--dark-gradient);
+  color: var(--text-primary);
+}
+
+/* ==========================================
+   CONTAINER PRINCIPAL
+   ========================================== */
+
 .login-aluno-container {
   min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  position: relative;
+  background: 
+    radial-gradient(circle at 20% 30%, rgba(102, 126, 234, 0.15) 0%, transparent 50%),
+    radial-gradient(circle at 80% 70%, rgba(118, 75, 162, 0.15) 0%, transparent 50%),
+    linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  overflow: hidden;
 }
 
-/* Wrapper principal */
 .login-aluno-wrapper {
   width: 100%;
-  max-width: 420px;
-  animation: fadeInUp 0.6s ease-out;
+  max-width: 480px;
+  position: relative;
+  z-index: 2;
+  animation: fadeInUp 0.8s ease-out;
 }
 
-/* Header com logo */
+/* ==========================================
+   HEADER COM LOGO
+   ========================================== */
+
 .login-header {
   text-align: center;
-  margin-bottom: 32px;
+  margin-bottom: 40px;
 }
 
 .logo-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  margin-bottom: 24px;
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
 .logo-icon {
-  color: #ffffff;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, rgba(102, 126, 234, 0.3), rgba(118, 75, 162, 0.3));
+  border: 2px solid rgba(102, 126, 234, 0.4);
+  border-radius: 18px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 48px;
-  height: 48px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 10px 30px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  color: #667eea;
+  position: relative;
+}
+
+.logo-icon::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(135deg, #667eea, #764ba2, #f093fb);
+  border-radius: 20px;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.logo-icon:hover::before {
+  opacity: 1;
+  animation: borderGlow 2s ease-in-out infinite;
 }
 
 .logo-text {
-  color: #ffffff;
-  font-size: 28px;
-  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.2rem;
+  font-weight: 800;
   margin: 0;
-  letter-spacing: -0.5px;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.6));
+  text-shadow: 
+    0 0 10px rgba(102, 126, 234, 0.4),
+    0 0 20px rgba(102, 126, 234, 0.2);
 }
 
 .login-aluno-title {
-  color: #ffffff;
-  font-size: 32px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  letter-spacing: -0.5px;
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin: 0 0 15px 0;
+  background: linear-gradient(135deg, #ffffff 0%, #b8c5d6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -1px;
 }
 
 .login-subtitle {
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 16px;
+  font-size: 1.1rem;
+  color: var(--text-secondary);
   margin: 0;
   font-weight: 400;
+  opacity: 0.9;
 }
 
-/* Caixa de login */
+/* ==========================================
+   CAIXA DE LOGIN FUTURISTA
+   ========================================== */
+
 .login-aluno-box {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(20px);
-  border-radius: 24px;
-  padding: 40px;
+  background: var(--glass-strong);
+  backdrop-filter: blur(25px);
+  border: 1px solid var(--glass-border);
+  border-radius: 25px;
+  padding: 50px;
+  position: relative;
+  overflow: hidden;
   box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.1),
-    0 0 0 1px rgba(255, 255, 255, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.3);
+    0 25px 50px rgba(0, 0, 0, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 0 40px rgba(102, 126, 234, 0.2);
 }
 
-/* Formulário */
+.login-aluno-box::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, #667eea, #764ba2, #f093fb, transparent);
+  animation: borderShimmer 4s ease-in-out infinite;
+}
+
+.login-aluno-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.4), transparent);
+}
+
+/* ==========================================
+   FORMULÁRIO
+   ========================================== */
+
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: 30px;
 }
 
-/* Grupos de input */
 .input-group {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 12px;
 }
 
 .input-label {
-  font-size: 14px;
+  font-size: 0.95rem;
   font-weight: 600;
-  color: #374151;
+  color: var(--text-primary);
   margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .input-wrapper {
@@ -111,97 +211,156 @@
 
 .input-icon {
   position: absolute;
-  left: 16px;
-  color: #9CA3AF;
-  z-index: 1;
+  left: 20px;
+  color: #667eea;
+  z-index: 2;
   pointer-events: none;
+  filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3));
 }
 
-/* Campos de input */
+/* ==========================================
+   CAMPOS DE INPUT FUTURISTAS
+   ========================================== */
+
 .login-aluno-input {
   width: 100%;
-  padding: 16px 16px 16px 48px;
-  border: 2px solid #E5E7EB;
-  border-radius: 12px;
-  font-size: 16px;
-  background: #ffffff;
-  transition: all 0.2s ease;
+  padding: 18px 20px 18px 55px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 15px;
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
   outline: none;
   box-sizing: border-box;
+  position: relative;
+}
+
+.login-aluno-input::placeholder {
+  color: rgba(184, 197, 214, 0.6);
+  font-weight: 400;
 }
 
 .login-aluno-input:focus {
   border-color: #667eea;
-  box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+  box-shadow: 
+    0 0 0 3px rgba(102, 126, 234, 0.2),
+    0 0 20px rgba(102, 126, 234, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.login-aluno-input::placeholder {
-  color: #9CA3AF;
+.login-aluno-input:hover {
+  border-color: rgba(102, 126, 234, 0.5);
 }
 
-/* Botão de toggle da senha */
+/* ==========================================
+   TOGGLE DE SENHA
+   ========================================== */
+
 .password-toggle {
   position: absolute;
-  right: 16px;
-  background: none;
-  border: none;
-  color: #9CA3AF;
-  cursor: pointer;
-  padding: 4px;
-  border-radius: 6px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.password-toggle:hover {
-  color: #667eea;
+  right: 18px;
   background: rgba(102, 126, 234, 0.1);
-}
-
-/* Mensagem de erro */
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 12px 16px;
-  background: #FEF2F2;
-  border: 1px solid #FECACA;
-  border-radius: 12px;
-  color: #DC2626;
-  font-size: 14px;
-  font-weight: 500;
-}
-
-/* Botão principal */
-.login-aluno-button {
-  width: 100%;
-  padding: 16px 24px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  border: none;
-  border-radius: 12px;
-  font-size: 16px;
-  font-weight: 600;
+  border: 1px solid rgba(102, 126, 234, 0.3);
+  border-radius: 8px;
+  color: #667eea;
   cursor: pointer;
+  padding: 8px;
   transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
-  min-height: 56px;
+  backdrop-filter: blur(10px);
+}
+
+.password-toggle:hover {
+  background: rgba(102, 126, 234, 0.2);
+  border-color: rgba(102, 126, 234, 0.5);
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+/* ==========================================
+   MENSAGEM DE ERRO
+   ========================================== */
+
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(220, 38, 38, 0.15));
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  border-radius: 12px;
+  color: #ff6b6b;
+  font-size: 0.9rem;
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.2);
+}
+
+.error-message svg {
+  filter: drop-shadow(0 0 5px rgba(239, 68, 68, 0.5));
+}
+
+/* ==========================================
+   BOTÃO PRINCIPAL FUTURISTA
+   ========================================== */
+
+.login-aluno-button {
+  width: 100%;
+  padding: 18px 30px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+  background-size: 200% 200%;
+  color: var(--text-primary);
+  border: none;
+  border-radius: 15px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.4s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 60px;
   position: relative;
   overflow: hidden;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  box-shadow: 
+    0 10px 30px rgba(102, 126, 234, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  animation: gradientShift 3s ease-in-out infinite;
+}
+
+.login-aluno-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.6s ease;
+}
+
+.login-aluno-button:hover::before {
+  left: 100%;
 }
 
 .login-aluno-button:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 
+    0 15px 40px rgba(102, 126, 234, 0.5),
+    0 0 30px rgba(102, 126, 234, 0.3);
+  background-position: 100% 0;
 }
 
 .login-aluno-button:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(-1px) scale(1.01);
 }
 
 .login-aluno-button:disabled {
@@ -214,33 +373,40 @@
   pointer-events: none;
 }
 
-/* Spinner */
+/* ==========================================
+   SPINNER
+   ========================================== */
+
 .spinner {
-  width: 20px;
-  height: 20px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top: 2px solid #ffffff;
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-top: 3px solid #ffffff;
   border-radius: 50%;
   animation: spin 1s linear infinite;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.5));
 }
 
-/* Footer do login */
+/* ==========================================
+   FOOTER DO LOGIN
+   ========================================== */
+
 .login-footer {
-  margin-top: 32px;
+  margin-top: 40px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 25px;
   align-items: center;
 }
 
-/* Divisor */
 .divider {
   display: flex;
   align-items: center;
   width: 100%;
-  gap: 16px;
-  color: #9CA3AF;
-  font-size: 14px;
+  gap: 20px;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  font-weight: 500;
 }
 
 .divider::before,
@@ -248,66 +414,98 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #E5E7EB;
+  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.3), transparent);
 }
 
-/* Botões secundários */
+/* ==========================================
+   BOTÕES SECUNDÁRIOS
+   ========================================== */
+
 .secondary-button {
   width: 100%;
-  padding: 14px 24px;
-  background: #ffffff;
-  color: #374151;
-  border: 2px solid #E5E7EB;
-  border-radius: 12px;
-  font-size: 16px;
+  padding: 16px 25px;
+  background: rgba(255, 255, 255, 0.05);
+  color: var(--text-primary);
+  border: 2px solid rgba(102, 126, 234, 0.3);
+  border-radius: 15px;
+  font-size: 1rem;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
+  backdrop-filter: blur(10px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .secondary-button:hover {
-  border-color: #D1D5DB;
-  background: #F9FAFB;
+  border-color: rgba(102, 126, 234, 0.5);
+  background: rgba(102, 126, 234, 0.1);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
 }
 
-/* Link buttons */
+/* ==========================================
+   LINKS E RODAPÉ
+   ========================================== */
+
 .link-button {
   background: none;
   border: none;
   color: #667eea;
-  font-size: 14px;
-  font-weight: 500;
+  font-size: 0.95rem;
+  font-weight: 600;
   cursor: pointer;
-  text-decoration: underline;
-  transition: color 0.2s ease;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(102, 126, 234, 0.3));
 }
 
 .link-button:hover {
-  color: #764ba2;
+  color: #f093fb;
+  text-shadow: 0 0 10px rgba(240, 147, 251, 0.5);
 }
 
 .link-button.inline {
-  font-size: inherit;
-  margin-left: 4px;
+  margin-left: 6px;
 }
 
-/* Rodapé */
 .login-bottom {
   text-align: center;
-  margin-top: 32px;
-  color: rgba(255, 255, 255, 0.8);
-  font-size: 14px;
+  margin-top: 40px;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  font-weight: 500;
 }
 
-/* Animações */
+/* ==========================================
+   EFEITOS DE FUNDO
+   ========================================== */
+
+.login-aluno-container::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: 
+    radial-gradient(circle at 25% 25%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(240, 147, 251, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ==========================================
+   ANIMAÇÕES
+   ========================================== */
+
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(30px);
+    transform: translateY(40px);
   }
   to {
     opacity: 1;
@@ -321,7 +519,42 @@
   }
 }
 
-/* Responsividade */
+@keyframes borderGlow {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes borderShimmer {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes gradientShift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+/* ==========================================
+   RESPONSIVIDADE
+   ========================================== */
+
 @media (max-width: 768px) {
   .login-aluno-container {
     padding: 16px;
@@ -332,109 +565,48 @@
   }
   
   .login-aluno-box {
-    padding: 32px 24px;
+    padding: 40px 30px;
   }
   
   .login-aluno-title {
-    font-size: 28px;
+    font-size: 2rem;
   }
   
   .logo-text {
-    font-size: 24px;
+    font-size: 1.8rem;
+  }
+  
+  .logo-icon {
+    width: 50px;
+    height: 50px;
   }
 }
 
 @media (max-width: 480px) {
   .login-aluno-box {
-    padding: 24px 20px;
+    padding: 30px 20px;
   }
   
   .login-aluno-title {
-    font-size: 24px;
+    font-size: 1.8rem;
   }
   
   .login-subtitle {
-    font-size: 14px;
+    font-size: 1rem;
   }
-}
-
-.login-aluno-input:focus {
-  border-color: #6f42c1;
-  outline: none;
-}
-
-/* Estilo para os botões */
-.login-aluno-button {
-  width: 100%;
-  padding: 12px;
-  background: linear-gradient(135deg, #4c6ef5, #6f42c1);
-  color: white;
-  font-size: 16px;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-  margin-bottom: 10px; /* Espaçamento entre os botões */
-}
-
-.login-aluno-button:hover {
-  transform: translateY(-3px) scale(1.05);
-  background: linear-gradient(135deg, #365ac1, #5a2ebc);
-}
-
-.login-aluno-button:active {
-  transform: scale(0.95);
-}
-
-/* Botão de voltar para o home */
-.login-aluno-button.secondary {
-  background: #f4f7fb;
-  color: #4c6ef5;
-  font-weight: 500;
-  box-shadow: none;
-  border: 2px solid #4c6ef5;
-  transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-.login-aluno-button.secondary:hover {
-  background-color: #e3e8f9;
-  transform: translateY(-3px);
-}
-
-.login-aluno-button.secondary:active {
-  transform: scale(0.95);
-}
-
-/* Animação de fundo */
-@keyframes gradientBackground {
-  0% {
-    background-position: 100% 50%;
+  
+  .logo-text {
+    font-size: 1.6rem;
   }
-  50% {
-    background-position: 0 50%;
-  }
-  100% {
-    background-position: 100% 50%;
-  }
-}
-
-/* Responsividade */
-@media (max-width: 768px) {
-  .login-aluno-box {
-    padding: 30px;
-  }
-
-  .login-aluno-title {
-    font-size: 22px;
-  }
-
+  
   .login-aluno-input {
-    font-size: 14px;
+    padding: 16px 18px 16px 50px;
+    font-size: 0.95rem;
   }
-
+  
   .login-aluno-button {
-    font-size: 14px;
+    padding: 16px 25px;
+    font-size: 1rem;
+    min-height: 55px;
   }
 }

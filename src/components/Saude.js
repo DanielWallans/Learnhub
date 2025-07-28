@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { addDocument, getDocuments, updateDocument, deleteDocument, getDocument, setDocument } from '../firebaseService';
@@ -23,7 +23,6 @@ function Saude({ darkMode = false }) {
   // Estados para atividades
   const [atividades, setAtividades] = useState([]);
   const [metas, setMetas] = useState([]);
-  const [historico, setHistorico] = useState([]);
   
   // Estados para formulários
   const [novaAtividade, setNovaAtividade] = useState({
@@ -85,29 +84,20 @@ function Saude({ darkMode = false }) {
     progresso: 0
   });
 
-  useEffect(() => {
-    if (currentUser) {
-      carregarDados();
-    }
-  }, [currentUser]);
-
-  const carregarDados = async () => {
+  const carregarDados = useCallback(async () => {
     setLoading(true);
-    try {      const [atividadesData, metasData, historicoData, gamificacaoData] = await Promise.all([
+    try {      const [atividadesData, metasData, gamificacaoData] = await Promise.all([
         getDocuments('saude-atividades'),
         getDocuments('saude-metas'),
-        getDocuments('saude-historico'),
         getDocument('saude-gamificacao', currentUser.uid)
       ]);
       
       // Filtrar por usuário atual
       const minhasAtividades = atividadesData.filter(a => a.userId === currentUser.uid);
       const minhasMetas = metasData.filter(m => m.userId === currentUser.uid);
-      const meuHistorico = historicoData.filter(h => h.userId === currentUser.uid);
       
       setAtividades(minhasAtividades || []);
       setMetas(minhasMetas || []);
-      setHistorico(meuHistorico || []);
       
       if (gamificacaoData) {
         setBadges(gamificacaoData.badges || []);
@@ -121,7 +111,13 @@ function Saude({ darkMode = false }) {
       setMessage('Erro ao carregar dados');
     }
     setLoading(false);
-  };
+  }, [currentUser]);
+
+  useEffect(() => {
+    if (currentUser) {
+      carregarDados();
+    }
+  }, [currentUser, carregarDados]);
 
   const calcularEstatisticasDiarias = (atividades) => {
     const hoje = new Date().toISOString().split('T')[0];
@@ -1053,7 +1049,9 @@ function Saude({ darkMode = false }) {
     );
   }
 
-  return (    <div className={`saude-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
+  return (
+    <>
+    <div className={`saude-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>
       {/* Cabeçalho */}
       <div className="carreira-header">
         <h3>
@@ -1325,6 +1323,7 @@ function Saude({ darkMode = false }) {
         </div>
       )}
     </div>
+    </>
   );
 }
 

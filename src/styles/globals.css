@@ -4,25 +4,25 @@
 
 :root {
   /* === CORES PRIMÁRIAS === */
-  --color-primary: #4c6ef5;
+  --color-primary: #667eea;
   --color-primary-dark: #364fc7;
   --color-primary-light: #748ffc;
-  --color-secondary: #845ef7;
+  --color-secondary: #764ba2;
   --color-secondary-dark: #6f42c1;
   --color-secondary-light: #9c88ff;
   
   /* === CORES DO SISTEMA === */
-  --color-success: #28a745;
-  --color-success-light: #48c774;
+  --color-success: #11998e;
+  --color-success-light: #38ef7d;
   --color-warning: #fab005;
   --color-warning-light: #ffd43b;
-  --color-error: #e74c3c;
+  --color-error: #ff6b6b;
   --color-error-light: #ff5757;
   --color-info: #17a2b8;
   --color-info-light: #3dd5f3;
   
-  /* === CORES NEUTRAS - MODO CLARO === */
-  --color-white: #ffffff;
+  /* === CORES NEUTRAS - MODO ESCURO === */
+  --color-white: #0f0f23;
   --color-gray-50: #f8fafc;
   --color-gray-100: #f1f5f9;
   --color-gray-200: #e2e8f0;

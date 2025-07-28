@@ -211,3 +211,59 @@
 .notificacoes:hover .notificacoes-list {
   display: block;
 }
+
+/* Header Brand Moderno */
+.header-brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3);
+  animation: headerLogoGlow 2s ease-in-out infinite alternate;
+}
+
+.header-logo-icon svg {
+  width: 20px;
+  height: 20px;
+  color: white;
+}
+
+@keyframes headerLogoGlow {
+  0% { box-shadow: 0 4px 20px rgba(59, 130, 246, 0.3); }
+  100% { box-shadow: 0 4px 20px rgba(139, 92, 246, 0.5); }
+}
+
+.header-brand-name {
+  font-size: 2rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.header-gradient-text {
+  background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: headerGradientShift 3s ease-in-out infinite;
+}
+
+.header-accent-text {
+  color: #fbbf24;
+  text-shadow: 0 0 15px rgba(251, 191, 36, 0.5);
+}
+
+@keyframes headerGradientShift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}

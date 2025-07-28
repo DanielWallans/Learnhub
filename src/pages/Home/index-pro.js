@@ -1,7 +1,4 @@
 import { useNavigate } from "react-router-dom";
-import { signOut } from "firebase/auth";
-import { auth } from "../../firebaseConfig";
-import Footer from "../../components/Footer";
 import "./home.css";
 
 function Home() {
@@ -15,41 +12,21 @@ function Home() {
     navigate('/cadastro-aluno');
   };
 
-  const handleLogout = async () => {
-    try {
-      console.log('Fazendo logout...');
-      await signOut(auth);
-      console.log('Logout realizado com sucesso');
-      navigate('/login');
-    } catch (error) {
-      console.error('Erro ao fazer logout:', error);
-    }
-  };
-
   return (
     <div className="futuristic-home">
       {/* Cabeçalho Futurista */}
       <header className="futuristic-header">
         <div className="header-content">
           <div className="logo-container">
+            <div className="logo-glow"></div>
             <h1 className="logo-text">
               <span className="logo-learn">Learn</span>
               <span className="logo-hub">Hub</span>
             </h1>
+            <div className="logo-underline"></div>
           </div>
           <nav className="header-nav">
             <span className="nav-indicator">Sistema de Aprendizado</span>
-            <button 
-              className="logout-btn"
-              onClick={handleLogout}
-            >
-              <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M9 21H5C4.46957 21 3.96086 20.7893 3.58579 20.4142C3.21071 20.0391 3 19.5304 3 19V5C3 4.46957 3.21071 3.96086 3.58579 3.58579C3.96086 3.21071 4.46957 3 5 3H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M16 17L21 12L16 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M21 12H9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Logout
-            </button>
           </nav>
         </div>
       </header>
@@ -126,11 +103,11 @@ function Home() {
             <div className="feature-card">
               <div className="feature-icon">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M8 7V3M16 7V3M7 11H17M5 21H19C19.5304 21 20.0391 20.7893 20.4142 20.4142C20.7893 20.0391 21 19.5304 21 19V7C21 6.46957 20.7893 5.96086 20.4142 5.58579C20.0391 5.21071 19.5304 5 19 5H5C4.46957 5 3.96086 5.21071 3.58579 5.58579C3.21071 5.96086 3 6.46957 3 7V19C3 19.5304 3.21071 20.0391 3.58579 20.4142C3.96086 20.7893 4.46957 21 5 21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M9 11H15M9 15H15M17 21L12 16L7 21V5C7 4.46957 7.21071 3.96086 7.58579 3.58579C7.96086 3.21071 8.46957 3 9 3H15C15.5304 3 16.0391 3.21071 16.4142 3.58579C16.7893 3.96086 17 4.46957 17 5V21Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h4>Planejamento de Estudos</h4>
-              <p>Organize sua agenda acadêmica e acompanhe suas tarefas</p>
+              <h4>Organização Inteligente</h4>
+              <p>Sistema avançado de planejamento de estudos com IA</p>
             </div>
 
             <div className="feature-card">
@@ -139,25 +116,23 @@ function Home() {
                   <path d="M22 12H18L15 21L9 3L6 12H2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h4>Saúde e Bem-estar</h4>
-              <p>Monitore hábitos saudáveis e mantenha o equilíbrio</p>
+              <h4>Análise de Performance</h4>
+              <p>Métricas detalhadas do seu progresso acadêmico</p>
             </div>
 
             <div className="feature-card">
               <div className="feature-icon">
                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M19 14C19 15.1046 18.1046 16 17 16H5C3.89543 16 3 15.1046 3 14M12 10L8 6M12 10L16 6M12 10V20" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 11.08V12C21.9988 14.1564 21.3005 16.2547 20.0093 17.9818C18.7182 19.7088 16.9033 20.9725 14.8354 21.5839C12.7674 22.1953 10.5573 22.1219 8.53447 21.3746C6.51168 20.6273 4.78465 19.2461 3.61096 17.4371C2.43727 15.628 1.87979 13.4905 2.02168 11.3363C2.16356 9.18203 2.99721 7.13214 4.39828 5.49883C5.79935 3.86553 7.69279 2.72636 9.79619 2.24223C11.8996 1.75809 14.1003 1.9548 16.07 2.81" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <path d="M22 4L12 14.01L9 11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                 </svg>
               </div>
-              <h4>Gestão de Projetos</h4>
-              <p>Organize seus projetos acadêmicos e conquiste seus objetivos</p>
+              <h4>Metas Personalizadas</h4>
+              <p>Defina e conquiste objetivos sob medida para você</p>
             </div>
           </div>
         </div>
       </main>
-
-      {/* Footer Futurista */}
-      <Footer />
 
       {/* Efeitos de fundo */}
       <div className="bg-effects">

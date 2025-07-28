@@ -9,8 +9,7 @@ import {
   updateDoc,
   doc,
   query,
-  where,
-  onSnapshot
+  where
 } from "firebase/firestore";
 import './Habitos-novo.css';
 
@@ -443,6 +442,7 @@ function Habitos({ darkMode = false }) {
     );
   }
   return (
+    <>
     <div className={`carreira-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>      {/* Cabeçalho */}
       <div className="carreira-header">
         <h3>
@@ -1172,6 +1172,7 @@ function Habitos({ darkMode = false }) {
         )}
       </div>
     </div>
+    </>
   );
 }
 

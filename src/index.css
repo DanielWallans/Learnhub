@@ -1,8 +1,8 @@
 /* Importar variáveis globais e utilitários */
 @import './styles/globals.css';
 @import './styles/utilities.css';
+@import './styles/aesthetic-modules.css';
 
-/* Prevenir overflow horizontal global */
 html, body {
   margin: 0;
   padding: 0;

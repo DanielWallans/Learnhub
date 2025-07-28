@@ -1,7 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebaseConfig";
+import { auth, db } from "../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
+import { useAuth } from "../../context/AuthContext";
 import "./login.css";
 
 function Login() {
@@ -11,6 +13,15 @@ function Login() {
   const [mostrarSenha, setMostrarSenha] = useState(false);
   const [erro, setErro] = useState("");
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
+
+  // Quando currentUser é atualizado e existe, redireciona
+  useEffect(() => {
+    if (currentUser && !loading) {
+      console.log("Login: currentUser detectado, redirecionando...");
+      navigate("/home");
+    }
+  }, [currentUser, loading, navigate]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -18,11 +29,30 @@ function Login() {
     setErro("");
 
     try {
+      console.log("Login: Iniciando autenticação...");
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
-      console.log("Login realizado com sucesso:", userCredential.user);
-      navigate("/home");
+      const user = userCredential.user;
+      console.log("Login: Firebase Auth sucesso:", user.uid, user.email);
+      
+      // Verifica se o usuário existe na coleção "usuarios", se não existir, cria
+      console.log("Login: Verificando na coleção usuarios...");
+      const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+      console.log("Login: Documento existe na coleção usuarios:", userDoc.exists());
+      
+      if (!userDoc.exists()) {
+        console.log("Login: Criando documento na coleção usuarios...");
+        await setDoc(doc(db, "usuarios", user.uid), {
+          uid: user.uid,
+          email: user.email,
+          criadoEm: new Date().toISOString()
+        });
+        console.log("Login: Documento criado com sucesso!");
+      }
+      
+      console.log("Login: Documento criado/verificado. Aguardando AuthContext...");
+      // Remove a navegação manual - deixa o useEffect fazer quando currentUser for atualizado
     } catch (error) {
-      console.error("Falha no login:", error);
+      console.error("Login: Erro completo:", error);
       
       // Tratamento de diferentes tipos de erro
       let mensagemErro = "Erro ao fazer login";
@@ -163,7 +193,8 @@ function Login() {
         {/* Links úteis */}
         <div className="login-links">
           <button 
-            className="forgot-password-link" 
+            type="button"
+            className="forgot-password" 
             onClick={() => navigate("/esqueci-senha")}
             disabled={loading}
           >
@@ -176,16 +207,20 @@ function Login() {
             Esqueci minha senha
           </button>
 
-          <div className="register-section">
-            <span>Não tem uma conta?</span>
-            <button 
-              className="register-link" 
-              onClick={() => navigate("/cadastros")}
-              disabled={loading}
-            >
-              Cadastre-se
-            </button>
-          </div>
+          <button 
+            type="button"
+            className="register-link" 
+            onClick={() => navigate("/cadastros")}
+            disabled={loading}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="8.5" cy="7" r="4"/>
+              <line x1="20" y1="8" x2="20" y2="14"/>
+              <line x1="23" y1="11" x2="17" y2="11"/>
+            </svg>
+            Criar conta
+          </button>
         </div>
 
         {/* Informações adicionais */}

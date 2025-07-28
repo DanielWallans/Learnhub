@@ -504,6 +504,7 @@ function Projetos({ darkMode = false }) {
   }
 
   return (
+    <>
     <div className={`carreira-container ${darkMode ? 'dark-mode' : ''}`} data-theme={darkMode ? 'dark' : 'light'}>{/* Cabeçalho */}
       <div className="carreira-header">
         <h3>
@@ -767,6 +768,7 @@ function Projetos({ darkMode = false }) {
         </div>
       )}
     </div>
+    </>
   );
 }
 

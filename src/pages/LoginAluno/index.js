@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { auth } from "../../firebaseConfig";
+import { auth, db } from "../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import "./loginAluno.css";
 
 function LoginAluno() {
@@ -19,7 +20,20 @@ function LoginAluno() {
 
     try {
       // Autenticando usuário no Firebase Authentication
-      await signInWithEmailAndPassword(auth, email, senha);
+      const userCredential = await signInWithEmailAndPassword(auth, email, senha);
+      const user = userCredential.user;
+      
+      // Verifica se o usuário existe na coleção "alunos", se não existir, cria
+      const userDoc = await getDoc(doc(db, "alunos", user.uid));
+      if (!userDoc.exists()) {
+        console.log("Usuário não encontrado na coleção alunos, criando...");
+        await setDoc(doc(db, "alunos", user.uid), {
+          uid: user.uid,
+          email: user.email,
+          criadoEm: new Date().toISOString()
+        });
+      }
+      
       navigate("/boas-vindas");
     } catch (error) {
       console.error("Erro ao fazer login:", error.code, error.message);
@@ -50,7 +64,7 @@ function LoginAluno() {
   };
 
   const handleBackToHome = () => {
-    navigate("/");
+    navigate("/home");
   };
 
   const togglePasswordVisibility = () => {

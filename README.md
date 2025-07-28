@@ -1,70 +1,289 @@
-# Getting Started with Create React App
+# 📚 LearnHub - Plataforma de Gestão Acadêmica e Pessoal
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+<div align="center">
+  <img src="public/logo192.png" alt="LearnHub Logo" width="100" height="100">
+  
+  [![React](https://img.shields.io/badge/React-19.0.0-blue.svg)](https://reactjs.org/)
+  [![Firebase](https://img.shields.io/badge/Firebase-11.5.0-orange.svg)](https://firebase.google.com/)
+  [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+  [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg)](CONTRIBUTING.md)
+</div>
 
-## Available Scripts
+## 📋 Sobre o Projeto
 
-In the project directory, you can run:
+O **LearnHub** é uma plataforma completa de gestão acadêmica e pessoal desenvolvida em React, projetada para ajudar estudantes a organizarem seus estudos, planejamentos, finanças, projetos e bem-estar de forma integrada e intuitiva.
 
-### `npm start`
+### 🎯 Objetivo
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Centralizar todas as ferramentas necessárias para um estudante gerenciar eficientemente sua vida acadêmica e pessoal em uma única plataforma moderna e responsiva.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## ✨ Principais Funcionalidades
 
-### `npm test`
+### 🏠 Dashboard Inteligente
+- **Resumo personalizado** com dados consolidados de todos os módulos
+- **Indicadores visuais** de progresso e metas
+- **Interface moderna** com tema customizável (claro/escuro)
+- **Navegação intuitiva** entre módulos
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### 📅 Gestão de Tempo e Planejamento
+- **Agenda integrada** com calendário interativo
+- **Sistema de planejamento** com metas e objetivos
+- **Formulários dinâmicos** para adicionar e editar planejamentos
+- **Visualização de cronogramas** e prazos
 
-### `npm run build`
+### 💼 Módulo de Carreira
+- **Acompanhamento de objetivos profissionais**
+- **Registro de experiências** e habilidades
+- **Planejamento de carreira** acadêmica e profissional
+- **Networking e contatos** importantes
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### 💰 Controle Financeiro
+- **Gestão de receitas e despesas**
+- **Categorização automática** de gastos
+- **Relatórios financeiros** detalhados
+- **Metas de economia** e orçamento
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### 🚀 Gestão de Projetos
+- **Criação e acompanhamento** de projetos pessoais e acadêmicos
+- **Sistema de status** e progresso
+- **Documentação integrada** de projetos
+- **Timeline de desenvolvimento**
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### 📖 Biblioteca de Leituras
+- **Catálogo pessoal** de livros e materiais
+- **Sistema de avaliação** e resenhas
+- **Progresso de leitura** e metas
+- **Recomendações personalizadas**
 
-### `npm run eject`
+### 🏥 Monitoramento de Saúde
+- **Registro de atividades físicas**
+- **Acompanhamento de hábitos saudáveis**
+- **Histórico de saúde** e bem-estar
+- **Lembretes e notificações**
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### 📋 Sistema de Hábitos
+- **Criação de rotinas** personalizadas
+- **Tracking diário** de hábitos
+- **Estatísticas de consistência**
+- **Gamificação** para motivação
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+## 🛠️ Tecnologias Utilizadas
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### Frontend
+- **React 19.0.0** - Biblioteca principal para interface
+- **React Router DOM 7.2.0** - Navegação entre páginas
+- **React Icons 5.5.0** - Iconografia moderna
+- **Lucide React 0.486.0** - Ícones adicionais
+- **Framer Motion 12.4.10** - Animações fluidas
+- **React Calendar 5.1.0** - Componente de calendário
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### Backend e Dados
+- **Firebase 11.5.0** - Autenticação e banco de dados
+- **Express 4.21.2** - Servidor backend
+- **Express Session 1.18.1** - Gerenciamento de sessões
+- **Axios 1.8.1** - Requisições HTTP
 
-## Learn More
+### Ferramentas de Desenvolvimento
+- **CRACO 7.1.0** - Configuração customizada do Create React App
+- **React Scripts 5.0.1** - Scripts de build e desenvolvimento
+- **Testing Library** - Suite completa de testes
+- **ESLint** - Linting e qualidade de código
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## 🚀 Como Executar o Projeto
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Pré-requisitos
 
-### Code Splitting
+- **Node.js** (versão 16.0.0 ou superior)
+- **npm** ou **yarn**
+- **Git**
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+### Instalação
 
-### Analyzing the Bundle Size
+1. **Clone o repositório**
+```bash
+git clone https://github.com/seu-usuario/learnhub.git
+cd learnhub
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+2. **Instale as dependências**
+```bash
+npm install
+```
 
-### Making a Progressive Web App
+3. **Configure o Firebase**
+   - Crie um projeto no [Firebase Console](https://console.firebase.google.com/)
+   - Configure as credenciais em `src/firebase-config.js`
+   - Ative Authentication e Firestore Database
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+4. **Execute o projeto**
+```bash
+npm start
+```
 
-### Advanced Configuration
+O aplicativo será aberto em [http://localhost:3000](http://localhost:3000)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+### Scripts Disponíveis
 
-### Deployment
+```bash
+# Inicia o servidor de desenvolvimento
+npm start
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+# Executa os testes
+npm test
 
-### `npm run build` fails to minify
+# Gera build de produção
+npm run build
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+# Ejeta as configurações (irreversível)
+npm run eject
+```
+
+## 📁 Estrutura do Projeto
+
+```
+learnhub/
+├── public/                 # Arquivos públicos
+│   ├── index.html         # Template HTML principal
+│   ├── manifest.json      # Configuração PWA
+│   └── sw.js             # Service Worker
+├── src/
+│   ├── components/        # Componentes React
+│   │   ├── Dashboard.js   # Dashboard principal
+│   │   ├── Agenda.js      # Componente de agenda
+│   │   ├── Carreira.js    # Módulo de carreira
+│   │   ├── Financas.js    # Controle financeiro
+│   │   ├── Projetos.js    # Gestão de projetos
+│   │   ├── Leituras.js    # Biblioteca de leituras
+│   │   ├── Saude.js       # Monitoramento de saúde
+│   │   ├── Habitos.js     # Sistema de hábitos
+│   │   └── ...
+│   ├── pages/             # Páginas da aplicação
+│   │   ├── Home/          # Página inicial
+│   │   ├── Login/         # Sistema de login
+│   │   ├── Cadastros/     # Cadastros de usuário
+│   │   └── ...
+│   ├── context/           # Contextos React
+│   │   ├── AuthContext.js # Autenticação
+│   │   └── ThemeContext.js # Temas
+│   ├── services/          # Serviços externos
+│   ├── hooks/             # Hooks customizados
+│   ├── utils/             # Utilitários
+│   └── styles/            # Estilos globais
+└── package.json
+```
+
+## 🔐 Autenticação e Segurança
+
+- **Sistema de login** com Firebase Authentication
+- **Rotas protegidas** para usuários autenticados
+- **Validação de dados** no frontend e backend
+- **Sessões seguras** com Express Session
+
+## 📱 Responsividade
+
+O LearnHub é totalmente responsivo e otimizado para:
+- 📱 **Mobile** (smartphones)
+- 📟 **Tablet** (tablets)
+- 💻 **Desktop** (computadores)
+
+## 🎨 Temas e Personalização
+
+- **Tema claro** e **escuro** disponíveis
+- **Personalização de cores** por módulo
+- **Interface adaptativa** baseada nas preferências do usuário
+- **Acessibilidade** seguindo padrões WCAG
+
+## 🧪 Testes
+
+```bash
+# Executa todos os testes
+npm test
+
+# Executa testes em modo watch
+npm test -- --watch
+
+# Executa testes com coverage
+npm test -- --coverage
+```
+
+## 🚀 Deploy
+
+### Netlify
+```bash
+npm run build
+# Upload da pasta build/ para o Netlify
+```
+
+### Vercel
+```bash
+npm install -g vercel
+vercel --prod
+```
+
+### Firebase Hosting
+```bash
+npm install -g firebase-tools
+firebase init hosting
+npm run build
+firebase deploy
+```
+
+## 🤝 Como Contribuir
+
+1. **Fork** o projeto
+2. Crie uma **branch** para sua feature (`git checkout -b feature/AmazingFeature`)
+3. **Commit** suas mudanças (`git commit -m 'Add some AmazingFeature'`)
+4. **Push** para a branch (`git push origin feature/AmazingFeature`)
+5. Abra um **Pull Request**
+
+### Diretrizes de Contribuição
+
+- Siga os padrões de código existentes
+- Escreva testes para novas funcionalidades
+- Documente mudanças significativas
+- Use commits semânticos (conventional commits)
+
+## 📊 Roadmap
+
+- [ ] **v1.1** - Sistema de notificações push
+- [ ] **v1.2** - Integração com Google Calendar
+- [ ] **v1.3** - Modo offline com sincronização
+- [ ] **v1.4** - API REST completa
+- [ ] **v1.5** - Aplicativo mobile nativo
+- [ ] **v2.0** - Inteligência artificial para recomendações
+
+## 🐛 Reportar Bugs
+
+Encontrou um bug? Por favor, abra uma [issue](https://github.com/seu-usuario/learnhub/issues) com:
+
+- Descrição detalhada do problema
+- Passos para reproduzir
+- Screenshots (se aplicável)
+- Informações do ambiente (SO, navegador, etc.)
+
+## 📝 Licença
+
+Este projeto está sob a licença **MIT**. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👥 Equipe
+
+- **Desenvolvedor Principal** - [Seu Nome](https://github.com/seu-usuario)
+
+## 📞 Contato
+
+- **Email**: seuemail@exemplo.com
+- **LinkedIn**: [Seu LinkedIn](https://linkedin.com/in/seu-perfil)
+- **GitHub**: [Seu GitHub](https://github.com/seu-usuario)
+
+## 🙏 Agradecimentos
+
+- [Create React App](https://create-react-app.dev/) - Base do projeto
+- [Firebase](https://firebase.google.com/) - Backend e autenticação
+- [React Icons](https://react-icons.github.io/react-icons/) - Iconografia
+- [Framer Motion](https://www.framer.com/motion/) - Animações
+
+---
+
+<div align="center">
+  Feito com ❤️ para estudantes que buscam organização e produtividade
+</div>

@@ -1,78 +1,106 @@
 import React, { useEffect, useState } from 'react';
-import { useTheme } from '../context/ThemeContext';
+import { auth, db } from '../firebaseConfig';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
+import { useNavigate, Link } from 'react-router-dom';
 import Resumo from './Resumo';
 import Organizacao from './Organizacao';
 import Planejamento from './Planejamento';
-import Habitos from './Habitos';
+import Agenda from './Agenda';
 import Carreira from './Carreira';
 import Financas from './Financas';
+import Habitos from './Habitos';
 import Leituras from './Leituras';
 import Saude from './Saude';
 import Projetos from './Projetos';
-import Agenda from './Agenda';
-import { auth, db } from '../firebaseConfig';
-import { doc, getDoc, collection, query, where, onSnapshot, updateDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
-import './organizacao.css';
-import './modalPerfil.css';
-import './Cabecalho.css';
-import './dashboard-nav.css';
-import './dashboard-modern.css';
-import './dashboard-mini-modules.css';
+import Footer from './Footer';
+import './dashboard-ultra.css';
 
-// Componente do cabeçalho do dashboard
-function Cabecalho() {
-  const { darkMode, toggleDarkMode } = useTheme();
+const Dashboard = () => {
+  // Estados principais
+  const [user, setUser] = useState(null);
   const [nome, setNome] = useState('');
   const [foto, setFoto] = useState('');
-  const [showPerfil, setShowPerfil] = useState(false);
   const [dadosAluno, setDadosAluno] = useState(null);
-  const [user, setUser] = useState(null);
-  const [showSearch, setShowSearch] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [showPerfil, setShowPerfil] = useState(false);
+  const [showEditForm, setShowEditForm] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const [editedData, setEditedData] = useState({});
   const [saving, setSaving] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [activeModule, setActiveModule] = useState('resumo');
+  const [loading, setLoading] = useState(true);
+  
+  // Estatísticas dinâmicas
+  const [stats, setStats] = useState({
+    habitosAtivos: 0,
+    projetosEmAndamento: 0,
+    metasAlcancadas: 0,
+    livrosLidos: 0,
+    horasEstudo: 0,
+    sequenciaEstudo: 0
+  });
+
   const navigate = useNavigate();
 
-  // Monitora mudanças na autenticação
+  // Monitora autenticação
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       setUser(user);
+      if (!user) {
+        navigate('/login-aluno');
+      } else {
+        setLoading(false);
+      }
     });
     return () => unsubscribe();
-  }, []);
+  }, [navigate]);
 
-  // Carrega dados do usuário logado
+  // Carrega dados do usuário
   useEffect(() => {
     if (user) {
-      const docRef = doc(db, 'alunos', user.uid);
-      getDoc(docRef).then((docSnap) => {
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setNome(data.nomeCompleto || data.nome || '');
-          setFoto(data.foto || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(data.nomeCompleto || data.nome || 'Aluno'));
-          setDadosAluno(data);
+      const loadUserData = async () => {
+        try {
+          const docRef = doc(db, 'alunos', user.uid);
+          const docSnap = await getDoc(docRef);
+          
+          if (docSnap.exists()) {
+            const data = docSnap.data();
+            setNome(data.nomeCompleto || data.nome || 'Estudante');
+            setFoto(data.foto || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.nomeCompleto || data.nome || 'Estudante')}&background=667eea&color=ffffff`);
+            setDadosAluno(data);
+            
+            // Simular estatísticas baseadas nos dados (você pode conectar com dados reais)
+            setStats({
+              habitosAtivos: Math.floor(Math.random() * 15) + 5,
+              projetosEmAndamento: Math.floor(Math.random() * 8) + 2,
+              metasAlcancadas: Math.floor(Math.random() * 12) + 3,
+              livrosLidos: Math.floor(Math.random() * 25) + 10,
+              horasEstudo: Math.floor(Math.random() * 50) + 20,
+              sequenciaEstudo: Math.floor(Math.random() * 30) + 5
+            });
+          }
+        } catch (error) {
+          console.error('Erro ao carregar dados do usuário:', error);
         }
-      });
+      };
+      
+      loadUserData();
     }
   }, [user]);
 
+  // Handlers
   const handleLogout = async () => {
-    await auth.signOut();
-    navigate('/login-aluno');
+    try {
+      await auth.signOut();
+      navigate('/login-aluno');
+    } catch (error) {
+      console.error('Erro ao fazer logout:', error);
+    }
   };
 
   const handleOpenPerfil = () => {
     setShowPerfil(true);
     setEditMode(false);
-    setEditedData({});
-  };
-
-  const handleEditPerfil = () => {
-    setEditMode(true);
     setEditedData({
       nomeCompleto: dadosAluno?.nomeCompleto || '',
       emailContato: dadosAluno?.emailContato || '',
@@ -91,14 +119,12 @@ function Cabecalho() {
       const docRef = doc(db, 'alunos', user.uid);
       await updateDoc(docRef, editedData);
       
-      // Atualizar estado local
       setDadosAluno(prev => ({ ...prev, ...editedData }));
       setNome(editedData.nomeCompleto || editedData.nome || '');
       
       setEditMode(false);
       setEditedData({});
       
-      // Mostrar mensagem de sucesso
       setShowSuccessMessage(true);
       setTimeout(() => setShowSuccessMessage(false), 3000);
       
@@ -110,499 +136,540 @@ function Cabecalho() {
     }
   };
 
-  const handleCancelEdit = () => {
-    setEditMode(false);
-    setEditedData({});
-  };
-
   const handleInputChange = (field, value) => {
     setEditedData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSearch = (e) => {
-    if (e.key === 'Enter' && searchTerm.trim()) {
-      // Aqui você pode implementar a lógica de busca
-      console.log('Buscando por:', searchTerm);
-      // Por exemplo, navegar para uma página de resultados
-      setShowSearch(false);
-      setSearchTerm('');
+  const renderActiveModule = () => {
+    switch (activeModule) {
+      case 'organizacao':
+        return <Organizacao />;
+      case 'planejamento':
+        return <Planejamento />;
+      case 'agenda':
+        return <Agenda />;
+      case 'carreira':
+        return <Carreira />;
+      case 'financas':
+        return <Financas />;
+      case 'habitos':
+        return <Habitos />;
+      case 'leituras':
+        return <Leituras />;
+      case 'saude':
+        return <Saude />;
+      case 'projetos':
+        return <Projetos />;
+      default:
+        return <Resumo />;
     }
   };
 
-  return (
-    <>
-      <header className="dashboard-header">
-        <div className="dashboard-header-left">
-          <button 
-            className="dashboard-icon-btn" 
-            title="Buscar" 
-            aria-label="Buscar"
-            onClick={() => setShowSearch(!showSearch)}
-          >
-            <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <circle cx="11" cy="11" r="8"/>
-              <path d="m21 21-4.35-4.35"/>
-            </svg>
-          </button>
-          
-          <button 
-            className="dashboard-icon-btn" 
-            title={darkMode ? "Modo Claro" : "Modo Escuro"}
-            aria-label={darkMode ? "Ativar modo claro" : "Ativar modo escuro"}
-            onClick={toggleDarkMode}
-          >
-            {darkMode ? (
-              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="5"/>
-                <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
-              </svg>
-            ) : (
-              <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/>
-              </svg>
-            )}
-          </button>
-          
-          <button className="dashboard-icon-btn" title="Notificações" aria-label="Notificações">
-            <svg width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M18 8a6 6 0 10-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
-              <path d="M13.73 21a2 2 0 01-3.46 0"/>
-            </svg>
-          </button>
-        </div>
-        
-        {showSearch && (
-          <div className="search-overlay">
-            <input
-              type="text"
-              placeholder="Buscar em todos os módulos..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              onKeyPress={handleSearch}
-              className="search-input-global"
-              autoFocus
-            />
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return 'Bom dia';
+    if (hour < 18) return 'Boa tarde';
+    return 'Boa noite';
+  };
+
+  if (loading) {
+    return (
+      <div className="ultra-loading">
+        <div className="loading-animation">
+          <div className="loading-cube">
+            <div className="cube-face cube-front"></div>
+            <div className="cube-face cube-back"></div>
+            <div className="cube-face cube-right"></div>
+            <div className="cube-face cube-left"></div>
+            <div className="cube-face cube-top"></div>
+            <div className="cube-face cube-bottom"></div>
           </div>
-        )}
-        
-        <div className="dashboard-header-right">
-          <div className="dashboard-profile" onClick={handleOpenPerfil}>
-            <div className="profile-avatar">
-              <img src={foto} alt="Perfil" className="dashboard-profile-img" />
-              <div className="profile-status"></div>
-            </div>
-            <div className="profile-info">
-              <span className="profile-greeting">Olá,</span>
-              <span className="dashboard-profile-nome">{nome}</span>
-            </div>
-            <div className="profile-dropdown-arrow">
-              <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <polyline points="6,9 12,15 18,9"/>
-              </svg>
-            </div>
+          <div className="loading-text">
+            <span className="loading-learn">Learn</span>
+            <span className="loading-hub">Hub</span>
           </div>
-          <button className="dashboard-logout-btn" onClick={handleLogout}>
-            <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-              <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/>
-              <polyline points="16,17 21,12 16,7"/>
-              <line x1="21" y1="12" x2="9" y2="12"/>
-            </svg>
-            Sair
-          </button>
-        </div>
-      </header>
-      
-      {showPerfil && (
-        <div className="modal-perfil-bg">
-          <div className="modal-perfil">
-            {showSuccessMessage && (
-              <div className="success-message">
-                <svg width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                  <polyline points="22,4 12,14.01 9,11.01"/>
-                </svg>
-                Perfil atualizado com sucesso!
-              </div>
-            )}
-            
-            <h3>Meu Cadastro</h3>
-            
-            <div><strong>Nome Completo:</strong> 
-              {editMode ? (
-                <input
-                  type="text"
-                  className="edit-input"
-                  value={editedData.nomeCompleto || ''}
-                  onChange={(e) => handleInputChange('nomeCompleto', e.target.value)}
-                  placeholder="Digite seu nome completo"
-                />
-              ) : (
-                dadosAluno?.nomeCompleto || "Não informado"
-              )}
-            </div>
-            
-            <div><strong>Email para Contato:</strong> 
-              {editMode ? (
-                <input
-                  type="email"
-                  className="edit-input"
-                  value={editedData.emailContato || ''}
-                  onChange={(e) => handleInputChange('emailContato', e.target.value)}
-                  placeholder="Digite seu email de contato"
-                />
-              ) : (
-                dadosAluno?.emailContato || "Não informado"
-              )}
-            </div>
-            
-            <div><strong>Email:</strong> {dadosAluno?.email || "Não informado"}</div>
-            <div><strong>Matrícula:</strong> {dadosAluno?.matricula || "Não informado"}</div>
-            
-            <div><strong>Nível de Ensino:</strong> 
-              {editMode ? (
-                <select
-                  className="edit-select"
-                  value={editedData.nivelEnsino || ''}
-                  onChange={(e) => handleInputChange('nivelEnsino', e.target.value)}
-                >
-                  <option value="">Selecione o nível</option>
-                  <option value="Ensino Fundamental">Ensino Fundamental</option>
-                  <option value="Ensino Médio">Ensino Médio</option>
-                  <option value="Graduação">Graduação</option>
-                  <option value="Pós-graduação">Pós-graduação</option>
-                  <option value="Mestrado">Mestrado</option>
-                  <option value="Doutorado">Doutorado</option>
-                </select>
-              ) : (
-                dadosAluno?.nivelEnsino || "Não informado"
-              )}
-            </div>
-            
-            <div><strong>Curso:</strong> 
-              {editMode ? (
-                <input
-                  type="text"
-                  className="edit-input"
-                  value={editedData.curso || ''}
-                  onChange={(e) => handleInputChange('curso', e.target.value)}
-                  placeholder="Digite seu curso"
-                />
-              ) : (
-                dadosAluno?.curso || "Não informado"
-              )}
-            </div>
-            
-            <div><strong>Semestre/Período Atual:</strong> 
-              {editMode ? (
-                <input
-                  type="text"
-                  className="edit-input"
-                  value={editedData.semestrePeriodo || ''}
-                  onChange={(e) => handleInputChange('semestrePeriodo', e.target.value)}
-                  placeholder="Ex: 5º Semestre"
-                />
-              ) : (
-                dadosAluno?.semestrePeriodo || "Não informado"
-              )}
-            </div>
-            
-            <div><strong>Modalidade:</strong> 
-              {editMode ? (
-                <select
-                  className="edit-select"
-                  value={editedData.modalidade || ''}
-                  onChange={(e) => handleInputChange('modalidade', e.target.value)}
-                >
-                  <option value="">Selecione a modalidade</option>
-                  <option value="Presencial">Presencial</option>
-                  <option value="EAD">EAD</option>
-                  <option value="Semipresencial">Semipresencial</option>
-                  <option value="Híbrido">Híbrido</option>
-                </select>
-              ) : (
-                dadosAluno?.modalidade || "Não informado"
-              )}
-            </div>
-            
-            <div className="modal-perfil-avatar">
-              <img src={dadosAluno?.foto || foto} alt="Avatar" />
-            </div>
-            
-            <div style={{marginTop: 16}}>
-              {editMode ? (
-                <div className="edit-buttons">
-                  <button className="btn-cancel" onClick={handleCancelEdit} disabled={saving}>
-                    Cancelar
-                  </button>
-                  <button className="btn-save" onClick={handleSavePerfil} disabled={saving}>
-                    {saving ? 'Salvando...' : 'Salvar'}
-                  </button>
-                </div>
-              ) : (
-                <div className="edit-buttons">
-                  <button className="dashboard-logout-btn" onClick={() => setShowPerfil(false)}>
-                    Fechar
-                  </button>
-                  <button className="btn-edit" onClick={handleEditPerfil}>
-                    Editar Perfil
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
-  );
-}
-
-function Dashboard () {
-  const { darkMode } = useTheme();
-  const [stats, setStats] = useState({
-    habitosAtivos: 0,
-    projetosEmAndamento: 0,
-    metasAlcancadas: 0,
-    livrosLidos: 0
-  });
-  const [user, setUser] = useState(null);
-
-  // Monitor user authentication
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      setUser(user);
-    });
-    return () => unsubscribe();
-  }, []);
-
-  // Buscar estatísticas em tempo real do Firebase
-  useEffect(() => {
-    if (!user) {
-      setStats({
-        habitosAtivos: 0,
-        projetosEmAndamento: 0,
-        metasAlcancadas: 0,
-        livrosLidos: 0
-      });
-      return;
-    }
-
-    // Listener para Hábitos
-    const habitosQuery = query(
-      collection(db, 'habitos'),
-      where('uid', '==', user.uid)
-    );
-    const unsubscribeHabitos = onSnapshot(habitosQuery, (snapshot) => {
-      const habitosAtivos = snapshot.docs.filter(doc => doc.data().ativo !== false).length;
-      setStats(prev => ({ ...prev, habitosAtivos }));
-    });
-
-    // Listener para Projetos
-    const projetosQuery = query(
-      collection(db, 'projetos'),
-      where('uid', '==', user.uid)
-    );
-    const unsubscribeProjetos = onSnapshot(projetosQuery, (snapshot) => {
-      const projetosEmAndamento = snapshot.docs.filter(doc => 
-        doc.data().status === 'Em Andamento' || !doc.data().status
-      ).length;
-      setStats(prev => ({ ...prev, projetosEmAndamento }));
-    });
-
-    // Listener para Metas (Planejamento)
-    const metasQuery = query(
-      collection(db, 'metas'),
-      where('uid', '==', user.uid)
-    );
-    const unsubscribeMetas = onSnapshot(metasQuery, (snapshot) => {
-      const metasAlcancadas = snapshot.docs.filter(doc => doc.data().concluida === true).length;
-      setStats(prev => ({ ...prev, metasAlcancadas }));
-    });
-
-    // Listener para Leituras
-    const leiturasQuery = query(
-      collection(db, 'leituras'),
-      where('uid', '==', user.uid)
-    );
-    const unsubscribeLeituras = onSnapshot(leiturasQuery, (snapshot) => {
-      const livrosLidos = snapshot.docs.filter(doc => doc.data().status === 'Lido').length;
-      setStats(prev => ({ ...prev, livrosLidos }));
-    });
-
-    return () => {
-      unsubscribeHabitos();
-      unsubscribeProjetos();
-      unsubscribeMetas();
-      unsubscribeLeituras();
-    };
-  }, [user]);
-
-  const modulosData = [
-    {
-      nome: 'Hábitos',
-      icone: (
-        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <circle cx="12" cy="12" r="10"/>
-          <polyline points="12,6 12,12 16,14"/>
-        </svg>
-      ),
-      rota: '/habitos',
-      descricao: 'Gerencie seus hábitos diários',
-      cor: '#4c6ef5'
-    },
-    {
-      nome: 'Carreira',
-      icone: (
-        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-        </svg>
-      ),
-      rota: '/carreira',
-      descricao: 'Desenvolva sua carreira profissional',
-      cor: '#845ef7'
-    },
-    {
-      nome: 'Finanças',
-      icone: (
-        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <line x1="12" y1="1" x2="12" y2="23"/>
-          <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/>
-        </svg>
-      ),
-      rota: '/financas',
-      descricao: 'Controle suas finanças pessoais',
-      cor: '#51cf66'
-    },
-    {
-      nome: 'Leituras',
-      icone: (
-        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-          <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-        </svg>
-      ),
-      rota: '/leituras',
-      descricao: 'Acompanhe suas leituras',
-      cor: '#ff8c42'
-    },
-    {
-      nome: 'Saúde',
-      icone: (
-        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
-        </svg>
-      ),
-      rota: '/saude',
-      descricao: 'Cuide da sua saúde e bem-estar',
-      cor: '#ff6b6b'
-    },
-    {
-      nome: 'Projetos',
-      icone: (
-        <svg width="24" height="24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-          <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
-        </svg>
-      ),
-      rota: '/projetos',
-      descricao: 'Organize seus projetos pessoais',
-      cor: '#339af0'
-    }
-  ];
-
-  return (
-    <div className={`dashboard-bg ${darkMode ? 'dark-mode' : ''}`}>
-      <div className="dashboard-container">
-        <Cabecalho />
-        
-        {/* Dashboard Stats */}
-        <div className="stats-grid">
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12,6 12,12 16,14"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{stats.habitosAtivos}</div>
-              <div className="stat-label">Hábitos Ativos</div>
-            </div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{stats.projetosEmAndamento}</div>
-              <div className="stat-label">Projetos em Andamento</div>
-            </div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
-                <polyline points="22,4 12,14.01 9,11.01"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{stats.metasAlcancadas}</div>
-              <div className="stat-label">Metas Alcançadas</div>
-            </div>
-          </div>
-          
-          <div className="stat-card">
-            <div className="stat-icon">
-              <svg width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
-              </svg>
-            </div>
-            <div className="stat-content">
-              <div className="stat-number">{stats.livrosLidos}</div>
-              <div className="stat-label">Livros Lidos</div>
-            </div>
-          </div>
-        </div>
-
-        {/* Módulos Grid */}
-        <div className="modulos-grid">
-          <h2 className="modulos-titulo">Seus Módulos</h2>
-          <div className="modulos-cards">
-            {modulosData.map((modulo, index) => (
-              <Link 
-                key={index} 
-                to={modulo.rota} 
-                className="modulo-card"
-                style={{'--modulo-cor': modulo.cor}}
-              >
-                <div className="modulo-icon">{modulo.icone}</div>
-                <div className="modulo-content">
-                  <h3 className="modulo-nome">{modulo.nome}</h3>
-                  <p className="modulo-descricao">{modulo.descricao}</p>
-                </div>
-                <div className="modulo-arrow">→</div>
-              </Link>
-            ))}
-          </div>
-        </div>
-
-        {/* Seção de Resumo e Módulos Menores */}
-        <div className="dashboard-bottom">
-          <div className="dashboard-resumo-section">
-            <Resumo />
-          </div>
-          
-          <div className="dashboard-modulos-pequenos">
-            <Organizacao />
-            <Planejamento />
-            <Agenda />
-          </div>
+          <div className="loading-subtitle">Carregando seu universo de aprendizado...</div>
         </div>
       </div>
+    );
+  }
+
+  return (
+    <div className="ultra-dashboard" data-active-module={activeModule}>
+      {/* Background Particles */}
+      <div className="particles-background">
+        {[...Array(50)].map((_, i) => (
+          <div 
+            key={i} 
+            className="particle"
+            style={{
+              left: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 20}s`,
+              animationDuration: `${15 + Math.random() * 10}s`
+            }}
+          ></div>
+        ))}
+      </div>
+
+      {/* Ultra Header - Only show on dashboard main page */}
+      {activeModule === 'resumo' && (
+        <header className="ultra-header">
+          <div className="header-container">
+            {/* Logo Ultra */}
+            <div className="ultra-logo">
+              <div className="logo-orbit">
+                <div className="logo-core">
+                  <svg viewBox="0 0 24 24" fill="none" className="logo-icon">
+                    <path
+                      d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"
+                      stroke="url(#ultraGradient)"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                    <defs>
+                      <linearGradient id="ultraGradient">
+                        <stop offset="0%" stopColor="#667eea" />
+                        <stop offset="50%" stopColor="#764ba2" />
+                        <stop offset="100%" stopColor="#f093fb" />
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div className="orbit-ring ring-1"></div>
+                <div className="orbit-ring ring-2"></div>
+              </div>
+              <div className="logo-text">
+                <span className="logo-learn">Learn</span>
+                <span className="logo-hub">Hub</span>
+              </div>
+            </div>
+
+            {/* Header Actions */}
+            <div className="header-actions">
+              {/* Profile Ultra */}
+              <div className="ultra-profile" onClick={handleOpenPerfil}>
+                <div className="profile-glow"></div>
+                <div className="profile-avatar">
+                  <img src={foto} alt="Perfil" />
+                  <div className="status-indicator"></div>
+                </div>
+                <div className="profile-info">
+                  <span className="profile-greeting">{getGreeting()},</span>
+                  <span className="profile-name">{nome}</span>
+                </div>
+                <div className="profile-arrow">
+                  <svg viewBox="0 0 24 24" fill="none">
+                    <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </div>
+              </div>
+
+              {/* Logout Ultra */}
+              <button className="ultra-logout" onClick={handleLogout}>
+                <div className="logout-glow"></div>
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <polyline points="16,17 21,12 16,7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+                <span>Sair</span>
+              </button>
+            </div>
+          </div>
+        </header>
+      )}
+
+      {/* Conteúdo Principal */}
+      <main className={`ultra-content ${activeModule !== 'resumo' ? 'module-page-active' : ''}`}>
+        {/* Dashboard Content - Only show when resumo is active */}
+        {activeModule === 'resumo' && (
+          <>
+            {/* Hero Section */}
+            <section className="ultra-hero">
+              <div className="hero-content">
+                <div className="hero-welcome">
+                  <h1 className="hero-title">
+                    <span className="title-icon">⚡</span>
+                    <span className="title-text">Bem-vindo de volta!</span>
+                    <div className="title-glow"></div>
+                  </h1>
+                  <p className="hero-subtitle">
+                    Transforme conhecimento em conquistas extraordinárias
+                  </p>
+                </div>
+                <div className="hero-visual">
+                  <div className="floating-elements">
+                    <div className="element element-1">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>
+                      </svg>
+                    </div>
+                    <div className="element element-2">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v6m0 6v6"/>
+                        <path d="m15.5 4.5-1.5 1.5"/>
+                        <path d="m4.5 15.5 1.5-1.5"/>
+                        <path d="m15.5 19.5-1.5-1.5"/>
+                        <path d="m4.5 8.5 1.5 1.5"/>
+                      </svg>
+                    </div>
+                    <div className="element element-3">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a2.18 2.18 0 00-2.91-.09z"/>
+                        <path d="m12 15-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/>
+                        <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0"/>
+                        <path d="M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
+                      </svg>
+                    </div>
+                    <div className="element element-4">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Ultra Stats */}
+            <section className="ultra-stats">
+              <div className="stats-container">
+                <div className="stat-card stat-primary">
+                  <div className="stat-glow"></div>
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="stat-value">{stats.habitosAtivos}</div>
+                  <div className="stat-label">Hábitos Ativos</div>
+                </div>
+
+                <div className="stat-card stat-secondary">
+                  <div className="stat-glow"></div>
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect x="2" y="3" width="20" height="14" rx="2" ry="2" stroke="currentColor" strokeWidth="2"/>
+                      <line x1="8" y1="21" x2="16" y2="21" stroke="currentColor" strokeWidth="2"/>
+                      <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <div className="stat-value">{stats.projetosEmAndamento}</div>
+                  <div className="stat-label">Projetos Ativos</div>
+                </div>
+
+                <div className="stat-card stat-accent">
+                  <div className="stat-glow"></div>
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" strokeWidth="2"/>
+                      <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="stat-value">{stats.metasAlcancadas}</div>
+                  <div className="stat-label">Metas Conquistadas</div>
+                </div>
+
+                <div className="stat-card stat-success">
+                  <div className="stat-glow"></div>
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" strokeWidth="2"/>
+                      <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <div className="stat-value">{stats.livrosLidos}</div>
+                  <div className="stat-label">Livros Dominados</div>
+                </div>
+
+                <div className="stat-card stat-warning">
+                  <div className="stat-glow"></div>
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2"/>
+                      <polyline points="12,6 12,12 16,14" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="stat-value">{stats.horasEstudo}</div>
+                  <div className="stat-label">Horas de Foco</div>
+                </div>
+
+                <div className="stat-card stat-info">
+                  <div className="stat-glow"></div>
+                  <div className="stat-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  </div>
+                  <div className="stat-value">{stats.sequenciaEstudo}</div>
+                  <div className="stat-label">Dias Consecutivos</div>
+                </div>
+              </div>
+            </section>
+
+            {/* Módulos */}
+            <section className="ultra-modules">
+              <h2 className="section-title">
+                <span className="title-icon">🎛️</span>
+                Central de Comandos
+              </h2>
+              <div className="modules-grid">
+                <div 
+                  className={`ultra-module ${activeModule === 'resumo' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('resumo')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M8 12h8M8 16h6" stroke="currentColor" strokeWidth="2.5"/>
+                        <circle cx="8" cy="8" r="1" fill="white" />
+                        <circle cx="12" cy="8" r="1" fill="white" />
+                        <circle cx="16" cy="8" r="1" fill="white" />
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Painel Geral</h3>
+                      <p>Visão completa do progresso</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'organizacao' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('organizacao')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="5" width="6" height="14" rx="1" stroke="currentColor" strokeWidth="2.5"/>
+                        <rect x="15" y="5" width="6" height="14" rx="1" stroke="currentColor" strokeWidth="2.5"/>
+                        <rect x="9" y="2" width="6" height="20" rx="1" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M6 8v2M18 8v2M12 5v2M12 15v2" stroke="currentColor" strokeWidth="2.5"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Organização</h3>
+                      <p>Tarefas e prioridades</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'planejamento' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('planejamento')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M9 11H7a4 4 0 010-8h2m0 8v2a4 4 0 008 0v-2m0 0h2a4 4 0 000-8h-2" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M9 7h6" stroke="currentColor" strokeWidth="2.5"/>
+                        <circle cx="12" cy="17" r="2" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M12 15v-4" stroke="currentColor" strokeWidth="2.5"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Planejamento</h3>
+                      <p>Estratégias e metas</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'agenda' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('agenda')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" strokeWidth="2.5"/>
+                        <circle cx="8" cy="14" r="1" fill="white" />
+                        <circle cx="12" cy="14" r="1" fill="white" />
+                        <circle cx="16" cy="14" r="1" fill="white" />
+                        <circle cx="8" cy="18" r="1" fill="white" />
+                        <circle cx="12" cy="18" r="1" fill="white" />
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Agenda</h3>
+                      <p>Compromissos e eventos</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'carreira' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('carreira')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 2l9 4.9-9 4.9-9-4.9L12 2z" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M12 12v9" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M3 17l9 4 9-4" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M3 12l9 4 9-4" stroke="currentColor" strokeWidth="2.5"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Carreira</h3>
+                      <p>Desenvolvimento profissional</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'financas' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('financas')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" strokeWidth="2.5"/>
+                        <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Finanças</h3>
+                      <p>Controle financeiro</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'habitos' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('habitos')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2.5"/>
+                        <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2.5"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Hábitos</h3>
+                      <p>Acompanhamento de hábitos</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'leituras' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('leituras')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M8 7h8M8 11h8M8 15h5" stroke="currentColor" strokeWidth="2.5"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Leituras</h3>
+                      <p>Biblioteca e progresso</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'saude' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('saude')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.29 1.51 4.04 3 5.5l7 7z" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M12 5L8 21l4-7 4 7-4-16z" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Saúde</h3>
+                      <p>Bem-estar e saúde</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div 
+                  className={`ultra-module ${activeModule === 'projetos' ? 'active' : ''}`}
+                  onClick={() => setActiveModule('projetos')}
+                >
+                  <div className="module-glow"></div>
+                  <div className="module-header">
+                    <div className="module-icon">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3" y="4" width="18" height="14" rx="2" ry="2" stroke="currentColor" strokeWidth="2.5"/>
+                        <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" strokeWidth="2.5"/>
+                        <rect x="6" y="12" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="2"/>
+                        <rect x="10.5" y="12" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="2"/>
+                        <rect x="15" y="12" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="2"/>
+                      </svg>
+                    </div>
+                    <div className="module-info">
+                      <h3>Projetos</h3>
+                      <p>Gestão de projetos</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            {/* Ações Rápidas */}
+            <section className="ultra-actions">
+              <h2 className="section-title">
+                <span className="title-icon">⚡</span>
+                Ações Instantâneas
+              </h2>
+              <div className="actions-grid single-action">
+                <button className="ultra-action main-action" onClick={() => setActiveModule('planejamento')}>
+                  <div className="action-glow"></div>
+                  <div className="action-icon">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" strokeWidth="2"/>
+                      <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" strokeWidth="2"/>
+                    </svg>
+                  </div>
+                  <span className="action-label">Nova Meta</span>
+                </button>
+              </div>
+            </section>
+          </>
+        )}
+
+        {/* Module Content - For individual module pages */}
+        {activeModule !== 'resumo' && (
+          <section className="ultra-module-content active">
+            <button className="module-back-float" onClick={() => setActiveModule('resumo')}>
+              <svg viewBox="0 0 24 24" fill="none">
+                <path d="M19 12H6m-1 0l3-3m-3 3l3 3" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+              Voltar ao Dashboard
+            </button>
+            <div className="content-wrapper">
+              {renderActiveModule()}
+            </div>
+          </section>
+        )}
+      </main>
+
+      {/* Footer - Only show on dashboard main page */}
+      {activeModule === 'resumo' && <Footer minimal={true} />}
     </div>
   );
-}
+};
+
 export default Dashboard;

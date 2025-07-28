@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Login Ultra Moderno</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        /* Inclua aqui o CSS do login para demonstração */
+        /* ========================================
+           LOGIN ULTRA MODERNO - DESIGN INOVADOR 2025
+           ======================================== */
+
+        /* Container principal com design futurista */
+        .login-container {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          min-height: 100vh;
+          background: 
+            linear-gradient(135deg, #0f0f23 0%, #1a1a3e 25%, #2d1b69 50%, #4338ca 75%, #6366f1 100%),
+            radial-gradient(circle at 20% 20%, rgba(99, 102, 241, 0.3) 0%, transparent 50%),
+            radial-gradient(circle at 80% 80%, rgba(168, 85, 247, 0.3) 0%, transparent 50%);
+          padding: 20px;
+          position: relative;
+          overflow: hidden;
+          font-family: 'Inter', 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+
+        /* Efeitos de partículas flutuantes animadas */
+        .login-container::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            radial-gradient(circle at 15% 25%, rgba(99, 102, 241, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 85% 75%, rgba(168, 85, 247, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 50% 10%, rgba(59, 130, 246, 0.1) 0%, transparent 50%);
+          animation: particlesFloat 12s ease-in-out infinite;
+          pointer-events: none;
+        }
+
+        .login-container::after {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: 
+            linear-gradient(45deg, transparent 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%),
+            linear-gradient(-45deg, transparent 48%, rgba(255, 255, 255, 0.03) 50%, transparent 52%);
+          background-size: 60px 60px;
+          animation: gridMove 20s linear infinite;
+          pointer-events: none;
+          opacity: 0.5;
+        }
+
+        @keyframes particlesFloat {
+          0%, 100% { 
+            transform: translateX(0) translateY(0) rotate(0deg); 
+            opacity: 1;
+          }
+          25% { 
+            transform: translateX(-20px) translateY(-15px) rotate(90deg); 
+            opacity: 0.8;
+          }
+          50% { 
+            transform: translateX(-10px) translateY(-30px) rotate(180deg); 
+            opacity: 0.6;
+          }
+          75% { 
+            transform: translateX(-30px) translateY(-10px) rotate(270deg); 
+            opacity: 0.8;
+          }
+        }
+
+        @keyframes gridMove {
+          0% { transform: translate(0, 0); }
+          100% { transform: translate(60px, 60px); }
+        }
+
+        /* Caixa de login ultra moderna com glass morphism */
+        .login-box {
+          background: rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(25px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          border-radius: 32px;
+          padding: 56px 48px;
+          width: 100%;
+          max-width: 480px;
+          box-shadow: 
+            0 32px 64px rgba(0, 0, 0, 0.4),
+            0 16px 32px rgba(99, 102, 241, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3),
+            inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+          animation: slideInUp 1s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          position: relative;
+          z-index: 10;
+          overflow: hidden;
+        }
+
+        .login-box::before {
+          content: '';
+          position: absolute;
+          top: 0;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+          border-radius: 32px;
+          pointer-events: none;
+        }
+
+        .login-box::after {
+          content: '';
+          position: absolute;
+          top: -2px;
+          left: -2px;
+          right: -2px;
+          bottom: -2px;
+          background: linear-gradient(45deg, #6366f1, #8b5cf6, #a855f7, #6366f1);
+          border-radius: 34px;
+          z-index: -1;
+          animation: borderGlow 3s ease-in-out infinite;
+          opacity: 0.7;
+        }
+
+        @keyframes borderGlow {
+          0%, 100% { opacity: 0.5; }
+          50% { opacity: 0.8; }
+        }
+
+        /* Header do login com estilo futurista */
+        .login-header {
+          text-align: center;
+          margin-bottom: 48px;
+        }
+
+        .login-logo-icon {
+          color: #6366f1;
+          margin-bottom: 24px;
+          animation: float 4s ease-in-out infinite;
+          filter: drop-shadow(0 8px 16px rgba(99, 102, 241, 0.4));
+          font-size: 3.5rem;
+        }
+
+        @keyframes float {
+          0%, 100% { 
+            transform: translateY(0px) rotate(0deg); 
+            filter: drop-shadow(0 8px 16px rgba(99, 102, 241, 0.4));
+          }
+          50% { 
+            transform: translateY(-12px) rotate(5deg); 
+            filter: drop-shadow(0 12px 24px rgba(99, 102, 241, 0.6));
+          }
+        }
+
+        .login-logo {
+          font-size: 3.2rem;
+          font-weight: 900;
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #a855f7 60%, #ec4899 100%);
+          -webkit-background-clip: text;
+          background-clip: text;
+          color: transparent;
+          margin-bottom: 16px;
+          letter-spacing: -2px;
+          line-height: 1;
+          text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+          animation: logoGlow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes logoGlow {
+          0% { filter: brightness(1) contrast(1); }
+          100% { filter: brightness(1.1) contrast(1.1); }
+        }
+
+        .login-subtitle {
+          color: rgba(255, 255, 255, 0.9);
+          font-size: 1.2rem;
+          font-weight: 500;
+          letter-spacing: 0.5px;
+          text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Formulário ultra moderno */
+        .login-form {
+          display: flex;
+          flex-direction: column;
+          gap: 32px;
+        }
+
+        .input-group {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+
+        .input-label {
+          font-weight: 700;
+          color: rgba(255, 255, 255, 0.95);
+          font-size: 0.95rem;
+          text-transform: uppercase;
+          letter-spacing: 1px;
+          margin-bottom: 8px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .input-container {
+          position: relative;
+          display: flex;
+          align-items: center;
+        }
+
+        .input-icon {
+          position: absolute;
+          left: 20px;
+          color: rgba(255, 255, 255, 0.6);
+          z-index: 2;
+          pointer-events: none;
+          transition: all 0.4s ease;
+          font-size: 1.1rem;
+        }
+
+        .login-input {
+          width: 100%;
+          padding: 20px 24px 20px 60px;
+          border: 2px solid rgba(255, 255, 255, 0.2);
+          border-radius: 20px;
+          font-size: 1.05rem;
+          font-weight: 500;
+          background: rgba(255, 255, 255, 0.08);
+          backdrop-filter: blur(10px);
+          transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+          box-sizing: border-box;
+          color: rgba(255, 255, 255, 0.95);
+          font-family: inherit;
+          outline: none;
+        }
+
+        .login-input:focus {
+          border-color: #6366f1;
+          background: rgba(255, 255, 255, 0.12);
+          box-shadow: 
+            0 0 0 4px rgba(99, 102, 241, 0.2),
+            0 8px 24px rgba(99, 102, 241, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+          transform: translateY(-2px);
+          color: rgba(255, 255, 255, 1);
+        }
+
+        .login-input:focus + .input-icon {
+          color: #6366f1;
+          transform: scale(1.1);
+        }
+
+        .login-input::placeholder {
+          color: rgba(255, 255, 255, 0.5);
+          font-weight: 400;
+        }
+
+        /* Botão de login ultra futurista */
+        .login-button {
+          width: 100%;
+          padding: 20px 28px;
+          background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 30%, #a855f7 70%, #ec4899 100%);
+          color: white;
+          border: none;
+          border-radius: 20px;
+          font-size: 1.15rem;
+          font-weight: 700;
+          cursor: pointer;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 14px;
+          transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+          box-shadow: 
+            0 12px 30px rgba(99, 102, 241, 0.5),
+            0 6px 16px rgba(0, 0, 0, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.3);
+          position: relative;
+          overflow: hidden;
+          font-family: inherit;
+          letter-spacing: 0.5px;
+          text-transform: uppercase;
+        }
+
+        .login-button:hover {
+          transform: translateY(-3px);
+          box-shadow: 
+            0 20px 40px rgba(99, 102, 241, 0.6),
+            0 12px 24px rgba(0, 0, 0, 0.4),
+            inset 0 1px 0 rgba(255, 255, 255, 0.4);
+          background: linear-gradient(135deg, #5b21b6 0%, #7c3aed 30%, #9333ea 70%, #db2777 100%);
+        }
+
+        /* Links ultra modernos */
+        .login-links {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-top: 32px;
+          flex-wrap: wrap;
+          gap: 20px;
+        }
+
+        .forgot-password,
+        .register-link {
+          color: #a855f7;
+          text-decoration: none;
+          font-weight: 600;
+          font-size: 1rem;
+          transition: all 0.4s ease;
+          padding: 12px 20px;
+          border-radius: 12px;
+          letter-spacing: 0.3px;
+          border: 1px solid rgba(168, 85, 247, 0.3);
+          background: rgba(168, 85, 247, 0.1);
+          backdrop-filter: blur(10px);
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+
+        .register-link {
+          color: #ec4899;
+          border-color: rgba(236, 72, 153, 0.3);
+          background: rgba(236, 72, 153, 0.1);
+        }
+
+        .forgot-password:hover {
+          color: #9333ea;
+          background: rgba(168, 85, 247, 0.2);
+          transform: translateY(-2px);
+          text-decoration: none;
+          border-color: rgba(168, 85, 247, 0.5);
+          box-shadow: 0 8px 20px rgba(168, 85, 247, 0.3);
+        }
+
+        .register-link:hover {
+          color: #db2777;
+          background: rgba(236, 72, 153, 0.2);
+          transform: translateY(-2px);
+          text-decoration: none;
+          border-color: rgba(236, 72, 153, 0.5);
+          box-shadow: 0 8px 20px rgba(236, 72, 153, 0.3);
+        }
+
+        /* Animações principais */
+        @keyframes slideInUp {
+          from {
+            opacity: 0;
+            transform: translateY(40px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
+        }
+
+        /* Reset básico */
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
+
+        body {
+          font-family: 'Inter', sans-serif;
+          margin: 0;
+          padding: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-box">
+            <!-- Logo com ícone -->
+            <div class="login-header">
+                <div class="login-logo-icon">
+                    <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
+                        <path d="M6 12v5c3 3 9 3 12 0v-5"/>
+                    </svg>
+                </div>
+                <h1 class="login-logo">LearnHub</h1>
+                <p class="login-subtitle">Bem-vindo de volta</p>
+            </div>
+
+            <!-- Formulário -->
+            <form class="login-form">
+                <!-- Campo Email -->
+                <div class="input-group">
+                    <label class="input-label">Email</label>
+                    <div class="input-container">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                            <polyline points="22,6 12,13 2,6"/>
+                        </svg>
+                        <input
+                            type="email"
+                            placeholder="seu@email.com"
+                            class="login-input"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- Campo Senha -->
+                <div class="input-group">
+                    <label class="input-label">Senha</label>
+                    <div class="input-container">
+                        <svg class="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                            <circle cx="12" cy="16" r="1"/>
+                            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                        </svg>
+                        <input
+                            type="password"
+                            placeholder="Digite sua senha"
+                            class="login-input"
+                            required
+                        />
+                    </div>
+                </div>
+
+                <!-- Botão de Login -->
+                <button class="login-button" type="submit">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                        <polyline points="10,17 15,12 10,7"/>
+                        <line x1="15" y1="12" x2="3" y2="12"/>
+                    </svg>
+                    Entrar
+                </button>
+            </form>
+
+            <!-- Links úteis -->
+            <div class="login-links">
+                <a href="#" class="forgot-password">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="8" cy="15" r="4"/>
+                        <path d="M10.85 12.15L19 4"/>
+                        <path d="M18 5l1.5-1.5"/>
+                        <path d="M15 8l1.5-1.5"/>
+                    </svg>
+                    Esqueci minha senha
+                </a>
+
+                <a href="#" class="register-link">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="8.5" cy="7" r="4"/>
+                        <line x1="20" y1="8" x2="20" y2="14"/>
+                        <line x1="23" y1="11" x2="17" y2="11"/>
+                    </svg>
+                    Criar conta
+                </a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

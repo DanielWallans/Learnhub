@@ -61,53 +61,43 @@ function RecuperarSenha() {
   };
 
   const handleBackToLogin = () => {
-    navigate("/login-aluno");
+    navigate("/login");
   };
 
   const handleBackToHome = () => {
     navigate("/");
   };
 
-  const handleResendEmail = () => {
-    setEmailSent(false);
-    setMessage("");
-    setError("");
-  };
-
   return (
     <div className="recuperar-senha-container">
       <div className="recuperar-senha-wrapper">
-        {/* Header com logo e título */}
-        <div className="recuperar-header">
-          <div className="logo-container">
-            <div className="logo-icon">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-              </svg>
-            </div>
-            <h1 className="logo-text">LearnHub</h1>
+        {/* Header da página */}
+        <div className="recuperar-senha-header">
+          <div className="recuperar-senha-icon">
+            <svg width="56" height="56" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="8" cy="15" r="4"/>
+              <path d="M10.85 12.15L19 4"/>
+              <path d="M18 5l1.5-1.5"/>
+              <path d="M15 8l1.5-1.5"/>
+            </svg>
           </div>
-          <div className="title-badge">
-            <span className="badge-text">Recuperação de Senha</span>
-          </div>
-          <h2 className="recuperar-title">Redefina sua senha</h2>
-          <p className="recuperar-subtitle">
+          <h1 className="recuperar-senha-title">Recuperar Senha</h1>
+          <p className="recuperar-senha-subtitle">
             {!emailSent 
-              ? "Digite seu email para receber o link de recuperação"
-              : "Email enviado com sucesso! Verifique sua caixa de entrada"
+              ? "Digite seu email para receber um link de recuperação"
+              : "Instruções de recuperação enviadas para seu email"
             }
           </p>
         </div>
 
-        {/* Conteúdo principal */}
+        {/* Caixa principal */}
         <div className="recuperar-senha-box">
           {!emailSent ? (
-            <form onSubmit={handlePasswordReset} className="recuperar-form">
+            <form onSubmit={handlePasswordReset} className="recuperar-senha-form">
               {/* Campo de email */}
               <div className="input-group">
-                <label htmlFor="email" className="input-label">Email cadastrado</label>
-                <div className="input-wrapper">
+                <label htmlFor="email" className="input-label">Email</label>
+                <div className="input-container">
                   <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                     <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
                     <polyline points="22,6 12,13 2,6"/>
@@ -115,11 +105,12 @@ function RecuperarSenha() {
                   <input
                     id="email"
                     type="email"
-                    placeholder="seu.email@exemplo.com"
+                    placeholder="seu@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="recuperar-input"
+                    className="recuperar-senha-input"
                     required
+                    disabled={loading}
                   />
                 </div>
               </div>
@@ -139,7 +130,7 @@ function RecuperarSenha() {
               {/* Botão de enviar */}
               <button 
                 type="submit" 
-                className={`recuperar-button ${loading ? 'loading' : ''}`}
+                className={`recuperar-senha-button ${loading ? 'loading' : ''}`}
                 disabled={loading}
               >
                 {loading ? (
@@ -150,92 +141,37 @@ function RecuperarSenha() {
                 ) : (
                   <>
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M8 12h.01"/>
-                      <path d="M12 12h.01"/>
-                      <path d="M16 12h.01"/>
-                      <path d="M21 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
-                      <path d="M3 12c1 0 3-1 3-3s-2-3-3-3-3 1-3 3 2 3 3 3"/>
+                      <path d="M22 2L11 13"/>
+                      <polygon points="22,2 15,22 11,13 2,9 22,2"/>
                     </svg>
-                    Enviar Link de Recuperação
+                    Enviar Link
                   </>
                 )}
               </button>
             </form>
           ) : (
-            <div className="success-content">
-              {/* Ícone de sucesso */}
-              <div className="success-icon">
-                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                  <polyline points="22,4 12,14.01 9,11.01"/>
-                </svg>
+            <div className="success-message">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22,4 12,14.01 9,11.01"/>
+              </svg>
+              <div>
+                <strong>Email enviado com sucesso!</strong>
+                <p style={{ margin: "8px 0 0 0", opacity: 0.9 }}>
+                  Verifique sua caixa de entrada e pasta de spam. O link de recuperação expira em 1 hora.
+                </p>
               </div>
-
-              {/* Mensagem de sucesso */}
-              {message && (
-                <div className="success-message">
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M9 12l2 2 4-4"/>
-                    <path d="M22 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
-                  </svg>
-                  {message}
-                </div>
-              )}
-
-              {/* Instruções */}
-              <div className="instructions">
-                <h3>✨ Próximos passos:</h3>
-                <div className="instruction-steps">
-                  <div className="step">
-                    <div className="step-number">1</div>
-                    <div className="step-content">
-                      <strong>Verifique seu email:</strong> <span className="email-highlight">{email}</span>
-                    </div>
-                  </div>
-                  <div className="step">
-                    <div className="step-number">2</div>
-                    <div className="step-content">
-                      <strong>Confira o spam:</strong> Caso não encontre na caixa de entrada
-                    </div>
-                  </div>
-                  <div className="step">
-                    <div className="step-number">3</div>
-                    <div className="step-content">
-                      <strong>Clique no link:</strong> Para redefinir sua senha
-                    </div>
-                  </div>
-                  <div className="step">
-                    <div className="step-number">4</div>
-                    <div className="step-content">
-                      <strong>Crie uma nova senha:</strong> Segura e memorável
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Botão para reenviar */}
-              <button 
-                type="button" 
-                onClick={handleResendEmail}
-                className="resend-button"
-              >
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <polyline points="23,4 23,10 17,10"/>
-                  <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
-                </svg>
-                Reenviar Email
-              </button>
             </div>
           )}
 
-          {/* Botões de navegação */}
-          <div className="recuperar-footer">
+          {/* Links de navegação */}
+          <div className="recuperar-senha-links">
             <button 
               type="button" 
               onClick={handleBackToLogin} 
-              className="back-button secondary"
+              className="back-to-login"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="15,18 9,12 15,6"/>
               </svg>
               Voltar ao Login
@@ -243,40 +179,17 @@ function RecuperarSenha() {
             
             <button 
               type="button" 
-              onClick={handleBackToHome} 
-              className="back-button primary"
+              onClick={() => navigate("/cadastros")} 
+              className="create-account"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                <polyline points="9,22 9,12 15,12 15,22"/>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                <circle cx="8.5" cy="7" r="4"/>
+                <line x1="20" y1="8" x2="20" y2="14"/>
+                <line x1="23" y1="11" x2="17" y2="11"/>
               </svg>
-              Início
+              Criar Conta
             </button>
-          </div>
-        </div>
-
-        {/* Rodapé com informações de segurança */}
-        <div className="security-info">
-          <div className="security-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <circle cx="12" cy="16" r="1"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-            <span>Recuperação segura</span>
-          </div>
-          <div className="security-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-            </svg>
-            <span>Dados protegidos</span>
-          </div>
-          <div className="security-item">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M9 12l2 2 4-4"/>
-              <path d="M22 12c-1 0-3-1-3-3s2-3 3-3 3 1 3 3-2 3-3 3"/>
-            </svg>
-            <span>Processo rápido</span>
           </div>
         </div>
       </div>

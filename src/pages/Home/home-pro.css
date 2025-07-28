@@ -65,7 +65,21 @@ body, html {
 .logo-container {
   position: relative;
   display: flex;
+  flex-direction: column;
   align-items: center;
+}
+
+.logo-glow {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  right: -10px;
+  bottom: -10px;
+  background: var(--primary-gradient);
+  border-radius: 20px;
+  filter: blur(20px);
+  opacity: 0.6;
+  animation: logoGlow 3s ease-in-out infinite alternate;
 }
 
 .logo-text {
@@ -82,11 +96,7 @@ body, html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 15px rgba(102, 126, 234, 0.8));
-  text-shadow: 
-    0 0 10px rgba(102, 126, 234, 0.6),
-    0 0 20px rgba(102, 126, 234, 0.4),
-    0 0 30px rgba(102, 126, 234, 0.2);
+  filter: drop-shadow(0 0 10px rgba(102, 126, 234, 0.5));
 }
 
 .logo-hub {
@@ -94,17 +104,21 @@ body, html {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 15px rgba(240, 147, 251, 0.8));
-  text-shadow: 
-    0 0 10px rgba(240, 147, 251, 0.6),
-    0 0 20px rgba(240, 147, 251, 0.4),
-    0 0 30px rgba(240, 147, 251, 0.2);
+  filter: drop-shadow(0 0 10px rgba(240, 147, 251, 0.5));
+}
+
+.logo-underline {
+  width: 100%;
+  height: 3px;
+  background: var(--accent-gradient);
+  border-radius: 2px;
+  margin-top: 5px;
+  animation: underlineGlow 2s ease-in-out infinite alternate;
 }
 
 .header-nav {
   display: flex;
   align-items: center;
-  gap: 20px;
 }
 
 .nav-indicator {
@@ -118,35 +132,6 @@ body, html {
   backdrop-filter: blur(10px);
 }
 
-.logout-btn {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background: linear-gradient(135deg, rgba(240, 147, 251, 0.2), rgba(245, 87, 108, 0.2));
-  border: 1px solid rgba(240, 147, 251, 0.3);
-  border-radius: 12px;
-  color: var(--text-primary);
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  backdrop-filter: blur(10px);
-}
-
-.logout-btn:hover {
-  background: linear-gradient(135deg, rgba(240, 147, 251, 0.3), rgba(245, 87, 108, 0.3));
-  border-color: rgba(240, 147, 251, 0.5);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(240, 147, 251, 0.3);
-}
-
-.logout-btn svg {
-  width: 16px;
-  height: 16px;
-  color: var(--text-primary);
-}
-
 /* ==========================================
    CONTEÚDO PRINCIPAL
    ========================================== */
@@ -155,25 +140,14 @@ body, html {
   max-width: 1200px;
   margin: 0 auto;
   padding: 60px 30px;
-  background: none;
-  box-shadow: none;
-  border: none;
 }
 
 .hero-section {
   text-align: center;
-  background: none;
-  box-shadow: none;
-  border: none;
 }
 
 .welcome-message {
   margin-bottom: 60px;
-  background: transparent !important;
-  backdrop-filter: none !important;
-  box-shadow: none !important;
-  border: none !important;
-  padding: 0 !important;
 }
 
 .hero-title {
@@ -181,15 +155,10 @@ body, html {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 20px;
-  text-align: center;
   background: linear-gradient(135deg, #ffffff 0%, #b8c5d6 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  padding: 0;
-  border: none;
-  box-shadow: none;
-  backdrop-filter: none;
 }
 
 .gradient-text {
@@ -217,11 +186,6 @@ body, html {
   font-weight: 400;
   max-width: 600px;
   margin: 0 auto;
-  background: none;
-  padding: 0;
-  box-shadow: none;
-  border: none;
-  backdrop-filter: none;
 }
 
 /* ==========================================
@@ -233,19 +197,15 @@ body, html {
 }
 
 .description-card {
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.25), rgba(118, 75, 162, 0.25));
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(102, 126, 234, 0.4);
-  border-radius: 25px;
-  padding: 50px;
+  background: var(--glass-bg);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 40px;
   max-width: 800px;
   margin: 0 auto;
   position: relative;
   overflow: hidden;
-  box-shadow: 
-    0 25px 50px rgba(102, 126, 234, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1),
-    0 0 40px rgba(102, 126, 234, 0.2);
 }
 
 .description-card::before {
@@ -254,59 +214,41 @@ body, html {
   top: 0;
   left: 0;
   right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #667eea, #764ba2, #f093fb, transparent);
-  animation: borderShimmer 4s ease-in-out infinite;
-}
-
-.description-card::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(102, 126, 234, 0.4), transparent);
+  background: var(--primary-gradient);
 }
 
 .card-icon {
-  width: 70px;
-  height: 70px;
-  margin: 0 auto 25px;
-  padding: 18px;
-  background: linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2));
-  border: 2px solid rgba(102, 126, 234, 0.4);
-  border-radius: 18px;
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 20px;
+  padding: 15px;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 
-    0 10px 20px rgba(102, 126, 234, 0.3),
-    inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .card-icon svg {
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   color: #667eea;
-  filter: drop-shadow(0 0 8px rgba(102, 126, 234, 0.5));
 }
 
 .description-card h3 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 25px;
-  color: #ffffff;
-  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: var(--text-primary);
 }
 
 .description-card p {
-  font-size: 1.15rem;
-  line-height: 1.8;
-  color: #ffffff;
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
   text-align: left;
-  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
-  font-weight: 400;
 }
 
 /* ==========================================
@@ -558,18 +500,6 @@ body, html {
   100% { box-shadow: 0 0 20px rgba(79, 172, 254, 0.8); }
 }
 
-@keyframes shimmer {
-  0% { transform: translateX(-100%); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateX(100%); opacity: 0; }
-}
-
-@keyframes borderShimmer {
-  0% { transform: translateX(-100%); opacity: 0; }
-  50% { opacity: 1; }
-  100% { transform: translateX(100%); opacity: 0; }
-}
-
 @keyframes float1 {
   0%, 100% { transform: translate(0, 0) rotate(0deg); }
   33% { transform: translate(30px, -30px) rotate(120deg); }
@@ -589,53 +519,6 @@ body, html {
 @keyframes gridFloat {
   0% { transform: translate(0, 0); }
   100% { transform: translate(50px, 50px); }
-}
-
-/* ==========================================
-   FOOTER SUTIL E MINIMALISTA
-   ========================================== */
-
-.futuristic-home .footer {
-  background: transparent;
-  backdrop-filter: none;
-  border-top: 1px solid rgba(102, 126, 234, 0.2);
-  box-shadow: none;
-  margin-top: 100px;
-  padding: 40px 0;
-}
-
-.futuristic-home .footer::before {
-  display: none;
-}
-
-.futuristic-home .footer .footer-content {
-  background: none;
-  padding: 20px;
-}
-
-.futuristic-home .gradient-text {
-  background: linear-gradient(135deg, #667eea, #764ba2);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  filter: none;
-}
-
-.futuristic-home .footer p {
-  color: var(--text-secondary);
-  font-size: 0.9rem;
-  opacity: 0.8;
-}
-
-.futuristic-home .footer a {
-  color: #667eea;
-  text-decoration: none;
-  transition: all 0.3s ease;
-}
-
-.futuristic-home .footer a:hover {
-  color: #764ba2;
-  text-shadow: 0 0 8px rgba(102, 126, 234, 0.3);
 }
 
 /* ==========================================
