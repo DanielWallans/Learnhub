@@ -3,15 +3,6 @@ import { auth, db } from '../firebaseConfig';
 import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import Resumo from './Resumo';
-import Organizacao from './Organizacao';
-import Planejamento from './Planejamento';
-import Agenda from './Agenda';
-import Carreira from './Carreira';
-import Financas from './Financas';
-import Habitos from './Habitos';
-import Leituras from './Leituras';
-import Saude from './Saude';
-import Projetos from './Projetos';
 import Footer from './Footer';
 import './dashboard-ultra.css';
 
@@ -142,24 +133,6 @@ const Dashboard = () => {
 
   const renderActiveModule = () => {
     switch (activeModule) {
-      case 'organizacao':
-        return <Organizacao />;
-      case 'planejamento':
-        return <Planejamento />;
-      case 'agenda':
-        return <Agenda />;
-      case 'carreira':
-        return <Carreira />;
-      case 'financas':
-        return <Financas />;
-      case 'habitos':
-        return <Habitos />;
-      case 'leituras':
-        return <Leituras />;
-      case 'saude':
-        return <Saude />;
-      case 'projetos':
-        return <Projetos />;
       default:
         return <Resumo />;
     }
@@ -438,193 +411,6 @@ const Dashboard = () => {
                     </div>
                   </div>
                 </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'organizacao' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('organizacao')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="5" width="6" height="14" rx="1" stroke="currentColor" strokeWidth="2.5"/>
-                        <rect x="15" y="5" width="6" height="14" rx="1" stroke="currentColor" strokeWidth="2.5"/>
-                        <rect x="9" y="2" width="6" height="20" rx="1" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M6 8v2M18 8v2M12 5v2M12 15v2" stroke="currentColor" strokeWidth="2.5"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Organização</h3>
-                      <p>Tarefas e prioridades</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'planejamento' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('planejamento')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M9 11H7a4 4 0 010-8h2m0 8v2a4 4 0 008 0v-2m0 0h2a4 4 0 000-8h-2" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M9 7h6" stroke="currentColor" strokeWidth="2.5"/>
-                        <circle cx="12" cy="17" r="2" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M12 15v-4" stroke="currentColor" strokeWidth="2.5"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Planejamento</h3>
-                      <p>Estratégias e metas</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'agenda' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('agenda')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" strokeWidth="2.5"/>
-                        <circle cx="8" cy="14" r="1" fill="white" />
-                        <circle cx="12" cy="14" r="1" fill="white" />
-                        <circle cx="16" cy="14" r="1" fill="white" />
-                        <circle cx="8" cy="18" r="1" fill="white" />
-                        <circle cx="12" cy="18" r="1" fill="white" />
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Agenda</h3>
-                      <p>Compromissos e eventos</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'carreira' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('carreira')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M12 2l9 4.9-9 4.9-9-4.9L12 2z" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M12 12v9" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M3 17l9 4 9-4" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M3 12l9 4 9-4" stroke="currentColor" strokeWidth="2.5"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Carreira</h3>
-                      <p>Desenvolvimento profissional</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'financas' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('financas')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <line x1="12" y1="1" x2="12" y2="23" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6" stroke="currentColor" strokeWidth="2.5"/>
-                        <circle cx="12" cy="12" r="8" stroke="currentColor" strokeWidth="2"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Finanças</h3>
-                      <p>Controle financeiro</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'habitos' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('habitos')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M22 12h-4l-3 9L9 3l-3 9H2" stroke="currentColor" strokeWidth="2.5"/>
-                        <circle cx="12" cy="12" r="2" stroke="currentColor" strokeWidth="2.5"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Hábitos</h3>
-                      <p>Acompanhamento de hábitos</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'leituras' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('leituras')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M4 19.5A2.5 2.5 0 016.5 17H20" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M8 7h8M8 11h8M8 15h5" stroke="currentColor" strokeWidth="2.5"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Leituras</h3>
-                      <p>Biblioteca e progresso</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'saude' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('saude')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0016.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 002 8.5c0 2.29 1.51 4.04 3 5.5l7 7z" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M12 5L8 21l4-7 4 7-4-16z" stroke="currentColor" strokeWidth="2"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Saúde</h3>
-                      <p>Bem-estar e saúde</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div 
-                  className={`ultra-module ${activeModule === 'projetos' ? 'active' : ''}`}
-                  onClick={() => setActiveModule('projetos')}
-                >
-                  <div className="module-glow"></div>
-                  <div className="module-header">
-                    <div className="module-icon">
-                      <svg viewBox="0 0 24 24" fill="none">
-                        <rect x="3" y="4" width="18" height="14" rx="2" ry="2" stroke="currentColor" strokeWidth="2.5"/>
-                        <path d="M8 2v4M16 2v4M3 10h18" stroke="currentColor" strokeWidth="2.5"/>
-                        <rect x="6" y="12" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="2"/>
-                        <rect x="10.5" y="12" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="2"/>
-                        <rect x="15" y="12" width="3" height="3" rx="1" stroke="currentColor" strokeWidth="2"/>
-                      </svg>
-                    </div>
-                    <div className="module-info">
-                      <h3>Projetos</h3>
-                      <p>Gestão de projetos</p>
-                    </div>
-                  </div>
-                </div>
               </div>
             </section>
 
@@ -635,16 +421,7 @@ const Dashboard = () => {
                 Ações Instantâneas
               </h2>
               <div className="actions-grid single-action">
-                <button className="ultra-action main-action" onClick={() => setActiveModule('planejamento')}>
-                  <div className="action-glow"></div>
-                  <div className="action-icon">
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <line x1="12" y1="5" x2="12" y2="19" stroke="currentColor" strokeWidth="2"/>
-                      <line x1="5" y1="12" x2="19" y2="12" stroke="currentColor" strokeWidth="2"/>
-                    </svg>
-                  </div>
-                  <span className="action-label">Nova Meta</span>
-                </button>
+                <p>Em breve novos módulos serão adicionados aqui!</p>
               </div>
             </section>
           </>

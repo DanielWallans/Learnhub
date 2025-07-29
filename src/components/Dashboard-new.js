@@ -3,9 +3,6 @@ import { auth, db } from '../firebaseConfig';
 import { doc, getDoc, collection, query, where, onSnapshot, updateDoc } from 'firebase/firestore';
 import { useNavigate, Link } from 'react-router-dom';
 import Resumo from './Resumo';
-import Organizacao from './Organizacao';
-import Planejamento from './Planejamento';
-import Agenda from './Agenda';
 import Footer from './Footer';
 import './dashboard-new.css';
 
@@ -120,12 +117,6 @@ const Dashboard = () => {
 
   const renderActiveModule = () => {
     switch (activeModule) {
-      case 'organizacao':
-        return <Organizacao />;
-      case 'planejamento':
-        return <Planejamento />;
-      case 'agenda':
-        return <Agenda />;
       default:
         return <Resumo />;
     }
@@ -309,69 +300,6 @@ const Dashboard = () => {
                 </div>
               </div>
             </div>
-
-            <div 
-              className={`module-card ${activeModule === 'organizacao' ? 'active' : ''}`}
-              onClick={() => setActiveModule('organizacao')}
-            >
-              <div className="module-header">
-                <div className="module-icon organizacao">
-                  <svg width="26" height="26" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <rect x="3" y="5" width="6" height="14" rx="1" />
-                    <rect x="15" y="5" width="6" height="14" rx="1" />
-                    <rect x="9" y="2" width="6" height="20" rx="1" />
-                    <path d="M6 8v2M18 8v2M12 5v2M12 15v2" />
-                  </svg>
-                </div>
-                <div className="module-info">
-                  <h3>Organização</h3>
-                  <p>Organize suas tarefas e prioridades</p>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className={`module-card ${activeModule === 'planejamento' ? 'active' : ''}`}
-              onClick={() => setActiveModule('planejamento')}
-            >
-              <div className="module-header">
-                <div className="module-icon planejamento">
-                  <svg width="26" height="26" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <path d="M9 11H7a4 4 0 010-8h2m0 8v2a4 4 0 008 0v-2m0 0h2a4 4 0 000-8h-2" />
-                    <path d="M9 7h6" />
-                    <circle cx="12" cy="17" r="2" />
-                    <path d="M12 15v-4" />
-                  </svg>
-                </div>
-                <div className="module-info">
-                  <h3>Planejamento</h3>
-                  <p>Planeje seus estudos e metas</p>
-                </div>
-              </div>
-            </div>
-
-            <div 
-              className={`module-card ${activeModule === 'agenda' ? 'active' : ''}`}
-              onClick={() => setActiveModule('agenda')}
-            >
-              <div className="module-header">
-                <div className="module-icon agenda">
-                  <svg width="26" height="26" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                    <path d="M8 2v4M16 2v4M3 10h18" />
-                    <circle cx="8" cy="14" r="1" fill="white" />
-                    <circle cx="12" cy="14" r="1" fill="white" />
-                    <circle cx="16" cy="14" r="1" fill="white" />
-                    <circle cx="8" cy="18" r="1" fill="white" />
-                    <circle cx="12" cy="18" r="1" fill="white" />
-                  </svg>
-                </div>
-                <div className="module-info">
-                  <h3>Agenda</h3>
-                  <p>Gerencie seus compromissos</p>
-                </div>
-              </div>
-            </div>
           </div>
         </section>
 
@@ -379,41 +307,7 @@ const Dashboard = () => {
         <section className="quick-actions animate-slide-up">
           <h2 className="section-title">Ações Rápidas</h2>
           <div className="actions-grid">
-            <button className="action-button" onClick={() => setActiveModule('planejamento')}>
-              <div className="action-icon primary">
-                <svg width="22" height="22" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <path d="M9 11H7a4 4 0 010-8h2m0 8v2a4 4 0 008 0v-2m0 0h2a4 4 0 000-8h-2" />
-                  <path d="M9 7h6" />
-                </svg>
-              </div>
-              <span className="action-label">Nova Meta</span>
-            </button>
-
-            <button className="action-button" onClick={() => setActiveModule('organizacao')}>
-              <div className="action-icon secondary">
-                <svg width="22" height="22" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                  <path d="M9 9h6M9 13h6M9 17h4" />
-                  <circle cx="7" cy="9" r="1" fill="white" />
-                  <circle cx="7" cy="13" r="1" fill="white" />
-                  <circle cx="7" cy="17" r="1" fill="white" />
-                </svg>
-              </div>
-              <span className="action-label">Nova Tarefa</span>
-            </button>
-
-            <button className="action-button" onClick={() => setActiveModule('agenda')}>
-              <div className="action-icon accent">
-                <svg width="22" height="22" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24">
-                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                  <path d="M8 2v4M16 2v4M3 10h18" />
-                  <circle cx="8" cy="14" r="1" fill="white" />
-                  <circle cx="12" cy="14" r="1" fill="white" />
-                  <circle cx="16" cy="14" r="1" fill="white" />
-                </svg>
-              </div>
-              <span className="action-label">Novo Evento</span>
-            </button>
+            <p>Novos módulos serão adicionados em breve!</p>
 
             <button className="action-button" onClick={handleOpenPerfil}>
               <div className="action-icon success">
