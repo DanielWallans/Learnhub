@@ -27,10 +27,6 @@ class KeyboardShortcuts {
       window.location.hash = '#/habitos';
     }, 'Ir para Hábitos');
 
-    this.register('ctrl+2', () => {
-      window.location.hash = '#/carreira';
-    }, 'Ir para Carreira');
-
     this.register('ctrl+3', () => {
       window.location.hash = '#/financas';
     }, 'Ir para Finanças');

@@ -1,0 +1,1491 @@
+/* ========== MÓDULO CARREIRA - DESIGN PROFISSIONAL HUMANIZADO ========== */
+/* CSS REFINADO PARA UMA EXPERIÊNCIA MAIS NATURAL E INTUITIVA */
+
+/* Reset específico para o módulo carreira */
+.modulo-carreira,
+.modulo-carreira * {
+  box-sizing: border-box !important;
+}
+
+/* PREVENÇÃO MÁXIMA DE SCROLL AUTOMÁTICO - APLICAÇÃO GLOBAL */
+.modulo-carreira,
+.modulo-carreira *,
+.modulo-carreira input,
+.modulo-carreira textarea,
+.modulo-carreira select,
+.modulo-carreira button {
+  scroll-behavior: auto !important;
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+  scroll-margin-top: 0 !important;
+  scroll-margin-bottom: 0 !important;
+  scroll-margin-left: 0 !important;
+  scroll-margin-right: 0 !important;
+  scroll-padding-top: 0 !important;
+  scroll-padding-bottom: 0 !important;
+  scroll-padding-left: 0 !important;
+  scroll-padding-right: 0 !important;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+  scroll-snap-type: none !important;
+}
+
+/* PREVENÇÃO ESPECÍFICA PARA O PORTFOLIO */
+.portfolio-sections,
+.portfolio-section,
+.subsection,
+.form-grid,
+.portfolio-sections input,
+.portfolio-sections textarea,
+.portfolio-sections select {
+  scroll-behavior: auto !important;
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+  position: static !important;
+  transform: none !important;
+  animation: none !important;
+  transition: none !important;
+}
+
+/* ========== ESTILOS ESPECÍFICOS PARA O GERADOR DE CV ========== */
+/* MÁXIMA SIMPLICIDADE E FUNCIONALIDADE */
+
+.cv-builder {
+  width: 100% !important;
+  max-width: none !important;
+}
+
+.cv-builder .cv-section {
+  background: #ffffff !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  margin-bottom: 1.5rem !important;
+  border: 1px solid #e2e8f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05) !important;
+}
+
+.cv-builder .cv-section h3 {
+  margin: 0 0 1rem 0 !important;
+  color: #374151 !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+/* INPUTS DO GERADOR DE CV - MÁXIMA SIMPLICIDADE */
+.cv-builder input,
+.cv-builder textarea,
+.cv-builder select {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 0.9rem !important;
+  line-height: 1.4 !important;
+  color: #374151 !important;
+  background: #ffffff !important;
+  border: 1px solid #d1d5db !important;
+  border-radius: 6px !important;
+  padding: 0.75rem !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  outline: none !important;
+  margin: 0 !important;
+  /* REMOVE TODAS AS PROPRIEDADES PROBLEMÁTICAS */
+  transition: border-color 0.2s ease !important;
+  transform: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+  position: static !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+}
+
+.cv-builder input:focus,
+.cv-builder textarea:focus,
+.cv-builder select:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  outline: none !important;
+  background: #ffffff !important;
+  /* GARANTIR QUE NÃO HÁ MOVIMENTO */
+  transform: none !important;
+  animation: none !important;
+  scroll-behavior: auto !important;
+  scroll-margin: 0 !important;
+}
+
+.cv-builder textarea {
+  resize: vertical !important;
+  min-height: 80px !important;
+  font-family: inherit !important;
+}
+
+/* GRID DO FORMULÁRIO */
+.cv-builder .form-grid {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.cv-builder .form-grid input:nth-child(5) {
+  grid-column: 1 / -1 !important;
+}
+
+/* FORMULÁRIOS DE ADICIONAR ITEM */
+.cv-builder .add-item-form {
+  background: #f8fafc !important;
+  border-radius: 8px !important;
+  padding: 1rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.cv-builder .skills-input {
+  display: flex !important;
+  gap: 0.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.cv-builder .skills-input input {
+  flex: 1 !important;
+}
+
+/* BOTÕES */
+.cv-builder .btn-add,
+.cv-builder .btn-primary,
+.cv-builder .btn-secondary {
+  padding: 0.5rem 1rem !important;
+  border-radius: 6px !important;
+  border: none !important;
+  cursor: pointer !important;
+  font-weight: 500 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.cv-builder .btn-add,
+.cv-builder .btn-primary {
+  background: #6366f1 !important;
+  color: white !important;
+}
+
+.cv-builder .btn-add:hover,
+.cv-builder .btn-primary:hover {
+  background: #5855f5 !important;
+}
+
+.cv-builder .btn-secondary {
+  background: #e5e7eb !important;
+  color: #374151 !important;
+}
+
+.cv-builder .btn-secondary:hover {
+  background: #d1d5db !important;
+}
+
+.cv-builder .btn-remove {
+  background: #ef4444 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 4px !important;
+  padding: 0.25rem 0.5rem !important;
+  cursor: pointer !important;
+  font-size: 0.8rem !important;
+}
+
+.cv-builder .btn-remove:hover {
+  background: #dc2626 !important;
+}
+
+/* LISTAS DE ITENS */
+.cv-builder .items-list {
+  margin-top: 1rem !important;
+}
+
+.cv-builder .list-item {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  background: #ffffff !important;
+  border: 1px solid #e5e7eb !important;
+  border-radius: 6px !important;
+  padding: 1rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.cv-builder .item-content {
+  flex: 1 !important;
+}
+
+.cv-builder .item-content h4 {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 0.95rem !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+}
+
+.cv-builder .item-content p {
+  margin: 0 0 0.25rem 0 !important;
+  font-size: 0.85rem !important;
+  color: #6b7280 !important;
+}
+
+.cv-builder .item-content small {
+  font-size: 0.75rem !important;
+  color: #9ca3af !important;
+}
+
+.cv-builder .item-content .description {
+  margin-top: 0.5rem !important;
+  font-size: 0.85rem !important;
+  color: #4b5563 !important;
+  font-style: italic !important;
+}
+
+/* TAGS DE HABILIDADES */
+.cv-builder .skills-tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+}
+
+.cv-builder .skill-tag {
+  background: #e0e7ff !important;
+  color: #3730a3 !important;
+  padding: 0.25rem 0.75rem !important;
+  border-radius: 20px !important;
+  font-size: 0.8rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.cv-builder .remove-skill {
+  background: none !important;
+  border: none !important;
+  color: #6b7280 !important;
+  cursor: pointer !important;
+  font-size: 1rem !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.cv-builder .remove-skill:hover {
+  color: #ef4444 !important;
+}
+
+/* CHECKBOX LABELS */
+.cv-builder .checkbox-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  font-size: 0.9rem !important;
+  color: #374151 !important;
+  cursor: pointer !important;
+}
+
+.cv-builder .checkbox-label input[type="checkbox"] {
+  width: auto !important;
+  margin: 0 !important;
+}
+
+/* AÇÕES DO CV */
+.cv-builder .cv-actions {
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  margin-top: 2rem !important;
+  padding: 1.5rem !important;
+  background: #f8fafc !important;
+  border-radius: 12px !important;
+}
+
+/* RESPONSIVIDADE */
+@media (max-width: 768px) {
+  .cv-builder .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+  
+  .cv-builder .cv-actions {
+    flex-direction: column !important;
+  }
+  
+  .cv-builder .skills-input {
+    flex-direction: column !important;
+  }
+}
+
+/* Estilos base para inputs - MÁXIMA PREVENÇÃO DE CONFLITOS */
+.modulo-carreira input,
+.modulo-carreira textarea,
+.modulo-carreira select {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-size: 0.95rem !important;
+  line-height: 1.5 !important;
+  color: #374151 !important;
+  background: #ffffff !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  padding: 0.9rem 1.1rem !important;
+  transition: none !important; /* REMOVENDO TRANSIÇÕES QUE PODEM CAUSAR SCROLL */
+  box-sizing: border-box !important;
+  width: 100% !important;
+  outline: none !important;
+  -webkit-appearance: none !important;
+  -moz-appearance: none !important;
+  appearance: none !important;
+  /* MÁXIMA PREVENÇÃO DE SCROLL AUTOMÁTICO */
+  scroll-margin: 0 !important;
+  scroll-behavior: auto !important;
+  scroll-margin-top: 0 !important;
+  scroll-margin-bottom: 0 !important;
+  scroll-padding: 0 !important;
+  scroll-snap-align: none !important;
+  scroll-snap-stop: normal !important;
+  /* PREVENIR TRANSFORMAÇÕES E ANIMAÇÕES */
+  transform: none !important;
+  -webkit-transform: none !important;
+  animation: none !important;
+  -webkit-animation: none !important;
+  /* FIXAR POSIÇÃO E LAYOUT */
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  margin: 0 0 1rem 0 !important;
+  vertical-align: baseline !important;
+}
+
+.modulo-carreira input:focus,
+.modulo-carreira textarea:focus,
+.modulo-carreira select:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  outline: none !important;
+  background: #ffffff !important;
+  /* MÁXIMA PREVENÇÃO DE SCROLL NO FOCO */
+  transform: none !important;
+  -webkit-transform: none !important;
+  scroll-margin: 0 !important;
+  scroll-margin-top: 0 !important;
+  scroll-margin-bottom: 0 !important;
+  scroll-padding: 0 !important;
+  scroll-behavior: auto !important;
+  /* PREVENIR QUALQUER MOVIMENTO OU ANIMAÇÃO */
+  animation: none !important;
+  -webkit-animation: none !important;
+  transition: none !important;
+  -webkit-transition: none !important;
+  /* GARANTIR POSIÇÃO ESTÁTICA */
+  position: relative !important;
+  top: auto !important;
+  left: auto !important;
+  z-index: auto !important;
+}
+
+/* Estilos específicos para textareas */
+.modulo-carreira textarea {
+  resize: vertical !important;
+  min-height: 100px !important;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  line-height: 1.6 !important;
+  /* Prevenir comportamentos estranhos */
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  white-space: pre-wrap !important;
+  word-wrap: break-word !important;
+}
+
+.modulo-carreira {
+  width: 100% !important;
+  min-height: 100vh !important;
+  background: 
+    linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%),
+    radial-gradient(circle at 25% 25%, rgba(99, 102, 241, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(168, 85, 247, 0.05) 0%, transparent 50%) !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  color: #334155 !important;
+  line-height: 1.7 !important;
+  position: relative !important;
+  z-index: 10 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background-attachment: fixed !important;
+  /* MÁXIMA PREVENÇÃO DE SCROLL AUTOMÁTICO */
+  scroll-behavior: auto !important;
+  scroll-margin: 0 !important;
+  scroll-padding: 0 !important;
+  scroll-snap-type: none !important;
+  overflow-x: hidden !important;
+  overflow-y: auto !important;
+  /* PREVENIR QUALQUER ANIMAÇÃO OU TRANSIÇÃO QUE CAUSE SCROLL */
+  animation: none !important;
+  -webkit-animation: none !important;
+  transition: none !important;
+  -webkit-transition: none !important;
+  transform: none !important;
+  -webkit-transform: none !important;
+}
+
+/* ========== CONTAINER PRINCIPAL ========== */
+.modulo-carreira .carreira-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 1.5rem !important;
+  position: relative !important;
+  background: transparent !important;
+  z-index: 11 !important;
+}
+
+/* ========== HEADER DO MÓDULO ========== */
+.modulo-carreira .carreira-header {
+  text-align: center !important;
+  margin-bottom: 2.5rem !important;
+  padding: 2.5rem 2rem !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  backdrop-filter: blur(12px) saturate(180%) !important;
+  border-radius: 20px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 1px 2px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.modulo-carreira .carreira-header::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 1px !important;
+  background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.3), transparent) !important;
+}
+
+.modulo-carreira .header-icon {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 70px !important;
+  height: 70px !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  border-radius: 18px !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: 
+    0 10px 25px rgba(99, 102, 241, 0.25),
+    0 4px 10px rgba(99, 102, 241, 0.15) !important;
+  position: relative !important;
+  animation: float 8s ease-in-out infinite !important;
+  transform: rotate(-5deg) !important;
+}
+
+.modulo-carreira .header-icon::after {
+  content: '' !important;
+  position: absolute !important;
+  inset: -1px !important;
+  border-radius: 18px !important;
+  padding: 1px !important;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(139, 92, 246, 0.4)) !important;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0) !important;
+  mask-composite: xor !important;
+  opacity: 0.7 !important;
+}
+
+.modulo-carreira .header-icon svg {
+  font-size: 2rem !important;
+  color: white !important;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15)) !important;
+}
+
+.modulo-carreira .carreira-title {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 0 1rem 0 !important;
+  background: linear-gradient(135deg, #1e293b 0%, #6366f1 60%, #8b5cf6 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  letter-spacing: -0.025em !important;
+  line-height: 1.1 !important;
+}
+
+.modulo-carreira .carreira-subtitle {
+  font-size: 1.1rem !important;
+  color: #64748b !important;
+  margin: 0 auto !important;
+  max-width: 500px !important;
+  font-weight: 400 !important;
+  opacity: 0.85 !important;
+  line-height: 1.6 !important;
+}
+
+/* ========== NAVEGAÇÃO POR ABAS ========== */
+.modulo-carreira .carreira-navigation {
+  display: flex !important;
+  gap: 0.5rem !important;
+  margin-bottom: 2.5rem !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  padding: 0.75rem !important;
+  background: rgba(255, 255, 255, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
+}
+
+.modulo-carreira .nav-tab {
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  padding: 0.8rem 1.2rem !important;
+  background: rgba(255, 255, 255, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+  border: 1px solid rgba(226, 232, 240, 0.2) !important;
+  border-radius: 12px !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  transition: all 0.25s ease-out !important;
+  text-decoration: none !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.modulo-carreira .nav-tab::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.4s ease-out !important;
+}
+
+.modulo-carreira .nav-tab:hover::before {
+  left: 100% !important;
+}
+
+.modulo-carreira .nav-tab:hover {
+  background: rgba(255, 255, 255, 0.8) !important;
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08) !important;
+  border-color: rgba(99, 102, 241, 0.2) !important;
+  color: #475569 !important;
+}
+
+.modulo-carreira .nav-tab.active {
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: white !important;
+  border-color: rgba(99, 102, 241, 0.3) !important;
+  box-shadow: 
+    0 8px 25px rgba(99, 102, 241, 0.25),
+    0 3px 8px rgba(99, 102, 241, 0.15) !important;
+  transform: translateY(-1px) !important;
+}
+
+.modulo-carreira .nav-tab svg {
+  font-size: 1rem !important;
+  transition: transform 0.25s ease-out !important;
+}
+
+.modulo-carreira .nav-tab:hover svg,
+.modulo-carreira .nav-tab.active svg {
+  transform: scale(1.05) !important;
+}
+
+/* ========== CONTEÚDO DAS ABAS ========== */
+.modulo-carreira .carreira-content {
+  background: rgba(255, 255, 255, 0.75) !important;
+  backdrop-filter: blur(12px) !important;
+  border-radius: 18px !important;
+  padding: 2.5rem !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.06),
+    0 1px 2px rgba(0, 0, 0, 0.04) !important;
+  margin-bottom: 1.5rem !important;
+  position: relative !important;
+}
+
+.modulo-carreira .feature-content {
+  width: 100% !important;
+}
+
+.modulo-carreira .feature-header {
+  text-align: center !important;
+  margin-bottom: 2.5rem !important;
+  padding-bottom: 1.5rem !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.4) !important;
+  position: relative !important;
+}
+
+.modulo-carreira .feature-header::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -1px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 40px !important;
+  height: 2px !important;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
+  border-radius: 2px !important;
+}
+
+.modulo-carreira .feature-header h2 {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.8rem !important;
+  font-size: 1.9rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin: 0 0 0.8rem 0 !important;
+  letter-spacing: -0.015em !important;
+}
+
+.modulo-carreira .feature-header h2 svg {
+  color: #6366f1 !important;
+  font-size: 1.7rem !important;
+  filter: drop-shadow(0 1px 2px rgba(99, 102, 241, 0.15)) !important;
+}
+
+.modulo-carreira .feature-header p {
+  font-size: 1rem !important;
+  color: #64748b !important;
+  margin: 0 auto !important;
+  max-width: 500px !important;
+  font-weight: 400 !important;
+  line-height: 1.6 !important;
+}
+
+/* ========== SEÇÕES DO PORTFOLIO ========== */
+.modulo-carreira .portfolio-sections {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
+}
+
+.modulo-carreira .portfolio-section {
+  background: rgba(248, 250, 252, 0.6) !important;
+  backdrop-filter: blur(8px) !important;
+  padding: 2rem !important;
+  border-radius: 16px !important;
+  border: 1px solid rgba(226, 232, 240, 0.4) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.03) !important;
+  transition: all 0.25s ease-out !important;
+}
+
+.modulo-carreira .portfolio-section:hover {
+  transform: translateY(-1px) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.05) !important;
+  background: rgba(248, 250, 252, 0.8) !important;
+  border-color: rgba(99, 102, 241, 0.15) !important;
+}
+
+.modulo-carreira .portfolio-section h3 {
+  font-size: 1.2rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin: 0 0 1.2rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+}
+
+.modulo-carreira .portfolio-section h3 svg {
+  color: #6366f1 !important;
+  font-size: 1.1rem !important;
+}
+
+/* ========== FORMULÁRIOS REFINADOS ========== */
+.modulo-carreira .form-grid {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1.2rem !important;
+  margin-bottom: 1.2rem !important;
+}
+
+.modulo-carreira .form-grid input,
+.modulo-carreira .form-grid select,
+.modulo-carreira textarea {
+  padding: 0.9rem 1.1rem !important;
+  border: 1.5px solid rgba(226, 232, 240, 0.6) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(6px) !important;
+  font-size: 0.9rem !important;
+  color: #374151 !important;
+  font-weight: 400 !important;
+  transition: all 0.2s ease-out !important;
+  font-family: inherit !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02) !important;
+}
+
+.modulo-carreira .form-grid input::placeholder,
+.modulo-carreira textarea::placeholder {
+  color: #9ca3af !important;
+  font-weight: 400 !important;
+}
+
+.modulo-carreira .form-grid input:focus,
+.modulo-carreira .form-grid select:focus,
+.modulo-carreira textarea:focus {
+  outline: none !important;
+  border-color: #6366f1 !important;
+  box-shadow: 
+    0 0 0 3px rgba(99, 102, 241, 0.08),
+    0 4px 12px rgba(99, 102, 241, 0.08) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  transform: translateY(-0.5px) !important;
+}
+
+.modulo-carreira textarea {
+  width: 100% !important;
+  resize: vertical !important;
+  min-height: 100px !important;
+  box-sizing: border-box !important;
+  line-height: 1.5 !important;
+}
+
+.modulo-carreira .form-group {
+  display: flex !important;
+  gap: 0.8rem !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+.modulo-carreira .form-group input {
+  flex: 1 !important;
+  min-width: 240px !important;
+}
+
+.modulo-carreira .form-group select {
+  min-width: 180px !important;
+}
+
+/* ========== BOTÕES REFINADOS ========== */
+.modulo-carreira .btn-primary {
+  padding: 0.8rem 1.6rem !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  font-size: 0.9rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-out !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  text-decoration: none !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.modulo-carreira .btn-primary::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15), transparent) !important;
+  transition: left 0.3s ease-out !important;
+}
+
+.modulo-carreira .btn-primary:hover::before {
+  left: 100% !important;
+}
+
+.modulo-carreira .btn-primary:hover {
+  transform: translateY(-1px) scale(1.01) !important;
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.25) !important;
+}
+
+.modulo-carreira .btn-primary:active {
+  transform: translateY(0) scale(0.99) !important;
+}
+
+.modulo-carreira .btn-secondary {
+  padding: 0.8rem 1.6rem !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  color: #64748b !important;
+  border: 1.5px solid rgba(226, 232, 240, 0.6) !important;
+  border-radius: 10px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-out !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+  font-size: 0.9rem !important;
+  text-decoration: none !important;
+  backdrop-filter: blur(6px) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02) !important;
+}
+
+.modulo-carreira .btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.95) !important;
+  border-color: #6366f1 !important;
+  color: #475569 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06) !important;
+}
+
+.modulo-carreira .btn-delete {
+  padding: 0.6rem 1rem !important;
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-out !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  box-shadow: 0 3px 8px rgba(239, 68, 68, 0.2) !important;
+}
+
+.modulo-carreira .btn-delete:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3) !important;
+}
+
+.modulo-carreira .btn-save-global {
+  padding: 1rem 2rem !important;
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 12px !important;
+  font-weight: 600 !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease-out !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.8rem !important;
+  box-shadow: 0 6px 20px rgba(16, 185, 129, 0.25) !important;
+  text-transform: none !important;
+  letter-spacing: normal !important;
+}
+
+.modulo-carreira .btn-save-global:hover {
+  transform: translateY(-2px) scale(1.01) !important;
+  box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3) !important;
+}
+
+/* ========== MODAL DE VISUALIZAÇÃO DO CV ========== */
+.modulo-carreira .cv-modal-overlay {
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(4px) !important;
+  z-index: 1000 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 2rem !important;
+  animation: fadeIn 0.2s ease-out !important;
+}
+
+.modulo-carreira .cv-modal {
+  background: white !important;
+  border-radius: 16px !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15) !important;
+  max-width: 800px !important;
+  width: 100% !important;
+  max-height: 90vh !important;
+  overflow: hidden !important;
+  position: relative !important;
+  animation: slideUp 0.3s ease-out !important;
+}
+
+.modulo-carreira .cv-modal-header {
+  padding: 1.5rem 2rem !important;
+  border-bottom: 1px solid rgba(226, 232, 240, 0.5) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%) !important;
+}
+
+.modulo-carreira .cv-modal-header h3 {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  color: #1e293b !important;
+  margin: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.6rem !important;
+}
+
+.modulo-carreira .cv-modal-header h3 svg {
+  color: #6366f1 !important;
+  font-size: 1.2rem !important;
+}
+
+.modulo-carreira .cv-modal-close {
+  background: rgba(239, 68, 68, 0.1) !important;
+  border: none !important;
+  color: #ef4444 !important;
+  cursor: pointer !important;
+  padding: 0.5rem !important;
+  border-radius: 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.2s ease-out !important;
+}
+
+.modulo-carreira .cv-modal-close:hover {
+  background: rgba(239, 68, 68, 0.15) !important;
+  transform: scale(1.05) !important;
+}
+
+.modulo-carreira .cv-modal-content {
+  padding: 2rem !important;
+  overflow-y: auto !important;
+  max-height: calc(90vh - 120px) !important;
+}
+
+.modulo-carreira .cv-preview {
+  background: white !important;
+  border: 1px solid rgba(226, 232, 240, 0.5) !important;
+  border-radius: 12px !important;
+  padding: 2.5rem !important;
+  font-family: 'Georgia', serif !important;
+  line-height: 1.6 !important;
+  color: #374151 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08) !important;
+}
+
+.modulo-carreira .cv-preview h1 {
+  font-size: 2.2rem !important;
+  font-weight: 700 !important;
+  color: #1e293b !important;
+  margin: 0 0 0.5rem 0 !important;
+  text-align: center !important;
+  border-bottom: 2px solid #6366f1 !important;
+  padding-bottom: 0.5rem !important;
+}
+
+.modulo-carreira .cv-preview .cv-contact {
+  text-align: center !important;
+  margin-bottom: 2rem !important;
+  color: #64748b !important;
+  font-size: 0.95rem !important;
+}
+
+.modulo-carreira .cv-preview h2 {
+  font-size: 1.3rem !important;
+  font-weight: 600 !important;
+  color: #6366f1 !important;
+  margin: 2rem 0 1rem 0 !important;
+  border-left: 3px solid #6366f1 !important;
+  padding-left: 1rem !important;
+}
+
+.modulo-carreira .cv-preview .cv-section {
+  margin-bottom: 1.5rem !important;
+}
+
+.modulo-carreira .cv-preview .cv-item {
+  margin-bottom: 1.2rem !important;
+  padding-left: 1rem !important;
+}
+
+.modulo-carreira .cv-preview .cv-item h3 {
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  margin: 0 0 0.3rem 0 !important;
+}
+
+.modulo-carreira .cv-preview .cv-item .cv-meta {
+  color: #64748b !important;
+  font-size: 0.9rem !important;
+  margin-bottom: 0.5rem !important;
+  font-style: italic !important;
+}
+
+.modulo-carreira .cv-preview .cv-skills {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.5rem !important;
+  margin-top: 0.5rem !important;
+}
+
+/* Cards das Dicas do LinkedIn */
+.modulo-carreira .dicas-cards {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)) !important;
+  gap: 1rem !important;
+  margin-top: 1rem !important;
+}
+
+.modulo-carreira .dica-card {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%) !important;
+  border: 1px solid #cbd5e1 !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  text-align: center !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.modulo-carreira .dica-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 3px !important;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6) !important;
+  transform: scaleX(0) !important;
+  transition: transform 0.3s ease !important;
+}
+
+.modulo-carreira .dica-card:hover {
+  transform: translateY(-5px) !important;
+  box-shadow: 0 10px 25px rgba(99, 102, 241, 0.2) !important;
+  border-color: #6366f1 !important;
+}
+
+.modulo-carreira .dica-card:hover::before {
+  transform: scaleX(1) !important;
+}
+
+.modulo-carreira .dica-icon {
+  font-size: 2rem !important;
+  margin-bottom: 0.8rem !important;
+  opacity: 0.8 !important;
+  transition: transform 0.3s ease !important;
+}
+
+.modulo-carreira .dica-card:hover .dica-icon {
+  transform: scale(1.1) !important;
+}
+
+.modulo-carreira .dica-card h5 {
+  color: #1e293b !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin: 0 0 0.5rem 0 !important;
+  line-height: 1.3 !important;
+}
+
+.modulo-carreira .dica-card p {
+  color: #64748b !important;
+  font-size: 0.9rem !important;
+  line-height: 1.5 !important;
+  margin: 0 !important;
+}
+
+/* Responsivo para cards das dicas */
+@media (max-width: 768px) {
+  .modulo-carreira .dicas-cards {
+    grid-template-columns: 1fr !important;
+    gap: 0.8rem !important;
+  }
+  
+  .modulo-carreira .dica-card {
+    padding: 1.2rem !important;
+  }
+}
+
+/* Estilos para subseções do portfolio */
+.modulo-carreira .subsection {
+  margin-bottom: 2rem !important;
+  padding: 1.5rem !important;
+  background: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+
+.modulo-carreira .subsection h4 {
+  color: #4f46e5 !important;
+  font-size: 1.1rem !important;
+  font-weight: 600 !important;
+  margin: 0 0 1rem 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.modulo-carreira .subsection h4:before {
+  content: '▶' !important;
+  color: #8b5cf6 !important;
+  font-size: 0.8rem !important;
+}
+
+/* Container de habilidades melhorado */
+.modulo-carreira .skills-container {
+  background: rgba(248, 250, 252, 0.8) !important;
+  border-radius: 12px !important;
+  padding: 1.5rem !important;
+  border: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+
+.modulo-carreira .skills-input-group {
+  display: flex !important;
+  gap: 0.75rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+.modulo-carreira .skills-input-group input {
+  flex: 1 !important;
+  padding: 0.9rem 1.1rem !important;
+  border: 1.5px solid #e2e8f0 !important;
+  border-radius: 8px !important;
+  font-size: 0.95rem !important;
+  transition: all 0.3s ease !important;
+}
+
+.modulo-carreira .skills-input-group input:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1) !important;
+  outline: none !important;
+}
+
+.modulo-carreira .btn-add-skill {
+  padding: 0.9rem 1.5rem !important;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+}
+
+.modulo-carreira .btn-add-skill:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(99, 102, 241, 0.3) !important;
+}
+
+.modulo-carreira .skills-list h5 {
+  color: #374151 !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+.modulo-carreira .skills-tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.75rem !important;
+  margin-bottom: 1rem !important;
+}
+
+.modulo-carreira .skill-tag {
+  background: linear-gradient(135deg, #f8fafc, #e2e8f0) !important;
+  color: #374151 !important;
+  padding: 0.6rem 1rem !important;
+  border-radius: 20px !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  border: 1px solid rgba(99, 102, 241, 0.2) !important;
+  transition: all 0.3s ease !important;
+}
+
+.modulo-carreira .skill-tag:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.2) !important;
+}
+
+.modulo-carreira .remove-skill {
+  background: #ef4444 !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 20px !important;
+  height: 20px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  font-size: 0.8rem !important;
+  font-weight: bold !important;
+  transition: all 0.2s ease !important;
+}
+
+.modulo-carreira .remove-skill:hover {
+  background: #dc2626 !important;
+  transform: scale(1.1) !important;
+}
+
+.modulo-carreira .skills-suggestions {
+  margin-top: 1rem !important;
+  padding-top: 1rem !important;
+  border-top: 1px solid rgba(99, 102, 241, 0.1) !important;
+}
+
+.modulo-carreira .skills-suggestions small {
+  color: #6b7280 !important;
+  font-style: italic !important;
+}
+
+/* Responsivo para novas seções */
+@media (max-width: 768px) {
+  .modulo-carreira .subsection {
+    padding: 1rem !important;
+  }
+  
+  .modulo-carreira .skills-input-group {
+    flex-direction: column !important;
+  }
+  
+  .modulo-carreira .btn-add-skill {
+    align-self: flex-start !important;
+  }
+}
+
+.modulo-carreira .cv-preview .cv-skill {
+  background: rgba(99, 102, 241, 0.1) !important;
+  color: #6366f1 !important;
+  padding: 0.3rem 0.8rem !important;
+  border-radius: 20px !important;
+  font-size: 0.85rem !important;
+  font-weight: 500 !important;
+}
+
+/* ========== OUTROS ELEMENTOS REFINADOS ========== */
+.modulo-carreira .tip,
+.modulo-carreira .empty-message,
+.modulo-carreira .empty-state {
+  padding: 1rem 1.2rem !important;
+  background: rgba(99, 102, 241, 0.04) !important;
+  border-radius: 10px !important;
+  color: #64748b !important;
+  font-weight: 400 !important;
+  margin-top: 1rem !important;
+  border-left: 3px solid rgba(99, 102, 241, 0.3) !important;
+  font-size: 0.9rem !important;
+}
+
+.modulo-carreira .skills-list {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 0.6rem !important;
+}
+
+.modulo-carreira .skill-tag {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.4rem !important;
+  padding: 0.4rem 0.8rem !important;
+  background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%) !important;
+  color: white !important;
+  border-radius: 20px !important;
+  font-size: 0.8rem !important;
+  font-weight: 500 !important;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.2) !important;
+  transition: all 0.2s ease-out !important;
+  animation: slideIn 0.2s ease-out !important;
+}
+
+.modulo-carreira .skill-tag:hover {
+  transform: translateY(-1px) scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25) !important;
+}
+
+.modulo-carreira .skill-tag button {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border: none !important;
+  color: white !important;
+  cursor: pointer !important;
+  font-size: 0.9rem !important;
+  padding: 0.2rem 0.3rem !important;
+  border-radius: 50% !important;
+  transition: all 0.15s ease-out !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 18px !important;
+  height: 18px !important;
+}
+
+.modulo-carreira .skill-tag button:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  transform: scale(1.1) !important;
+}
+
+.modulo-carreira .portfolio-actions {
+  display: flex !important;
+  gap: 1rem !important;
+  justify-content: center !important;
+  flex-wrap: wrap !important;
+  margin-top: 2rem !important;
+  padding-top: 1.5rem !important;
+  border-top: 1px solid rgba(226, 232, 240, 0.4) !important;
+}
+
+/* ========== ANIMAÇÕES SUAVES ========== */
+@keyframes float {
+  0%, 100% { transform: rotate(-5deg) translateY(0px); }
+  50% { transform: rotate(-5deg) translateY(-4px); }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========== RESPONSIVIDADE REFINADA ========== */
+@media (max-width: 1024px) {
+  .modulo-carreira .carreira-container {
+    padding: 1.2rem !important;
+  }
+  
+  .modulo-carreira .carreira-content {
+    padding: 2rem !important;
+  }
+
+  .modulo-carreira .cv-modal {
+    margin: 1rem !important;
+    max-width: calc(100% - 2rem) !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .modulo-carreira .carreira-container {
+    padding: 1rem !important;
+  }
+
+  .modulo-carreira .carreira-header {
+    padding: 2rem 1.5rem !important;
+  }
+
+  .modulo-carreira .carreira-title {
+    font-size: 2rem !important;
+  }
+
+  .modulo-carreira .carreira-navigation {
+    flex-direction: column !important;
+    gap: 0.4rem !important;
+    padding: 0.8rem !important;
+  }
+
+  .modulo-carreira .nav-tab {
+    justify-content: center !important;
+    padding: 0.9rem !important;
+  }
+
+  .modulo-carreira .carreira-content {
+    padding: 1.5rem !important;
+  }
+
+  .modulo-carreira .feature-header h2 {
+    font-size: 1.6rem !important;
+    flex-direction: column !important;
+    gap: 0.4rem !important;
+  }
+
+  .modulo-carreira .form-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .modulo-carreira .form-group {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .modulo-carreira .form-group input,
+  .modulo-carreira .form-group select {
+    min-width: unset !important;
+  }
+
+  .modulo-carreira .cv-modal {
+    margin: 0.5rem !important;
+    max-width: calc(100% - 1rem) !important;
+    max-height: 95vh !important;
+  }
+
+  .modulo-carreira .cv-modal-content {
+    padding: 1.5rem !important;
+  }
+
+  .modulo-carreira .cv-preview {
+    padding: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .modulo-carreira .carreira-title {
+    font-size: 1.7rem !important;
+  }
+
+  .modulo-carreira .carreira-subtitle {
+    font-size: 1rem !important;
+  }
+
+  .modulo-carreira .feature-header h2 {
+    font-size: 1.4rem !important;
+  }
+
+  .modulo-carreira .portfolio-section,
+  .modulo-carreira .carreira-content {
+    padding: 1.2rem !important;
+  }
+
+  .modulo-carreira .portfolio-actions {
+    flex-direction: column !important;
+    align-items: center !important;
+  }
+
+  .modulo-carreira .cv-modal-overlay {
+    padding: 0.5rem !important;
+  }
+
+  .modulo-carreira .cv-preview h1 {
+    font-size: 1.8rem !important;
+  }
+}

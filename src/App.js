@@ -5,6 +5,7 @@ import Cadastros from './pages/Cadastros';
 import CadastroAluno from './pages/CadastroAluno';
 import LoginAluno from './pages/LoginAluno';
 import RecuperarSenha from './pages/RecuperarSenha';
+import ModuloCarreira from './components/carreira';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -29,6 +30,7 @@ function AppRoutes() {
       <Route path="/login-aluno" element={<LoginAluno />} />
       <Route path="/boas-vindas" element={<BoasVindas />} />
       <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/carreira" element={<ModuloCarreira />} />
 
       {/* algumas rotas específicas do sistema */}
       <Route

@@ -31,13 +31,7 @@ Centralizar todas as ferramentas necessárias para um estudante gerenciar eficie
 - **Formulários dinâmicos** para adicionar e editar planejamentos
 - **Visualização de cronogramas** e prazos
 
-### 💼 Módulo de Carreira
-- **Acompanhamento de objetivos profissionais**
-- **Registro de experiências** e habilidades
-- **Planejamento de carreira** acadêmica e profissional
-- **Networking e contatos** importantes
-
-### 💰 Controle Financeiro
+###  Controle Financeiro
 - **Gestão de receitas e despesas**
 - **Categorização automática** de gastos
 - **Relatórios financeiros** detalhados
@@ -150,7 +144,6 @@ learnhub/
 │   ├── components/        # Componentes React
 │   │   ├── Dashboard.js   # Dashboard principal
 │   │   ├── Agenda.js      # Componente de agenda
-│   │   ├── Carreira.js    # Módulo de carreira
 │   │   ├── Financas.js    # Controle financeiro
 │   │   ├── Projetos.js    # Gestão de projetos
 │   │   ├── Leituras.js    # Biblioteca de leituras

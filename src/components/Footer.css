@@ -670,14 +670,7 @@
   background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
 }
 
-/* Prevenção de scroll horizontal */
-html, body {
-  overflow-x: hidden !important;
-}
-
-#root, .App {
-  overflow-x: hidden !important;
-}
+/* Prevenção de scroll horizontal removida - causava conflitos */
 
 /* Animações de entrada */
 .footer-section {
@@ -722,26 +715,4 @@ html, body {
   }
 }
 
-/* Prevenção de scroll horizontal global */
-html, body {
-  overflow-x: hidden;
-}
-
-#root, .App {
-  overflow-x: hidden;
-}
-
-/* Garantir que os containers principais não limitem o footer */
-.home-container,
-.dashboard-bg,
-.carreira-container,
-.leituras-container,
-.saude-container {
-  overflow-x: visible !important;
-}
-
-/* Container geral para todas as páginas */
-body > div,
-#root > div {
-  overflow-x: visible !important;
-}
+/* Estilos globais removidos para evitar conflitos com dashboard */
