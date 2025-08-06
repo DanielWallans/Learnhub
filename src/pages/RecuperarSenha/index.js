@@ -7,7 +7,6 @@ import "./recuperarSenha.css";
 function RecuperarSenha() {
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
-  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [emailSent, setEmailSent] = useState(false);
   const navigate = useNavigate();
@@ -16,7 +15,6 @@ function RecuperarSenha() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    setMessage("");
 
     // Validação básica de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -32,7 +30,6 @@ function RecuperarSenha() {
         handleCodeInApp: false
       });
       setEmailSent(true);
-      setMessage("Email de recuperação enviado! Verifique sua caixa de entrada e spam.");
     } catch (error) {
       console.error("Erro ao enviar email de recuperação:", error.code, error.message);
       
@@ -62,10 +59,6 @@ function RecuperarSenha() {
 
   const handleBackToLogin = () => {
     navigate("/login");
-  };
-
-  const handleBackToHome = () => {
-    navigate("/");
   };
 
   return (

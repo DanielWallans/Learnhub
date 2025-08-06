@@ -780,7 +780,7 @@ const ModuloCarreira = () => {
         aprovados,
         taxaSucesso
       };
-    }, [candidaturas]);
+    }, []);
 
     return (
       <div className="feature-content">
@@ -1560,7 +1560,7 @@ const ModuloCarreira = () => {
         progressoCurtoPrazo,
         progressoLongoPrazo
       };
-    }, [metas]);
+    }, []);
 
     return (
       <div className="feature-content">
