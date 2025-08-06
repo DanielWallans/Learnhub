@@ -16,8 +16,8 @@ const ModuloFinancas = () => {
   // Estados para gerenciar os dados financeiros
   const [user, setUser] = useState(null);
   const [orcamento, setOrcamento] = useState({
-    entrada: [],
-    saida: [],
+    entradas: [],
+    saidas: [],
     metas: []
   });
   const [novaTransacao, setNovaTransacao] = useState({
@@ -39,12 +39,12 @@ const ModuloFinancas = () => {
 
   // Categorias para entradas e saídas
   const categoriasSaida = [
-    'Moradia', 'Alimentação', 'Transporte', 'Educação', 
+    'Moradia', 'Alimentação', 'Transporte', 'Faculdade', 'Educação', 
     'Saúde', 'Lazer', 'Vestuário', 'Outros'
   ];
   
   const categoriasEntrada = [
-    'Salário', 'Freelance', 'Investimentos', 'Mesada', 
+    'Salário', 'Freelancer', 'Investimentos', 'Mesada', 
     'Presente', 'Reembolso', 'Outros'
   ];
 
@@ -67,11 +67,15 @@ const ModuloFinancas = () => {
               setOrcamento(financasSnap.data());
             } else {
               // Criar documento financeiro inicial
-              await setDoc(financasRef, {
-                entrada: [],
-                saida: [],
-                metas: []
-              });
+              const initialData = {
+                entradas: [],
+                saidas: [],
+                metas: [],
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+              };
+              await setDoc(financasRef, initialData);
+              setOrcamento(initialData);
             }
           }
         } catch (error) {
@@ -84,8 +88,8 @@ const ModuloFinancas = () => {
   }, []);
 
   // Cálculos financeiros
-  const totalEntrada = orcamento.entrada ? orcamento.entrada.reduce((acc, item) => acc + parseFloat(item.valor), 0) : 0;
-  const totalSaida = orcamento.saida ? orcamento.saida.reduce((acc, item) => acc + parseFloat(item.valor), 0) : 0;
+  const totalEntrada = orcamento.entradas ? orcamento.entradas.reduce((acc, item) => acc + parseFloat(item.valor), 0) : 0;
+  const totalSaida = orcamento.saidas ? orcamento.saidas.reduce((acc, item) => acc + parseFloat(item.valor), 0) : 0;
   const saldoAtual = totalEntrada - totalSaida;
   
   // Progresso das metas
@@ -107,6 +111,11 @@ const ModuloFinancas = () => {
     }
 
     try {
+      if (!user || !user.uid) {
+        alert('Usuário não autenticado. Faça login novamente.');
+        return;
+      }
+      
       const financasRef = doc(db, 'financas', user.uid);
       const tipo = novaTransacao.tipo;
       const novoItem = { ...novaTransacao, id: Date.now().toString() };
@@ -114,33 +123,41 @@ const ModuloFinancas = () => {
       if (editandoTransacao) {
         // Atualizar transação existente
         const tipoAtual = editandoTransacao.tipo;
-        const itensAtualizados = orcamento[`${tipoAtual}s`].map(item => 
+        const tipoKey = tipoAtual === 'entrada' ? 'entradas' : 'saidas';
+        const arrayAtual = orcamento[tipoKey] || [];
+        const itensAtualizados = arrayAtual.map(item => 
           item.id === editandoTransacao.id ? novoItem : item
         );
         
         await updateDoc(financasRef, {
-          [`${tipoAtual}s`]: itensAtualizados
+          [tipoKey]: itensAtualizados
         });
         
         // Se o tipo mudou, remover do array antigo e adicionar ao novo
         if (tipoAtual !== tipo) {
-          const itensAntigos = orcamento[`${tipoAtual}s`].filter(item => 
+          const tipoAntigoKey = tipoAtual === 'entrada' ? 'entradas' : 'saidas';
+          const tipoNovoKey = tipo === 'entrada' ? 'entradas' : 'saidas';
+          const arrayAntigo = orcamento[tipoAntigoKey] || [];
+          const arrayNovo = orcamento[tipoNovoKey] || [];
+          const itensAntigos = arrayAntigo.filter(item => 
             item.id !== editandoTransacao.id
           );
           
-          const itensNovos = [...orcamento[`${tipo}s`], novoItem];
+          const itensNovos = [...arrayNovo, novoItem];
           
           await updateDoc(financasRef, {
-            [`${tipoAtual}s`]: itensAntigos,
-            [`${tipo}s`]: itensNovos
+            [tipoAntigoKey]: itensAntigos,
+            [tipoNovoKey]: itensNovos
           });
         }
         
         setEditandoTransacao(null);
       } else {
         // Adicionar nova transação
+        const tipoKey = tipo === 'entrada' ? 'entradas' : 'saidas';
+        const arrayAtual = orcamento[tipoKey] || [];
         await updateDoc(financasRef, {
-          [`${tipo}s`]: [...orcamento[`${tipo}s`], novoItem]
+          [tipoKey]: [...arrayAtual, novoItem]
         });
       }
       
@@ -160,7 +177,12 @@ const ModuloFinancas = () => {
       });
     } catch (error) {
       console.error('Erro ao salvar transação:', error);
-      alert('Erro ao salvar. Tente novamente.');
+      console.error('Detalhes do erro:', {
+        message: error.message,
+        code: error.code,
+        stack: error.stack
+      });
+      alert(`Erro ao salvar transação: ${error.message || 'Erro desconhecido'}. Verifique sua conexão e tente novamente.`);
     }
   };
 
@@ -176,7 +198,7 @@ const ModuloFinancas = () => {
       
       if (editandoMeta) {
         // Atualizar meta existente
-        const metasAtualizadas = orcamento.metas.map(meta => 
+        const metasAtualizadas = (orcamento.metas || []).map(meta => 
           meta.id === editandoMeta.id ? novaMeta_ : meta
         );
         
@@ -228,10 +250,11 @@ const ModuloFinancas = () => {
     if (window.confirm('Tem certeza que deseja excluir esta transação?')) {
       try {
         const financasRef = doc(db, 'financas', user.uid);
-        const itensAtualizados = orcamento[tipo].filter(item => item.id !== id);
+        const tipoKey = tipo === 'entrada' ? 'entradas' : 'saidas';
+        const itensAtualizados = orcamento[tipoKey].filter(item => item.id !== id);
         
         await updateDoc(financasRef, {
-          [tipo]: itensAtualizados
+          [tipoKey]: itensAtualizados
         });
         
         // Atualizar estado local
@@ -250,7 +273,7 @@ const ModuloFinancas = () => {
     if (window.confirm('Tem certeza que deseja excluir esta meta?')) {
       try {
         const financasRef = doc(db, 'financas', user.uid);
-        const metasAtualizadas = orcamento.metas.filter(meta => meta.id !== id);
+        const metasAtualizadas = (orcamento.metas || []).filter(meta => meta.id !== id);
         
         await updateDoc(financasRef, {
           metas: metasAtualizadas
@@ -271,7 +294,7 @@ const ModuloFinancas = () => {
   const atualizarValorMeta = async (id, novoValor) => {
     try {
       const financasRef = doc(db, 'financas', user.uid);
-      const metasAtualizadas = orcamento.metas.map(meta => {
+      const metasAtualizadas = (orcamento.metas || []).map(meta => {
         if (meta.id === id) {
           return { ...meta, valorAtual: novoValor };
         }
@@ -332,9 +355,9 @@ const ModuloFinancas = () => {
       
       <div className="metas-financeiras">
         <h3 className="section-title">Metas Financeiras</h3>
-        {orcamento.metas.length > 0 ? (
+        {(orcamento.metas || []).length > 0 ? (
           <div className="metas-lista">
-            {orcamento.metas.map(meta => (
+            {(orcamento.metas || []).map(meta => (
               <div className="meta-item" key={meta.id}>
                 <div className="meta-info">
                   <h4>{meta.descricao}</h4>
@@ -368,11 +391,11 @@ const ModuloFinancas = () => {
       
       <div className="transacoes-recentes">
         <h3 className="section-title">Transações Recentes</h3>
-        {[...orcamento.entrada, ...orcamento.saida]
+        {[...(orcamento.entradas || []), ...(orcamento.saidas || [])]
           .sort((a, b) => new Date(b.data) - new Date(a.data))
           .slice(0, 5)
           .map(item => {
-            const tipo = orcamento.entrada.includes(item) ? 'entrada' : 'saida';
+            const tipo = (orcamento.entradas || []).includes(item) ? 'entrada' : 'saida';
             return (
               <div className={`transacao-item ${tipo === 'entrada' ? 'receita' : 'despesa'}`} key={item.id}>
                 <div className="transacao-info">
@@ -396,7 +419,7 @@ const ModuloFinancas = () => {
               </div>
             );
           })}
-        {[...orcamento.entrada, ...orcamento.saida].length === 0 && (
+        {[...(orcamento.entradas || []), ...(orcamento.saidas || [])].length === 0 && (
           <p className="mensagem-vazia">Você ainda não tem transações registradas.</p>
         )}
       </div>
@@ -504,81 +527,36 @@ const ModuloFinancas = () => {
       </div>
       
       <div className="lista-container">
-        <div className="tabs">
-          <button 
-            className={`tab ${activeTab === 'entrada' ? 'active' : ''}`}
-            onClick={() => setActiveTab('entrada')}
-          >
-            Entrada
-          </button>
-          <button 
-            className={`tab ${activeTab === 'saida' ? 'active' : ''}`}
-            onClick={() => setActiveTab('saida')}
-          >
-            Saída
-          </button>
-        </div>
+        <h3>Todas as Transações</h3>
         
         <div className="lista-transacoes">
-          {activeTab === 'entrada' ? (
-            orcamento.entrada.length > 0 ? (
-              orcamento.entrada
-                .sort((a, b) => new Date(b.data) - new Date(a.data))
-                .map(item => (
-                  <div className="transacao-item receita" key={item.id}>
-                    <div className="transacao-info">
-                      <h4>{item.descricao}</h4>
-                      <div className="transacao-detalhes">
-                        <span className="categoria">{item.categoria}</span>
-                        <span className="data">{new Date(item.data).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <div className="transacao-valor">
-                      <span>+ R$ {parseFloat(item.valor).toFixed(2)}</span>
-                      <div className="transacao-acoes">
-                        <button onClick={() => editarTransacao(item, 'entrada')} className="btn-editar">
-                          <FaEdit />
-                        </button>
-                        <button onClick={() => excluirTransacao(item.id, 'entrada')} className="btn-excluir">
-                          <FaTrash />
-                        </button>
-                      </div>
+          {[...(orcamento.entradas || []), ...(orcamento.saidas || [])].length > 0 ? (
+            [...(orcamento.entradas || []).map(item => ({...item, tipo: 'entrada'})), 
+             ...(orcamento.saidas || []).map(item => ({...item, tipo: 'saida'}))]
+              .sort((a, b) => new Date(b.data) - new Date(a.data))
+              .map(item => (
+                <div className={`transacao-item ${item.tipo === 'entrada' ? 'receita' : 'despesa'}`} key={`${item.tipo}-${item.id}`}>
+                  <div className="transacao-info">
+                    <h4>{item.descricao}</h4>
+                    <div className="transacao-detalhes">
+                      <span className="categoria">{item.categoria}</span>
+                      <span className="data">{new Date(item.data).toLocaleDateString()}</span>
+                      <span className={`tipo ${item.tipo}`}>{item.tipo === 'entrada' ? 'Entrada' : 'Saída'}</span>
                     </div>
                   </div>
-                ))
-            ) : (
-              <p className="mensagem-vazia">Você ainda não tem entradas registradas.</p>
-            )
-          ) : (
-            orcamento.saida.length > 0 ? (
-              orcamento.saida
-                .sort((a, b) => new Date(b.data) - new Date(a.data))
-                .map(item => (
-                  <div className="transacao-item despesa" key={item.id}>
-                    <div className="transacao-info">
-                      <h4>{item.descricao}</h4>
-                      <div className="transacao-detalhes">
-                        <span className="categoria">{item.categoria}</span>
-                        <span className="data">{new Date(item.data).toLocaleDateString()}</span>
-                      </div>
-                    </div>
-                    <div className="transacao-valor">
-                      <span>- R$ {parseFloat(item.valor).toFixed(2)}</span>
-                      <div className="transacao-acoes">
-                        <button onClick={() => editarTransacao(item, 'saida')} className="btn-editar">
-                          <FaEdit />
-                        </button>
-                        <button onClick={() => excluirTransacao(item.id, 'saida')} className="btn-excluir">
-                          <FaTrash />
-                        </button>
-                      </div>
+                  <div className="transacao-valor">
+                    <span>{item.tipo === 'entrada' ? '+' : '-'} R$ {parseFloat(item.valor).toFixed(2)}</span>
+                    <div className="transacao-acoes">
+                      <button onClick={() => editarTransacao(item, item.tipo)} className="btn-editar">
+                        <FaEdit />
+                      </button>
                     </div>
                   </div>
-                ))
-            ) : (
-              <p className="mensagem-vazia">Você ainda não tem saídas registradas.</p>
-            )
-          )}
+                </div>
+              ))
+           ) : (
+             <p className="mensagem-vazia">Você ainda não tem transações registradas.</p>
+           )}
         </div>
       </div>
     </div>
@@ -666,8 +644,8 @@ const ModuloFinancas = () => {
         <h3 className="section-title">Suas Metas Financeiras</h3>
         
         <div className="lista-metas">
-          {orcamento.metas.length > 0 ? (
-            orcamento.metas
+          {(orcamento.metas || []).length > 0 ? (
+            (orcamento.metas || [])
               .sort((a, b) => new Date(a.dataAlvo) - new Date(b.dataAlvo))
               .map(meta => (
                 <div className="meta-item" key={meta.id}>
@@ -777,6 +755,15 @@ const ModuloFinancas = () => {
 
   return (
     <div className="modulo-financas">
+      <div className="volta-dashboard-container">
+        <button 
+          className="volta-dashboard-btn"
+          onClick={() => window.history.back()}
+        >
+          Voltar ao Dashboard
+        </button>
+      </div>
+      
       <header className="financas-header">
         <div className="header-container">
           <h1>
