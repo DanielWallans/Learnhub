@@ -74,6 +74,10 @@ const Dashboard = () => {
     navigate('/habilidades');
   }, [navigate]);
 
+  const navigateToLeitura = useCallback(() => {
+    navigate('/leitura');
+  }, [navigate]);
+
   // Monitora autenticação - otimizado
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
@@ -239,6 +243,23 @@ const Dashboard = () => {
                   <div className="module-content">
                     <h3>Gerenciamento de Habilidades</h3>
                     <p>Desenvolva e acompanhe seus hábitos de estudo e crescimento pessoal.</p>
+                  </div>
+                  <div className="module-arrow">→</div>
+                </div>
+                
+                <div 
+                  className="module-card"
+                  onClick={navigateToLeitura}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigateToLeitura()}
+                >
+                  <div className="module-icon">
+                    <FaBook />
+                  </div>
+                  <div className="module-content">
+                    <h3>Biblioteca Pessoal</h3>
+                    <p>Organize sua jornada de leitura, gerencie livros, resumos e apostilas com progresso detalhado.</p>
                   </div>
                   <div className="module-arrow">→</div>
                 </div>
