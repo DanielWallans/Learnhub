@@ -1,0 +1,1185 @@
+/* ========== MÓDULO HABILIDADES - DESIGN PROFISSIONAL HUMANIZADO ========== */
+/* CSS REFINADO PARA UMA EXPERIÊNCIA MAIS NATURAL E INTUITIVA */
+
+/* FORCE OVERRIDE - GARANTIR QUE SEMPRE USE O ESTILO ATUAL */
+.modulo-habilidades {
+  all: unset !important;
+  display: block !important;
+}
+
+/* FORÇA RESET TOTAL PARA EVITAR CONFLITOS COM ESTILOS ANTIGOS */
+body .modulo-habilidades,
+#root .modulo-habilidades,
+div .modulo-habilidades {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%) !important;
+  min-height: 100vh !important;
+  width: 100% !important;
+  display: block !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Reset específico para o módulo habilidades */
+.modulo-habilidades,
+.modulo-habilidades * {
+  box-sizing: border-box !important;
+}
+
+/* RESET TOTAL E FORÇAR ESTILOS NOVOS - PRIORIDADE MÁXIMA */
+html body .modulo-habilidades,
+html body #root .modulo-habilidades,
+html body div .modulo-habilidades,
+.modulo-habilidades {
+  all: unset !important;
+  display: block !important;
+  position: relative !important;
+  width: 100% !important;
+  min-height: 100vh !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 50%, #e2e8f0 100%) !important;
+  color: #1f2937 !important;
+  line-height: 1.6 !important;
+  z-index: 1000 !important;
+  animation: forceUpdate 0.1s ease-in !important;
+}
+
+/* FORÇA RESET TOTAL PARA TODOS OS ELEMENTOS FILHOS */
+.modulo-habilidades *,
+.modulo-habilidades *::before,
+.modulo-habilidades *::after {
+  box-sizing: border-box !important;
+}
+
+/* REMOVE QUALQUER ESTILO DE BOOTSTRAP OU OUTROS FRAMEWORKS */
+.modulo-habilidades,
+.modulo-habilidades * {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  text-decoration: none !important;
+}
+
+/* ========== BOTÃO VOLTA AO DASHBOARD - DESIGN HARMONIOSO ========== */
+.volta-dashboard-container {
+  margin-bottom: 1.5rem !important;
+}
+
+.modulo-habilidades .volta-dashboard-btn,
+.volta-dashboard-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  padding: 0.75rem 1.5rem !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%) !important;
+  color: #ffffff !important;
+  border: 1px solid #a78bfa !important;
+  border-radius: 12px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+  font-size: 0.875rem !important;
+  font-weight: 600 !important;
+  line-height: 1.25 !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 6px -1px rgba(139, 92, 246, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  outline: none !important;
+  user-select: none !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modulo-habilidades .volta-dashboard-btn::before,
+.volta-dashboard-btn::before {
+  content: '\2190' !important;
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  margin-right: 0.25rem !important;
+}
+
+.modulo-habilidades .volta-dashboard-btn:hover,
+.volta-dashboard-btn:hover {
+  background: linear-gradient(135deg, #a78bfa 0%, #8b5cf6 50%, #7c3aed 100%) !important;
+  border-color: #c4b5fd !important;
+  color: #ffffff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 12px -2px rgba(139, 92, 246, 0.3), 0 4px 6px -1px rgba(0, 0, 0, 0.1) !important;
+}
+
+.modulo-habilidades .volta-dashboard-btn:active,
+.volta-dashboard-btn:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 4px -1px rgba(139, 92, 246, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+}
+
+.modulo-habilidades .volta-dashboard-btn:focus,
+.volta-dashboard-btn:focus {
+  outline: 2px solid #a78bfa !important;
+  outline-offset: 2px !important;
+}
+
+.habilidades-container {
+  max-width: 1200px !important;
+  margin: 0 auto !important;
+  padding: 20px !important;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  background: transparent !important;
+  min-height: 100vh !important;
+  color: #1f2937 !important;
+}
+
+.habilidades-header {
+  text-align: center !important;
+  margin-bottom: 40px !important;
+  padding: 40px 20px !important;
+  background: 
+    linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(168, 85, 247, 0.05) 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+  border-radius: 24px !important;
+  box-shadow: 
+    0 20px 60px rgba(139, 92, 246, 0.15),
+    0 8px 25px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  border: 1px solid rgba(139, 92, 246, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.habilidades-header::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+.habilidades-header h2 {
+  font-size: 2.5rem !important;
+  margin-bottom: 15px !important;
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 50%, #6d28d9 100%) !important;
+  -webkit-background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  background-clip: text !important;
+  letter-spacing: -0.5px !important;
+  line-height: 1.2 !important;
+  text-shadow: none !important;
+}
+
+.habilidades-header p {
+  font-size: 1.1rem !important;
+  color: #64748b !important;
+  font-weight: 500 !important;
+  line-height: 1.6 !important;
+  margin-bottom: 0 !important;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+
+.habilidades-controles {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  margin-bottom: 30px !important;
+  background: 
+    linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(168, 85, 247, 0.03) 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+  padding: 25px !important;
+  border-radius: 20px !important;
+  backdrop-filter: blur(20px) !important;
+  box-shadow: 
+    0 10px 30px rgba(139, 92, 246, 0.1),
+    0 4px 15px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+}
+
+.filtros {
+  display: flex !important;
+  align-items: center !important;
+  gap: 15px !important;
+  color: #374151 !important;
+}
+
+.filtros label {
+  font-weight: 600 !important;
+  font-size: 0.875rem !important;
+  color: #374151 !important;
+}
+
+.filtros select {
+  padding: 10px 15px !important;
+  border: 1px solid rgba(139, 92, 246, 0.2) !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 2px 8px rgba(139, 92, 246, 0.1) !important;
+}
+
+.filtros select:hover {
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 4px 15px rgba(139, 92, 246, 0.2) !important;
+  background: rgba(255, 255, 255, 1) !important;
+}
+
+.filtros select:focus {
+  outline: none !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1) !important;
+}
+
+.btn-adicionar {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 14px 28px !important;
+  border-radius: 20px !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  margin-bottom: 20px !important;
+}
+
+.btn-adicionar::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.btn-adicionar:hover::before {
+  left: 100% !important;
+}
+
+.btn-adicionar:hover {
+  transform: translateY(-4px) scale(1.05) !important;
+  box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4) !important;
+}
+
+.btn-adicionar:active {
+  transform: translateY(-2px) scale(1.02) !important;
+  transition: all 0.1s !important;
+}
+
+.formulario-habilidade {
+  background: 
+    linear-gradient(135deg, rgba(139, 92, 246, 0.02) 0%, rgba(168, 85, 247, 0.01) 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.95) 100%) !important;
+  padding: 35px !important;
+  border-radius: 24px !important;
+  margin: 25px 0 35px 0 !important;
+  box-shadow: 
+    0 25px 70px rgba(139, 92, 246, 0.08),
+    0 12px 35px rgba(0, 0, 0, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  animation: slideDown 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.formulario-habilidade::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.formulario-habilidade h3 {
+  color: #333;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+}
+
+.form-row {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 25px !important;
+  margin-bottom: 25px !important;
+  align-items: flex-start !important;
+}
+
+.form-group {
+  display: flex !important;
+  flex-direction: column !important;
+  position: relative !important;
+}
+
+.form-group label {
+  display: block !important;
+  margin-bottom: 10px !important;
+  font-weight: 600 !important;
+  color: #374151 !important;
+  font-size: 14px !important;
+  letter-spacing: 0.3px !important;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100% !important;
+  padding: 14px 18px !important;
+  border: 2px solid rgba(139, 92, 246, 0.1) !important;
+  border-radius: 16px !important;
+  font-size: 14px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  background: 
+    linear-gradient(135deg, rgba(255, 255, 255, 0.9) 0%, rgba(248, 250, 252, 0.8) 100%) !important;
+  box-shadow: 
+    0 4px 12px rgba(139, 92, 246, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8) !important;
+  color: #374151 !important;
+  font-weight: 500 !important;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  outline: none !important;
+  border-color: #8b5cf6 !important;
+  box-shadow: 
+    0 0 0 4px rgba(139, 92, 246, 0.15),
+    0 8px 25px rgba(139, 92, 246, 0.1),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-1px) !important;
+  background: 
+    linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+}
+
+.form-group textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.form-actions {
+  display: flex !important;
+  gap: 18px !important;
+  justify-content: flex-end !important;
+  margin-top: 25px !important;
+  padding-top: 22px !important;
+  border-top: 1px solid rgba(139, 92, 246, 0.1) !important;
+}
+
+.btn-salvar {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  font-size: 13px !important;
+}
+
+.btn-salvar::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.btn-salvar:hover::before {
+  left: 100% !important;
+}
+
+.btn-salvar:hover {
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 12px 35px rgba(79, 172, 254, 0.4) !important;
+}
+
+.btn-cancelar {
+  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 12px 24px !important;
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 6px 20px rgba(240, 147, 251, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  font-size: 13px !important;
+}
+
+.btn-cancelar::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.btn-cancelar:hover::before {
+  left: 100% !important;
+}
+
+.btn-cancelar:hover {
+  transform: translateY(-3px) scale(1.05) !important;
+  box-shadow: 0 12px 35px rgba(240, 147, 251, 0.4) !important;
+}
+
+.btn-salvar:hover,
+.btn-cancelar:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.habilidades-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+.habilidade-card {
+  background: 
+    linear-gradient(135deg, rgba(139, 92, 246, 0.03) 0%, rgba(168, 85, 247, 0.02) 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.95) 0%, rgba(248, 250, 252, 0.9) 100%) !important;
+  border-radius: 24px !important;
+  padding: 30px !important;
+  box-shadow: 
+    0 20px 60px rgba(139, 92, 246, 0.08),
+    0 8px 25px rgba(0, 0, 0, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(139, 92, 246, 0.08) !important;
+  backdrop-filter: blur(20px) !important;
+}
+
+.habilidade-card::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 4px !important;
+  background: linear-gradient(90deg, #8b5cf6 0%, #a78bfa 50%, #c4b5fd 100%) !important;
+  border-radius: 24px 24px 0 0 !important;
+}
+
+.habilidade-card:hover {
+  transform: translateY(-8px) scale(1.02) !important;
+  box-shadow: 
+    0 32px 80px rgba(139, 92, 246, 0.15),
+    0 16px 40px rgba(0, 0, 0, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 1) !important;
+  border-color: rgba(139, 92, 246, 0.15) !important;
+}
+
+.habilidade-card.inativa {
+  opacity: 0.6;
+  filter: grayscale(50%);
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+}
+
+.titulo-categoria h3 {
+  margin: 0 0 5px 0;
+  color: #333;
+  font-size: 1.3rem;
+}
+
+.categoria {
+  background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%) !important;
+  color: #2d3748 !important;
+  padding: 6px 16px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 4px 15px rgba(168, 237, 234, 0.3) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.categoria::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent) !important;
+  transition: left 0.5s !important;
+}
+
+.categoria:hover::before {
+  left: 100% !important;
+}
+
+.nivel-badge {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.nivel-badge::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.5s !important;
+}
+
+.nivel-badge:hover::before {
+  left: 100% !important;
+}
+
+.nivel-badge:hover,
+.categoria:hover {
+  transform: translateY(-2px) scale(1.05) !important;
+}
+
+.descricao {
+  color: #666;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.meta {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+  border-left: 4px solid #3b82f6;
+  font-size: 14px;
+}
+
+.meta strong {
+  color: #1f2937;
+  font-weight: 600;
+}
+
+/* Estilos para informações de prazo */
+.prazo-info {
+  background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+  padding: 12px 16px;
+  border-radius: 8px;
+  margin: 12px 0;
+  border-left: 4px solid #f59e0b;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.prazo-item {
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #92400e;
+}
+
+.prazo-item strong {
+  color: #78350f;
+  font-weight: 600;
+  margin-right: 8px;
+  min-width: 70px;
+}
+
+/* Seção de Dicas Personalizadas */
+.dicas-container {
+  background: linear-gradient(135deg, #fef7cd 0%, #fef3c7 50%, #fed7aa 100%);
+  border: 1px solid #f59e0b;
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.1);
+  transition: all 0.3s ease;
+}
+
+.dicas-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15);
+}
+
+.dicas-container h4 {
+  margin: 0 0 12px 0;
+  color: #92400e;
+  font-size: 16px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dicas-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.dica-item {
+  background: rgba(255, 255, 255, 0.7);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: #78350f;
+  border-left: 3px solid #f59e0b;
+  transition: all 0.2s ease;
+  backdrop-filter: blur(10px);
+}
+
+.dica-item:hover {
+  background: rgba(255, 255, 255, 0.9);
+  transform: translateX(4px);
+  border-left-color: #d97706;
+}
+
+.progresso-container {
+  margin-bottom: 20px;
+}
+
+.progresso-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #333;
+}
+
+.barra-progresso {
+  width: 100% !important;
+  height: 12px !important;
+  background: linear-gradient(90deg, #f1f3f4 0%, #e8eaed 100%) !important;
+  border-radius: 20px !important;
+  overflow: hidden !important;
+  margin-bottom: 15px !important;
+  position: relative !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+}
+
+.barra-progresso::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%) !important;
+  animation: shimmer 2s infinite !important;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.progresso-fill {
+  height: 100% !important;
+  background: linear-gradient(90deg, #43e97b 0%, #38f9d7 50%, #4facfe 100%) !important;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  border-radius: 20px !important;
+  box-shadow: 0 2px 8px rgba(67, 233, 123, 0.3) !important;
+}
+
+.progresso-fill::after {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.4) 50%, transparent 100%) !important;
+  animation: progress-shine 1.5s infinite !important;
+  border-radius: 20px !important;
+}
+
+@keyframes progress-shine {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.controles-progresso {
+  display: flex !important;
+  gap: 12px !important;
+  justify-content: center !important;
+  margin-top: 12px !important;
+  padding: 8px 0 !important;
+}
+
+.controles-progresso button {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 6px 14px !important;
+  border-radius: 16px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 3px 12px rgba(102, 126, 234, 0.3) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.3px !important;
+}
+
+.controles-progresso button::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  width: 0 !important;
+  height: 0 !important;
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-radius: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  transition: width 0.3s, height 0.3s !important;
+}
+
+.controles-progresso button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5a67d8 0%, #667eea 100%) !important;
+  transform: translateY(-2px) scale(1.05) !important;
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4) !important;
+}
+
+.controles-progresso button:hover:not(:disabled)::before {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.controles-progresso button:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+  background: #ccc !important;
+  box-shadow: none !important;
+}
+
+.card-actions {
+  display: flex !important;
+  gap: 8px !important;
+  justify-content: flex-end !important;
+  margin-top: 18px !important;
+  padding-top: 18px !important;
+  border-top: 1px solid rgba(139, 92, 246, 0.1) !important;
+}
+
+.btn-editar {
+  flex: 1 !important;
+  padding: 10px 16px !important;
+  border: none !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  font-size: 12px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+  background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%) !important;
+  color: white !important;
+}
+
+.btn-editar::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.btn-editar:hover::before {
+  left: 100% !important;
+}
+
+.btn-editar:hover {
+  transform: translateY(-4px) scale(1.05) !important;
+  box-shadow: 0 20px 50px rgba(99, 102, 241, 0.4) !important;
+}
+
+.btn-editar:active {
+  transform: translateY(-2px) scale(1.02) !important;
+  transition: all 0.1s !important;
+}
+
+.btn-status {
+  flex: 1 !important;
+  padding: 10px 16px !important;
+  border: none !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  font-size: 12px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.1) !important;
+}
+
+.btn-status::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.btn-status:hover::before {
+  left: 100% !important;
+}
+
+.btn-status.ativo {
+  background: linear-gradient(135deg, #ff9a56 0%, #ff6b35 50%, #f7931e 100%) !important;
+  color: white !important;
+  box-shadow: 0 12px 35px rgba(255, 107, 53, 0.4) !important;
+}
+
+.btn-status.inativo {
+  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 50%, #43e97b 100%) !important;
+  color: white !important;
+  box-shadow: 0 12px 35px rgba(79, 172, 254, 0.4) !important;
+}
+
+.btn-remover {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 50%, #ff4757 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 10px 16px !important;
+  border-radius: 14px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  font-size: 12px !important;
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3) !important;
+}
+
+.btn-remover::before {
+  content: '' !important;
+  position: absolute !important;
+  top: 0 !important;
+  left: -100% !important;
+  width: 100% !important;
+  height: 100% !important;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent) !important;
+  transition: left 0.6s !important;
+}
+
+.btn-remover:hover::before {
+  left: 100% !important;
+}
+
+.btn-status:hover,
+.btn-remover:hover {
+  transform: translateY(-4px) scale(1.05) !important;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2) !important;
+}
+
+.btn-status:active,
+.btn-remover:active {
+  transform: translateY(-2px) scale(1.02) !important;
+  transition: all 0.1s !important;
+}
+
+.sem-habilidades {
+  text-align: center;
+  background: white;
+  padding: 40px;
+  border-radius: 20px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+.sem-habilidades p {
+  color: #666;
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.sem-habilidades button {
+  background: linear-gradient(45deg, #667eea, #764ba2);
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 25px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.sem-habilidades button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Estados de carregamento e autenticação */
+.carregando {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 60px 20px !important;
+  text-align: center !important;
+}
+
+.carregando p {
+  font-size: 18px !important;
+  color: #6b7280 !important;
+  font-weight: 500 !important;
+  margin: 0 !important;
+  animation: pulse 2s infinite !important;
+}
+
+.nao-autenticado {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  align-items: center !important;
+  padding: 80px 20px !important;
+  text-align: center !important;
+  background: 
+    linear-gradient(135deg, rgba(239, 68, 68, 0.05) 0%, rgba(248, 113, 113, 0.03) 100%),
+    linear-gradient(45deg, rgba(255, 255, 255, 0.98) 0%, rgba(254, 242, 242, 0.95) 100%) !important;
+  border-radius: 24px !important;
+  margin: 20px !important;
+  box-shadow: 
+    0 25px 70px rgba(239, 68, 68, 0.08),
+    0 12px 35px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid rgba(239, 68, 68, 0.1) !important;
+}
+
+.nao-autenticado h2 {
+  color: #dc2626 !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  margin-bottom: 16px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.nao-autenticado p {
+  color: #6b7280 !important;
+  font-size: 16px !important;
+  margin-bottom: 30px !important;
+  line-height: 1.6 !important;
+}
+
+.nao-autenticado button {
+  background: linear-gradient(135deg, #dc2626 0%, #ef4444 100%) !important;
+  color: white !important;
+  border: none !important;
+  padding: 14px 32px !important;
+  border-radius: 16px !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  box-shadow: 0 8px 25px rgba(220, 38, 38, 0.3) !important;
+}
+
+.nao-autenticado button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 12px 35px rgba(220, 38, 38, 0.4) !important;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+/* Botões desabilitados */
+.btn-salvar:disabled,
+.btn-cancelar:disabled {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.btn-salvar:disabled:hover,
+.btn-cancelar:disabled:hover {
+  transform: none !important;
+  box-shadow: 0 6px 20px rgba(79, 172, 254, 0.3) !important;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .habilidades-container {
+    padding: 15px;
+  }
+  
+  .habilidades-header h2 {
+    font-size: 2rem;
+  }
+  
+  .habilidades-controles {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+  
+  .habilidades-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+  }
+  
+  .form-actions {
+    flex-direction: column;
+  }
+  
+  .nao-autenticado {
+    margin: 10px !important;
+    padding: 60px 20px !important;
+  }
+  
+  .nao-autenticado h2 {
+    font-size: 24px !important;
+  }
+  
+  /* Responsividade para dicas em tablets */
+  .dicas-container {
+    padding: 14px;
+    margin-bottom: 18px;
+  }
+  
+  .dicas-container h4 {
+    font-size: 15px;
+  }
+  
+  .dica-item {
+    padding: 9px 11px;
+    font-size: 12.5px;
+  }
+}
+
+@media (max-width: 480px) {
+  .habilidades-container {
+    padding: 10px;
+  }
+  
+  .formulario-habilidade {
+    padding: 20px;
+  }
+  
+  .habilidade-card {
+    padding: 20px;
+  }
+  
+  .nao-autenticado {
+    padding: 40px 15px !important;
+  }
+  
+  .nao-autenticado h2 {
+    font-size: 20px !important;
+  }
+  
+  .nao-autenticado p {
+    font-size: 14px !important;
+  }
+  
+  /* Responsividade para dicas */
+  .dicas-container {
+    padding: 12px;
+    margin-bottom: 16px;
+  }
+  
+  .dicas-container h4 {
+    font-size: 14px;
+  }
+  
+  .dica-item {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+}

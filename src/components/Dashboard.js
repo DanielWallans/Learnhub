@@ -11,7 +11,8 @@ import {
   FaRocket,
   FaStar,
   FaHeart,
-  FaWallet
+  FaWallet,
+  FaCogs
 } from 'react-icons/fa';
 import './dashboard-ultra.css';
 
@@ -67,6 +68,10 @@ const Dashboard = () => {
 
   const navigateToFinancas = useCallback(() => {
     navigate('/financas');
+  }, [navigate]);
+
+  const navigateToHabilidades = useCallback(() => {
+    navigate('/habilidades');
   }, [navigate]);
 
   // Monitora autenticação - otimizado
@@ -217,6 +222,23 @@ const Dashboard = () => {
                   <div className="module-content">
                     <h3>Gestão Financeira</h3>
                     <p>Organize suas finanças, estabeleça metas e desenvolva hábitos financeiros saudáveis.</p>
+                  </div>
+                  <div className="module-arrow">→</div>
+                </div>
+                
+                <div 
+                  className="module-card"
+                  onClick={navigateToHabilidades}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigateToHabilidades()}
+                >
+                  <div className="module-icon">
+                    <FaCogs />
+                  </div>
+                  <div className="module-content">
+                    <h3>Gerenciamento de Habilidades</h3>
+                    <p>Desenvolva e acompanhe seus hábitos de estudo e crescimento pessoal.</p>
                   </div>
                   <div className="module-arrow">→</div>
                 </div>
