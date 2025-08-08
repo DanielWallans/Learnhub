@@ -147,7 +147,7 @@
 }
 
 .icone-titulo::before {
-  content: '☕';
+  content: '\2615';
   position: absolute;
   top: 0;
   left: 0;
@@ -765,7 +765,7 @@
 }
 
 .site-recursos h5::before {
-  content: '⚡';
+  content: '\26A1';
   font-size: 1.2rem;
   animation: sparkle 2s ease-in-out infinite alternate;
 }
