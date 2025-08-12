@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { auth, db } from '../firebaseConfig';
 import { doc, getDoc } from 'firebase/firestore';
+import { FaStar, FaHandPaper } from 'react-icons/fa';
 import './BoasVindas.css';
 
 function BoasVindas() {
@@ -61,7 +62,7 @@ function BoasVindas() {
       <div className="boas-vindas-content">
         {/* Badge de boas-vindas */}
         <div className="welcome-badge">
-          <span className="badge-icon">✨</span>
+          <span className="badge-icon"><FaStar /></span>
           <span>Tudo pronto para começar!</span>
         </div>
 
@@ -69,7 +70,7 @@ function BoasVindas() {
         <h1 className="welcome-title">
           {saudacao}
           {nome && <span className="name-highlight">, {nome}</span>}!
-          <span className="wave-emoji">👋</span>
+          <span className="wave-emoji"><FaHandPaper /></span>
         </h1>
 
         {/* Subtítulo */}

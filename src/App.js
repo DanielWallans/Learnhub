@@ -9,6 +9,8 @@ import ModuloCarreira from './components/carreira';
 import ModuloFinancas from './components/financas';
 import Habilidades from './components/Habilidades';
 import Leitura from './components/Leitura';
+import Projetos from './components/Projetos';
+
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import PrivateRoute from './components/PrivateRoute';
@@ -37,6 +39,8 @@ function AppRoutes() {
       <Route path="/financas" element={<ModuloFinancas />} />
       <Route path="/habilidades" element={<Habilidades />} />
       <Route path="/leitura" element={<Leitura />} />
+        <Route path="/projetos" element={<Projetos />} />
+
 
       {/* algumas rotas específicas do sistema */}
       <Route

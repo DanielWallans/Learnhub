@@ -13,6 +13,7 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { FaCheck, FaTimes } from 'react-icons/fa';
 import './Leitura.css';
 
 const Leitura = () => {
@@ -541,7 +542,7 @@ const Leitura = () => {
                       <ul className="recursos-lista">
                         {site.recursos.map((recurso, idx) => (
                           <li key={idx} className="recurso-item">
-                            <span className="recurso-bullet">✓</span>
+                            <span className="recurso-bullet"><FaCheck /></span>
                             {recurso}
                           </li>
                         ))}
@@ -631,7 +632,7 @@ const Leitura = () => {
                     cancelarEdicao();
                   }}
                 >
-                  ✕
+                  <FaTimes />
                 </button>
               </div>
               
@@ -1014,7 +1015,7 @@ const Leitura = () => {
                           onClick={() => atualizarAvaliacao(livro.id, 0)}
                           title="Remover avaliação"
                         >
-                          ✕
+                          <FaTimes />
                         </button>
                       )}
                     </div>

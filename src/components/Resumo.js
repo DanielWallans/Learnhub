@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebaseConfig';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { FaSun, FaMoon, FaCloudSun, FaTrendingUp, FaClock } from 'react-icons/fa';
 
 function Resumo() {
   const [dadosResumo, setDadosResumo] = useState({
@@ -161,7 +162,7 @@ function Resumo() {
             <h2 className="resumo-saudacao">
               {getSaudacao()}!
               <span className="resumo-emoji">
-                {getSaudacao() === 'Bom dia' ? '🌅' : getSaudacao() === 'Boa tarde' ? '☀️' : '🌙'}
+                {getSaudacao() === 'Bom dia' ? <FaCloudSun /> : getSaudacao() === 'Boa tarde' ? <FaSun /> : <FaMoon />}
               </span>
             </h2>
             <p className="resumo-data">{getDataFormatada()}</p>
@@ -182,7 +183,7 @@ function Resumo() {
             </div>
             <div className="resumo-stat-content">
               <span className="resumo-stat-number">
-                {loading ? '⏳' : dadosResumo.diasConsecutivos}
+                {loading ? <FaClock /> : dadosResumo.diasConsecutivos}
               </span>
               <span className="resumo-stat-label">Dias Consecutivos</span>
             </div>
@@ -197,7 +198,7 @@ function Resumo() {
             </div>
             <div className="resumo-stat-content">
               <span className="resumo-stat-number">
-                {loading ? '⏳' : `${dadosResumo.progressoSemanal}%`}
+                {loading ? <FaClock /> : `${dadosResumo.progressoSemanal}%`}
               </span>
               <span className="resumo-stat-label">Progresso Semanal</span>
             </div>
@@ -207,7 +208,7 @@ function Resumo() {
         <div className="resumo-atividades">
           <div className="atividades-header">
             <h3 className="atividades-titulo">
-              <span className="atividades-icon">📈</span>
+              <span className="atividades-icon"><FaTrendingUp /></span>
               Atividade Recente
             </h3>
           </div>

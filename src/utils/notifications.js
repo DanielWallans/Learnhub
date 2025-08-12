@@ -8,19 +8,19 @@ export const notify = {
   success: (message) => {
     // se tiver alguma lib de toast, usar ela aqui
     // por agora só console mesmo
-    console.log('✅', message);
+    console.log('[SUCCESS]', message);
   },
   
   error: (message) => {
-    console.error('❌', message);
+    console.error('[ERROR]', message);
   },
   
   info: (message) => {
-    console.info('ℹ️', message);
+    console.info('[INFO]', message);
   },
   
   warning: (message) => {
-    console.warn('⚠️', message);
+    console.warn('[WARNING]', message);
   }
 };
 
@@ -28,7 +28,7 @@ export const notify = {
 export const notifyUser = {
   // organização
   tarefaAdicionada: () => notify.success('Tarefa adicionada com sucesso!'),
-  tarefaConcluida: () => notify.success('Parabéns! Tarefa concluída 🎉'),
+  tarefaConcluida: () => notify.success('Parabéns! Tarefa concluída!'),
   tarefaRemovida: () => notify.info('Tarefa removida'),
   tarefaEditada: () => notify.success('Tarefa atualizada!'),
   
@@ -40,7 +40,7 @@ export const notifyUser = {
   
   // planejamento
   metaAdicionada: () => notify.success('Meta adicionada ao planejamento!'),
-  metaConcluida: () => notify.success('Meta concluída! 🏆'),
+  metaConcluida: () => notify.success('Meta concluída!'),
   metaRemovida: () => notify.info('Meta removida'),
   metaEditada: () => notify.success('Meta atualizada!'),
   
@@ -50,7 +50,7 @@ export const notifyUser = {
   
   // autenticação 
   loginSucesso: (nome) => notify.success(`Bem-vindo(a), ${nome}!`),
-  logoutSucesso: () => notify.info('Até mais! 👋'),
+  logoutSucesso: () => notify.info('Até mais!'),
   erroAutenticacao: () => notify.error('Erro na autenticação'),
   
   // geral

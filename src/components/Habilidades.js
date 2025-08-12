@@ -13,6 +13,15 @@ import {
   onSnapshot
 } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { 
+  FaBook, FaBullseye, FaEdit, FaSync, FaClock, FaPalette, FaChartLine, FaUsers, 
+  FaBan, FaCheck, FaRocket, FaRobot, FaWalking, FaWater, FaBed, FaAppleAlt, 
+  FaRunning, FaDumbbell, FaOm, FaMobile, FaStrongArm, FaUtensils, FaBrain, 
+  FaPencilAlt, FaCamera, FaStar, FaTheaterMasks, FaRedo, FaGraduationCap, 
+  FaMoneyBillWave, FaHandPaper, FaSmile, FaParty, FaComments, FaHandshake, 
+  FaPhone, FaMicrophone, FaGlobe, FaLightbulb, FaFire, FaClipboardList, 
+  FaTimes, FaExclamationTriangle, FaStop, FaEar
+} from 'react-icons/fa';
 import './Habilidades.css';
 
 const Habilidades = () => {
@@ -47,102 +56,102 @@ const Habilidades = () => {
     const dicasPorCategoria = {
       'Estudo': {
         'Iniciante': [
-          '📚 Comece com sessões de 15-20 minutos para criar o hábito',
-          '🎯 Defina um horário fixo para estudar todos os dias',
-          '📝 Use técnicas simples como resumos e mapas mentais',
-          '🔄 Revise o conteúdo no dia seguinte para fixar'
+          '<FaBook /> Comece com sessões de 15-20 minutos para criar o hábito',
+          '<FaBullseye /> Defina um horário fixo para estudar todos os dias',
+          '<FaEdit /> Use técnicas simples como resumos e mapas mentais',
+          '<FaSync /> Revise o conteúdo no dia seguinte para fixar'
         ],
         'Intermediário': [
-          '⏰ Aplique a técnica Pomodoro (25min estudo + 5min pausa)',
-          '🎨 Varie as técnicas: flashcards, diagramas, explicação oral',
-          '📊 Acompanhe seu desempenho e identifique pontos fracos',
-          '👥 Forme grupos de estudo ou encontre um parceiro'
+          '<FaClock /> Aplique a técnica Pomodoro (25min estudo + 5min pausa)',
+          '<FaPalette /> Varie as técnicas: flashcards, diagramas, explicação oral',
+          '<FaChartLine /> Acompanhe seu desempenho e identifique pontos fracos',
+          '<FaUsers /> Forme grupos de estudo ou encontre um parceiro'
         ],
         'Avançado': [
-          '🧠 Use técnicas avançadas como método Feynman e spaced repetition',
-          '📈 Crie um sistema de revisão espaçada personalizado',
-          '🎓 Ensine outros para consolidar seu conhecimento',
-          '🔬 Aplique o conhecimento em projetos práticos'
+          '<FaBrain /> Use técnicas avançadas como método Feynman e spaced repetition',
+          '<FaChartLine /> Crie um sistema de revisão espaçada personalizado',
+          '<FaGraduationCap /> Ensine outros para consolidar seu conhecimento',
+          '<FaBrain /> Aplique o conhecimento em projetos práticos'
         ]
       },
       'Produtividade': {
         'Iniciante': [
-          '📋 Faça uma lista simples de 3 tarefas prioritárias por dia',
-          '⏰ Use um timer para controlar o tempo das atividades',
-          '🚫 Elimine uma distração por vez (celular, redes sociais)',
-          '✅ Comemore pequenas conquistas para manter a motivação'
+          '<FaClipboardList /> Faça uma lista simples de 3 tarefas prioritárias por dia',
+          '<FaClock /> Use um timer para controlar o tempo das atividades',
+          '<FaBan /> Elimine uma distração por vez (celular, redes sociais)',
+          '<FaCheck /> Comemore pequenas conquistas para manter a motivação'
         ],
         'Intermediário': [
-          '🎯 Implemente a matriz de Eisenhower (urgente vs importante)',
-          '📱 Use aplicativos de produtividade como Todoist ou Notion',
-          '🔄 Estabeleça rotinas matinais e noturnas consistentes',
-          '📊 Analise semanalmente onde seu tempo está sendo gasto'
+          '<FaBullseye /> Implemente a matriz de Eisenhower (urgente vs importante)',
+          '<FaMobile /> Use aplicativos de produtividade como Todoist ou Notion',
+          '<FaSync /> Estabeleça rotinas matinais e noturnas consistentes',
+          '<FaChartLine /> Analise semanalmente onde seu tempo está sendo gasto'
         ],
         'Avançado': [
-          '⚡ Domine técnicas como GTD (Getting Things Done)',
-          '🤖 Automatize tarefas repetitivas sempre que possível',
-          '📈 Otimize fluxos de trabalho com ferramentas avançadas',
-          '🎨 Desenvolva sistemas personalizados de organização'
+          '<FaRocket /> Domine técnicas como GTD (Getting Things Done)',
+          '<FaRobot /> Automatize tarefas repetitivas sempre que possível',
+          '<FaChartLine /> Otimize fluxos de trabalho com ferramentas avançadas',
+          '<FaPalette /> Desenvolva sistemas personalizados de organização'
         ]
       },
       'Saúde': {
         'Iniciante': [
-          '🚶 Comece com caminhadas de 10-15 minutos diários',
-          '💧 Beba um copo de água ao acordar e antes das refeições',
-          '😴 Estabeleça um horário fixo para dormir e acordar',
-          '🥗 Inclua uma fruta ou vegetal em cada refeição'
+          '<FaWalking /> Comece com caminhadas de 10-15 minutos diários',
+          '<FaWater /> Beba um copo de água ao acordar e antes das refeições',
+          '<FaBed /> Estabeleça um horário fixo para dormir e acordar',
+          '<FaAppleAlt /> Inclua uma fruta ou vegetal em cada refeição'
         ],
         'Intermediário': [
-          '🏃 Alterne entre exercícios aeróbicos e de força',
-          '🍎 Planeje refeições semanalmente e prepare marmitas',
-          '🧘 Pratique 10 minutos de meditação ou respiração',
-          '📱 Use apps para monitorar atividade física e sono'
+          '<FaRunning /> Alterne entre exercícios aeróbicos e de força',
+          '<FaAppleAlt /> Planeje refeições semanalmente e prepare marmitas',
+          '<FaOm /> Pratique 10 minutos de meditação ou respiração',
+          '<FaMobile /> Use apps para monitorar atividade física e sono'
         ],
         'Avançado': [
-          '💪 Crie um programa de treino periodizado e progressivo',
-          '🥘 Calcule macronutrientes e ajuste dieta aos objetivos',
-          '🧠 Integre práticas de mindfulness no dia a dia',
-          '📊 Monitore biomarcadores e ajuste estratégias'
+          '<FaDumbbell /> Crie um programa de treino periodizado e progressivo',
+          '<FaUtensils /> Calcule macronutrientes e ajuste dieta aos objetivos',
+          '<FaBrain /> Integre práticas de mindfulness no dia a dia',
+          '<FaChartLine /> Monitore biomarcadores e ajuste estratégias'
         ]
       },
       'Criatividade': {
         'Iniciante': [
-          '✏️ Dedique 10 minutos diários para desenhar ou escrever',
-          '🎨 Experimente uma nova técnica criativa por semana',
-          '📸 Documente ideias criativas em um caderno ou app',
-          '🌟 Não julgue suas criações, foque no processo'
+          '<FaPencilAlt /> Dedique 10 minutos diários para desenhar ou escrever',
+          '<FaPalette /> Experimente uma nova técnica criativa por semana',
+          '<FaCamera /> Documente ideias criativas em um caderno ou app',
+          '<FaStar /> Não julgue suas criações, foque no processo'
         ],
         'Intermediário': [
-          '🎭 Combine diferentes formas de arte (música + visual)',
-          '👥 Participe de comunidades criativas online ou presenciais',
-          '🔄 Estabeleça projetos criativos com prazos definidos',
-          '📚 Estude trabalhos de artistas que você admira'
+          '<FaTheaterMasks /> Combine diferentes formas de arte (música + visual)',
+          '<FaUsers /> Participe de comunidades criativas online ou presenciais',
+          '<FaRedo /> Estabeleça projetos criativos com prazos definidos',
+          '<FaBook /> Estude trabalhos de artistas que você admira'
         ],
         'Avançado': [
-          '🚀 Desenvolva seu estilo único e assinatura criativa',
-          '💼 Monetize suas criações através de plataformas digitais',
-          '🎓 Ensine sua arte para outros e receba feedback',
-          '🌍 Participe de concursos e exposições para visibilidade'
+          '<FaRocket /> Desenvolva seu estilo único e assinatura criativa',
+          '<FaMoneyBillWave /> Monetize suas criações através de plataformas digitais',
+          '<FaGraduationCap /> Ensine sua arte para outros e receba feedback',
+          '<FaGlobe /> Participe de concursos e exposições para visibilidade'
         ]
       },
       'Social': {
         'Iniciante': [
-          '👋 Cumprimente uma pessoa nova por dia',
-          '👂 Pratique escuta ativa em conversas',
-          '😊 Sorria mais e mantenha contato visual',
-          '📱 Limite uso de redes sociais durante interações'
+          '<FaHandPaper /> Cumprimente uma pessoa nova por dia',
+          '<FaEar /> Pratique escuta ativa em conversas',
+          '<FaSmile /> Sorria mais e mantenha contato visual',
+          '<FaMobile /> Limite uso de redes sociais durante interações'
         ],
         'Intermediário': [
-          '🎉 Participe de eventos e atividades em grupo',
-          '💬 Inicie conversas sobre interesses em comum',
-          '🤝 Ofereça ajuda e apoio quando apropriado',
-          '📞 Mantenha contato regular com amigos e família'
+          '<FaParty /> Participe de eventos e atividades em grupo',
+          '<FaComments /> Inicie conversas sobre interesses em comum',
+          '<FaHandshake /> Ofereça ajuda e apoio quando apropriado',
+          '<FaPhone /> Mantenha contato regular com amigos e família'
         ],
         'Avançado': [
-          '🎤 Desenvolva habilidades de apresentação e oratória',
-          '🌐 Construa uma rede profissional sólida',
-          '👥 Lidere grupos ou projetos colaborativos',
-          '🤔 Pratique empatia e inteligência emocional'
+          '<FaMicrophone /> Desenvolva habilidades de apresentação e oratória',
+          '<FaGlobe /> Construa uma rede profissional sólida',
+          '<FaUsers /> Lidere grupos ou projetos colaborativos',
+          '<FaBrain /> Pratique empatia e inteligência emocional'
         ]
       }
     };
@@ -631,7 +640,7 @@ const Habilidades = () => {
             </div>
 
             <div className="dicas-container">
-              <h4>💡 Dicas Personalizadas</h4>
+              <h4><FaLightbulb /> Dicas Personalizadas</h4>
               <div className="dicas-lista">
                 {obterDicasHabilidade(habilidade.categoria, habilidade.nivel, habilidade.progresso).map((dica, index) => (
                   <div key={index} className="dica-item">

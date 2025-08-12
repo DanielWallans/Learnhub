@@ -48,9 +48,10 @@ export const CONFIG = {
       trabalho: '#3498db',
       pessoal: '#9b59b6',
       estudos: '#f39c12',
-      saude: '#27ae60',
+  
       financas: '#e67e22',
-      outros: '#95a5a6'
+        projetos: '#8e44ad',
+        outros: '#95a5a6'
     }
   },
   

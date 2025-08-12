@@ -130,7 +130,7 @@ class NotificationService {
   }
 
   async notifyAchievement(achievementName) {
-    return this.showNotification('Conquista Desbloqueada! 🎉', {
+    return this.showNotification('Conquista Desbloqueada!', {
       body: `Parabéns! Você conquistou: ${achievementName}`,
       tag: 'achievement',
       requireInteraction: true,

@@ -12,7 +12,8 @@ import {
   FaStar,
   FaHeart,
   FaWallet,
-  FaCogs
+  FaCogs,
+  FaTasks
 } from 'react-icons/fa';
 import './dashboard-ultra.css';
 
@@ -49,6 +50,10 @@ const Dashboard = () => {
     }
   }, [navigate]);
 
+  const navigateToProjetos = useCallback(() => {
+    navigate('/projetos');
+  }, [navigate]);
+
   const handleOpenPerfil = useCallback(() => {
     setShowPerfil(true);
   }, []);
@@ -77,6 +82,8 @@ const Dashboard = () => {
   const navigateToLeitura = useCallback(() => {
     navigate('/leitura');
   }, [navigate]);
+
+
 
   // Monitora autenticação - otimizado
   useEffect(() => {
@@ -263,6 +270,24 @@ const Dashboard = () => {
                   </div>
                   <div className="module-arrow">→</div>
                 </div>
+                
+                <div 
+                  className="module-card"
+                  onClick={navigateToProjetos}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => e.key === 'Enter' && navigateToProjetos()}
+                >
+                  <div className="module-icon">
+                    <FaTasks />
+                  </div>
+                  <div className="module-content">
+                    <h3>Módulo de Projetos</h3>
+                    <p>Organize e gerencie seus projetos de vida, carreira, estudos, portfólio e empreendimentos.</p>
+                  </div>
+                  <div className="module-arrow">→</div>
+                </div>
+
               </div>
             </div>
           </div>

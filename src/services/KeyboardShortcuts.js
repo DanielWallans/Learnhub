@@ -32,8 +32,8 @@ class KeyboardShortcuts {
     }, 'Ir para Finanças');
 
     this.register('ctrl+4', () => {
-      window.location.hash = '#/saude';
-    }, 'Ir para Saúde');
+      window.location.hash = '#/projetos';
+    }, 'Ir para Projetos');
 
     this.register('ctrl+5', () => {
       window.location.hash = '#/leituras';

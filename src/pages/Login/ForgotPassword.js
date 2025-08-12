@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { auth } from "../../firebaseConfig";
 import { sendPasswordResetEmail } from "firebase/auth";
+import { FaRocket } from "react-icons/fa";
 import "./login.css";
 
 function ForgotPassword() {
@@ -76,7 +77,7 @@ function ForgotPassword() {
                 Enviando...
               </>
             ) : (
-              "🚀 Enviar Link"
+              <><FaRocket /> Enviar Link</>
             )}
           </button>
         </form>

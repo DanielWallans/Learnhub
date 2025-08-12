@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { FaStar } from 'react-icons/fa';
 import './Footer.css';
 
 const Footer = ({ minimal = false }) => {
@@ -111,7 +112,7 @@ const Footer = ({ minimal = false }) => {
               © {currentYear} <span className="gradient-text">Daniel Wallans</span>
             </p>
             <p className="footer-subtitle">
-              Transformando a educação através da tecnologia ✨
+              Transformando a educação através da tecnologia <FaStar />
             </p>
           </div>
           
