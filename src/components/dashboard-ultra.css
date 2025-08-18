@@ -386,9 +386,12 @@ body {
 
 /* ===== GRID DE MÓDULOS ===== */
 .modules-grid {
-  display: flex;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+  gap: 40px;
+  justify-items: center;
   margin-top: 30px;
+  padding: 0 20px;
 }
 
 .module-card {
@@ -934,7 +937,9 @@ body {
   }
 
   .modules-grid {
-    justify-content: center;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 30px;
+    padding: 0 15px;
   }
 
   .floating-icons {
@@ -992,7 +997,9 @@ body {
   }
 
   .modules-grid {
-    justify-content: center;
+    grid-template-columns: 1fr;
+    gap: 25px;
+    padding: 0 10px;
   }
 
   .ultra-logo h1 {

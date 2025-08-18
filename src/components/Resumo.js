@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebaseConfig';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { FaSun, FaMoon, FaCloudSun, FaTrendingUp, FaClock } from 'react-icons/fa';
+import { FaSun, FaMoon, FaCloudSun, FaChartLine, FaClock } from 'react-icons/fa';
+import './Resumo.css';
 
 function Resumo() {
   const [dadosResumo, setDadosResumo] = useState({
@@ -208,7 +209,7 @@ function Resumo() {
         <div className="resumo-atividades">
           <div className="atividades-header">
             <h3 className="atividades-titulo">
-              <span className="atividades-icon"><FaTrendingUp /></span>
+              <span className="atividades-icon"><FaChartLine /></span>
               Atividade Recente
             </h3>
           </div>
