@@ -1,4 +1,4 @@
-const CACHE_NAME = 'learnhub-v1.0.0';
+const CACHE_NAME = 'learnhub-v1.0.1';
 const urlsToCache = [
   '/',
   '/static/js/bundle.js',
@@ -35,17 +35,35 @@ self.addEventListener('activate', event => {
           }
         })
       );
+    }).then(() => {
+      // Força o service worker a assumir controle imediatamente
+      return self.clients.claim();
     })
   );
 });
 
 // Interceptar requisições
 self.addEventListener('fetch', event => {
+  // Durante desenvolvimento, sempre buscar da rede para CSS e JS
+  if (event.request.url.includes('.css') || event.request.url.includes('.js') || event.request.url.includes('hot-update')) {
+    event.respondWith(fetch(event.request));
+    return;
+  }
+
   event.respondWith(
     caches.match(event.request)
       .then(response => {
-        // Cache hit - retorna a resposta
+        // Cache hit - mas sempre verificar se há versão mais nova
         if (response) {
+          // Buscar versão atualizada em background
+          fetch(event.request).then(fetchResponse => {
+            if (fetchResponse && fetchResponse.status === 200) {
+              const responseClone = fetchResponse.clone();
+              caches.open(CACHE_NAME).then(cache => {
+                cache.put(event.request, responseClone);
+              });
+            }
+          }).catch(() => {});
           return response;
         }
 
@@ -143,6 +161,19 @@ function doBackgroundSync() {
 self.addEventListener('message', event => {
   if (event.data && event.data.type === 'SKIP_WAITING') {
     self.skipWaiting();
+  }
+  
+  if (event.data && event.data.type === 'CLEAR_CACHE') {
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(cacheName => {
+          console.log('Limpando cache:', cacheName);
+          return caches.delete(cacheName);
+        })
+      );
+    }).then(() => {
+      event.ports[0].postMessage({ success: true });
+    });
   }
 });
 

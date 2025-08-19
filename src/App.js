@@ -1,4 +1,5 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect } from 'react';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Cadastros from './pages/Cadastros';
@@ -10,14 +11,14 @@ import ModuloFinancas from './components/financas';
 import Habilidades from './components/Habilidades';
 import Leitura from './components/Leitura';
 
-
-
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
 import PrivateRoute from './components/PrivateRoute';
 import ForgotPassword from "./pages/Login/ForgotPassword";
 import Dashboard from './components/Dashboard';
 import BoasVindas from './components/BoasVindas';
+import CacheManager from './components/CacheManager';
+import { setupCacheShortcuts, detectCacheIssues, fixCacheIssues } from './utils/cacheUtils';
 
 // ...existing code...
 
@@ -63,10 +64,29 @@ function AppRoutes() {
 }
 
 function App() {
+  useEffect(() => {
+    // Configurar atalhos de teclado para cache
+    setupCacheShortcuts();
+    
+    // Detectar problemas de cache na inicialização
+    if (detectCacheIssues()) {
+      console.warn('Problemas de cache detectados. Use Ctrl+Shift+R para limpar.');
+    }
+    
+    // Adicionar listener para detectar atualizações do service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.addEventListener('controllerchange', () => {
+        console.log('Service Worker atualizado, recarregando página...');
+        window.location.reload();
+      });
+    }
+  }, []);
+
   return (
     <ThemeProvider>
       <AuthProvider>
         <AppRoutes />
+        <CacheManager />
       </AuthProvider>
     </ThemeProvider>
   );
