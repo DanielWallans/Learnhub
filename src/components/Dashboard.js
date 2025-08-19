@@ -12,9 +12,11 @@ import {
   FaStar,
   FaHeart,
   FaWallet,
-  FaCogs
+  FaCogs,
+  FaBug
 } from 'react-icons/fa';
 import './dashboard-ultra.css';
+import RelatorioBug from './RelatorioBug';
 
 // Lazy loading dos componentes pesados
 const Resumo = lazy(() => import('./Resumo'));
@@ -28,6 +30,7 @@ const Dashboard = () => {
   const [foto, setFoto] = useState('');
   const [dadosAluno, setDadosAluno] = useState(null);
   const [showPerfil, setShowPerfil] = useState(false);
+  const [showBugReport, setShowBugReport] = useState(false);
   const [activeModule, setActiveModule] = useState('resumo');
   const [loading, setLoading] = useState(true);
 
@@ -63,6 +66,14 @@ const Dashboard = () => {
     setDadosAluno(prev => ({ ...prev, ...newData }));
     setNome(newData.nome || newData.nomeCompleto || nome);
   }, [nome]);
+
+  const handleOpenBugReport = useCallback(() => {
+    setShowBugReport(true);
+  }, []);
+
+  const handleCloseBugReport = useCallback(() => {
+    setShowBugReport(false);
+  }, []);
 
   const navigateToCarreira = useCallback(() => {
     navigate('/carreira');
@@ -161,6 +172,14 @@ const Dashboard = () => {
               <h1>LearnHub</h1>
             </div>
             <div className="header-actions">
+              <button 
+                className="bug-report-btn"
+                onClick={handleOpenBugReport}
+                title="Reportar problema ou sugestão"
+              >
+                <FaBug />
+                <span>Reportar Bug</span>
+              </button>
               <div className="user-controls">
                 <div onClick={handleOpenPerfil}>
                   <img src={foto} alt="Perfil" className="avatar-img" />
@@ -312,6 +331,11 @@ const Dashboard = () => {
             onUpdateProfile={handleUpdateProfile}
           />
         </Suspense>
+      )}
+
+      {/* Modal de Relatório de Bug */}
+      {showBugReport && (
+        <RelatorioBug onClose={handleCloseBugReport} />
       )}
     </div>
   );
