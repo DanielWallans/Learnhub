@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { auth, db } from "../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
-import "./loginAluno.css";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaGraduationCap, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaArrowLeft, FaExclamationCircle, FaSignInAlt } from "react-icons/fa";
 
 function LoginAluno() {
   const [email, setEmail] = useState("");
@@ -19,14 +20,11 @@ function LoginAluno() {
     setError("");
 
     try {
-      // Autenticando usuário no Firebase Authentication
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
       
-      // Verifica se o usuário existe na coleção "alunos", se não existir, cria
       const userDoc = await getDoc(doc(db, "alunos", user.uid));
       if (!userDoc.exists()) {
-        console.log("Usuário não encontrado na coleção alunos, criando...");
         await setDoc(doc(db, "alunos", user.uid), {
           uid: user.uid,
           email: user.email,
@@ -38,25 +36,23 @@ function LoginAluno() {
     } catch (error) {
       console.error("Erro ao fazer login:", error.code, error.message);
       
-      // Mensagens de erro mais amigáveis
-      let errorMessage = "Erro ao fazer login";
+      let errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
       switch (error.code) {
         case "auth/user-not-found":
-          errorMessage = "Usuário não encontrado";
+          errorMessage = "Usuário não encontrado.";
           break;
         case "auth/wrong-password":
-          errorMessage = "Senha incorreta";
+          errorMessage = "Senha incorreta.";
           break;
         case "auth/invalid-email":
-          errorMessage = "Email inválido";
+          errorMessage = "Email inválido.";
           break;
         case "auth/too-many-requests":
-          errorMessage = "Muitas tentativas. Tente novamente mais tarde";
+          errorMessage = "Muitas tentativas. Tente novamente mais tarde.";
           break;
         default:
-          errorMessage = "Erro ao fazer login. Verifique suas credenciais";
+          errorMessage = "Erro ao fazer login. Verifique suas credenciais.";
       }
-      
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -72,152 +68,146 @@ function LoginAluno() {
   };
 
   return (
-    <div className="login-aluno-container">
-      <div className="login-aluno-wrapper">
-        {/* Header com logo e título */}
-        <div className="login-header">
-          <div className="logo-container">
-            <div className="logo-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-              </svg>
-            </div>
-            <h1 className="logo-text">LearnHub</h1>
-          </div>
-          <h2 className="login-aluno-title">Área do Estudante</h2>
-          <p className="login-subtitle">Acesse sua conta para continuar seus estudos</p>
-        </div>
+    <div className="min-h-screen bg-background text-on-surface flex items-center justify-center p-6 relative overflow-hidden font-body-md">
+      {/* Efeitos luminosos de fundo */}
+      <div className="bg-effects">
+        <div className="particle particle-1"></div>
+        <div className="particle particle-2"></div>
+      </div>
 
-        {/* Formulário de login */}
-        <div className="login-aluno-box">
-          <form onSubmit={handleLogin} className="login-form">
-            {/* Campo de email */}
-            <div className="input-group">
-              <label htmlFor="email" className="input-label">Email</label>
-              <div className="input-wrapper">
-                <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                  <polyline points="22,6 12,13 2,6"/>
-                </svg>
+      <motion.div 
+        className="max-w-md w-full z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {/* Card de Login */}
+        <div className="glass-card p-8 rounded-[32px] border border-outline-variant/30 shadow-xl flex flex-col items-center">
+          
+          {/* Header */}
+          <div className="flex flex-col items-center mb-8 text-center">
+            <motion.div 
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-secondary text-on-primary flex items-center justify-center mb-4 text-2xl shadow-md"
+              whileHover={{ rotate: 10 }}
+            >
+              <FaGraduationCap />
+            </motion.div>
+            <h1 className="font-display text-3xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-1">LearnHub</h1>
+            <h2 className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Área do Estudante</h2>
+            <p className="text-xs text-on-surface-variant/80 mt-1">Acesse sua conta para continuar seus estudos</p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleLogin} className="w-full flex flex-col gap-5">
+            
+            {/* Email Field */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="email" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email</label>
+              <div className="relative">
+                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
                 <input
                   id="email"
                   type="email"
                   placeholder="seu.email@exemplo.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="login-aluno-input"
+                  className="w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border border-outline-variant/20 rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white"
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
 
-            {/* Campo de senha */}
-            <div className="input-group">
-              <label htmlFor="senha" className="input-label">Senha</label>
-              <div className="input-wrapper">
-                <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                  <circle cx="12" cy="16" r="1"/>
-                  <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-                </svg>
+            {/* Password Field */}
+            <div className="flex flex-col gap-1.5">
+              <label htmlFor="senha" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Senha</label>
+              <div className="relative">
+                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
                 <input
                   id="senha"
                   type={showPassword ? "text" : "password"}
                   placeholder="Digite sua senha"
                   value={senha}
                   onChange={(e) => setSenha(e.target.value)}
-                  className="login-aluno-input"
+                  className="w-full pl-11 pr-11 py-3 bg-surface-container-low dark:bg-surface-container border border-outline-variant/20 rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white"
                   required
+                  disabled={loading}
                 />
                 <button
                   type="button"
                   onClick={togglePasswordVisibility}
-                  className="password-toggle"
-                  aria-label={showPassword ? "Ocultar senha" : "Mostrar senha"}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+                  disabled={loading}
                 >
-                  {showPassword ? (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                      <line x1="1" y1="1" x2="23" y2="23"/>
-                    </svg>
-                  ) : (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                      <circle cx="12" cy="12" r="3"/>
-                    </svg>
-                  )}
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
                 </button>
               </div>
             </div>
 
-            {/* Mensagem de erro */}
-            {error && (
-              <div className="error-message">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="15" y1="9" x2="9" y2="15"/>
-                  <line x1="9" y1="9" x2="15" y2="15"/>
-                </svg>
-                {error}
-              </div>
-            )}
+            {/* Error Message */}
+            <AnimatePresence>
+              {error && (
+                <motion.div 
+                  className="flex items-center gap-2 text-xs font-bold text-error bg-error/10 border border-error/20 p-3.5 rounded-2xl"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <FaExclamationCircle className="text-sm shrink-0" />
+                  <span>{error}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
 
-            {/* Botão de login */}
-            <button 
-              type="submit" 
-              className={`login-aluno-button ${loading ? 'loading' : ''}`}
+            {/* Submit Button */}
+            <motion.button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-primary to-secondary text-on-primary font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
               disabled={loading}
+              whileTap={{ scale: 0.98 }}
             >
               {loading ? (
                 <>
-                  <div className="spinner"></div>
-                  Entrando...
+                  <div className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></div>
+                  <span>Entrando...</span>
                 </>
               ) : (
                 <>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                    <polyline points="10,17 15,12 10,7"/>
-                    <line x1="15" y1="12" x2="3" y2="12"/>
-                  </svg>
-                  Entrar
+                  <FaSignInAlt />
+                  <span>Entrar</span>
                 </>
               )}
-            </button>
+            </motion.button>
           </form>
 
-          {/* Links adicionais */}
-          <div className="login-footer">
-            <div className="divider">
-              <span>ou</span>
-            </div>
-            
-            <button 
-              type="button" 
-              onClick={handleBackToHome} 
-              className="secondary-button"
-            >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <polyline points="15,18 9,12 15,6"/>
-              </svg>
-              Voltar ao início
-            </button>
+          {/* Divider */}
+          <div className="w-full flex items-center gap-4 my-6 text-xs text-on-surface-variant/60 font-bold uppercase tracking-widest">
+            <div className="h-px bg-outline-variant/20 flex-1"></div>
+            <span>ou</span>
+            <div className="h-px bg-outline-variant/20 flex-1"></div>
           </div>
-        </div>
 
-        {/* Rodapé */}
-        <div className="login-bottom">
-          <p>Não tem uma conta? 
+          {/* Actions Footer */}
+          <button 
+            type="button" 
+            onClick={handleBackToHome} 
+            className="w-full py-3.5 bg-surface-container-lowest dark:bg-inverse-surface border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-95 text-sm"
+          >
+            <FaArrowLeft />
+            <span>Voltar ao início</span>
+          </button>
+
+          <p className="mt-8 text-sm text-on-surface-variant">
+            Não tem uma conta?{" "}
             <button 
               onClick={() => navigate("/cadastro-aluno")} 
-              className="link-button inline"
+              className="text-primary font-bold hover:underline"
             >
               Cadastre-se aqui
             </button>
           </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

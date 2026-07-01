@@ -1,10 +1,9 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useEffect } from 'react';
 import Login from './pages/Login';
 import Home from './pages/Home';
 import Cadastros from './pages/Cadastros';
 import CadastroAluno from './pages/CadastroAluno';
-import LoginAluno from './pages/LoginAluno';
 import RecuperarSenha from './pages/RecuperarSenha';
 import ModuloCarreira from './components/carreira';
 import ModuloFinancas from './components/financas';
@@ -13,53 +12,65 @@ import Leitura from './components/Leitura';
 
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
-import PrivateRoute from './components/PrivateRoute';
+
 import ForgotPassword from "./pages/Login/ForgotPassword";
 import Dashboard from './components/Dashboard';
 import BoasVindas from './components/BoasVindas';
 import CacheManager from './components/CacheManager';
 import { setupCacheShortcuts, detectCacheIssues, fixCacheIssues } from './utils/cacheUtils';
+import { NavBar } from './components/ui/tubelight-navbar';
+import { Home as HomeIcon, Briefcase, Wallet, CheckCircle, BookOpen } from 'lucide-react';
 
-// ...existing code...
-
-function AppRoutes() {
+function AppLayout() {
   const { currentUser } = useAuth();
+  const location = useLocation();
+
+  // Itens de navegação para alunos logados
+  const studentNavItems = [
+    { name: 'Início', url: '/dashboard', icon: HomeIcon },
+    { name: 'Carreira', url: '/carreira', icon: Briefcase },
+    { name: 'Finanças', url: '/financas', icon: Wallet },
+    { name: 'Hábitos', url: '/habilidades', icon: CheckCircle },
+    { name: 'Biblioteca', url: '/leitura', icon: BookOpen }
+  ];
+
+  const isStudentPage = ['/dashboard', '/financas'].includes(location.pathname);
+  const showStudentNavBar = currentUser && isStudentPage;
 
   return (
-    <Router>
+    <>
+      {showStudentNavBar && <NavBar items={studentNavItems} />}
       <Routes>
         {/* rotas públicas */}
         <Route path="/login" element={<Login />} />
         <Route path="/esqueci-senha" element={<ForgotPassword />} />
         <Route path="/recuperar-senha" element={<RecuperarSenha />} />
-      <Route path="/cadastros" element={<Cadastros />} />
-      <Route path="/cadastro-aluno" element={<CadastroAluno />} />
-      <Route path="/login-aluno" element={<LoginAluno />} />
-      <Route path="/boas-vindas" element={<BoasVindas />} />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/carreira" element={<ModuloCarreira />} />
-      <Route path="/financas" element={<ModuloFinancas />} />
-      <Route path="/habilidades" element={<Habilidades />} />
-      <Route path="/leitura" element={<Leitura />} />
+        <Route path="/cadastros" element={<Cadastros />} />
+        <Route path="/cadastro-aluno" element={<CadastroAluno />} />
+        <Route path="/login-aluno" element={<Navigate to="/login" replace />} />
+        <Route path="/boas-vindas" element={<BoasVindas />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/carreira" element={<ModuloCarreira />} />
+        <Route path="/financas" element={<ModuloFinancas />} />
+        <Route path="/habilidades" element={<Habilidades />} />
+        <Route path="/leitura" element={<Leitura />} />
 
+        {/* algumas rotas específicas do sistema */}
+        <Route path="/home" element={<Home />} />
+        <Route
+          path="/"
+          element={<Navigate to="/home" replace />}
+        />
+      </Routes>
+    </>
+  );
+}
 
-
-
-      {/* algumas rotas específicas do sistema */}
-      <Route
-        path="/home"
-        element={
-          <PrivateRoute>
-            <Home />
-          </PrivateRoute>
-        }
-      />
-      <Route
-        path="/"
-        element={currentUser ? <Navigate to="/home" replace /> : <Navigate to="/login" replace />}
-      />
-    </Routes>
-  </Router>
+function AppRoutes() {
+  return (
+    <Router>
+      <AppLayout />
+    </Router>
   );
 }
 

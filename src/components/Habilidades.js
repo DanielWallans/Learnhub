@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
 import { db, auth } from '../firebaseConfig';
 import { 
   collection, 
   query, 
   where, 
-  getDocs, 
   addDoc, 
   updateDoc, 
   deleteDoc,
@@ -14,169 +14,84 @@ import {
 } from 'firebase/firestore';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { 
-  FaBook, FaBullseye, FaEdit, FaSync, FaClock, FaPalette, FaChartLine, FaUsers, 
-  FaBan, FaCheck, FaRocket, FaRobot, FaWalking, FaWater, FaBed, FaAppleAlt, 
-  FaRunning, FaDumbbell, FaOm, FaMobile, FaStrongArm, FaUtensils, FaBrain, 
-  FaPencilAlt, FaCamera, FaStar, FaTheaterMasks, FaRedo, FaGraduationCap, 
-  FaMoneyBillWave, FaHandPaper, FaSmile, FaParty, FaComments, FaHandshake, 
-  FaPhone, FaMicrophone, FaGlobe, FaLightbulb, FaFire, FaClipboardList, 
-  FaTimes, FaExclamationTriangle, FaStop, FaEar
-} from 'react-icons/fa';
+  Server, Wrench, HardDrive, Cpu, Scale, Shield, Plus, ArrowLeft, 
+  Lightbulb, Trash2, Play, Pause, Edit3, Sparkles, X, Check, Target, Clock, Calendar
+} from 'lucide-react';
 import './Habilidades.css';
+import Loading from './Loading';
+import HabilidadesBg from '../IMG/HABILIDADES.jpg';
 
 const Habilidades = () => {
   const navigate = useNavigate();
   const [user, loading, error] = useAuthState(auth);
   
   const [habilidades, setHabilidades] = useState([]);
-
-  const [novaHabilidade, setNovaHabilidade] = useState({
-    nome: '',
-    categoria: 'Estudo',
-    descricao: '',
-    nivel: 'Iniciante',
-    meta: '',
-    prazo: '1 mês',
-    dataInicio: new Date().toISOString().split('T')[0]
-  });
-
-  const [habilidadeEditando, setHabilidadeEditando] = useState(null);
-  const [mostrarFormulario, setMostrarFormulario] = useState(false);
-  const [modoEdicao, setModoEdicao] = useState(false);
-  const [filtroCategoria, setFiltroCategoria] = useState('Todas');
   const [carregando, setCarregando] = useState(true);
   const [salvando, setSalvando] = useState(false);
+  const [seeding, setSeeding] = useState(false);
 
-  const categorias = ['Todas', 'Estudo', 'Produtividade', 'Saúde', 'Criatividade', 'Social'];
+  // Flow control states
+  const [showDashboard, setShowDashboard] = useState(false);
+  const [selectedSkillId, setSelectedSkillId] = useState(null);
+  const [pulsingAxisIndex, setPulsingAxisIndex] = useState(null);
+  const [justAddedId, setJustAddedId] = useState(null);
+  
+  // Category tabs filter
+  const [filtroCategoria, setFiltroCategoria] = useState('Todas');
+
+  // FAB addition form state
+  const [showFabForm, setShowFabForm] = useState(false);
+  const [newSkillName, setNewSkillName] = useState('');
+  const [newSkillCategory, setNewSkillCategory] = useState('Estudo');
+  const [newSkillLevel, setNewSkillLevel] = useState('Iniciante');
+
+  // Detail panel editing state
+  const [isEditingDetail, setIsEditingDetail] = useState(false);
+  const [editNome, setEditNome] = useState('');
+  const [editDescricao, setEditDescricao] = useState('');
+  const [editCategoria, setEditCategoria] = useState('Estudo');
+  const [editNivel, setEditNivel] = useState('Iniciante');
+  const [editMeta, setEditMeta] = useState('');
+  const [editPrazo, setEditPrazo] = useState('1 mês');
+  const [editDataInicio, setEditDataInicio] = useState('');
+
+  const categorias = ['Estudo', 'Produtividade', 'Criatividade', 'Saúde', 'Social'];
   const niveis = ['Iniciante', 'Intermediário', 'Avançado'];
-  const prazos = ['1 dia', '1 semana', '2 semanas', '1 mês', '3 meses', '6 meses', '1 ano', 'Personalizado'];
+  const prazos = ['1 dia', '1 semana', '2 semanas', '1 mês', '3 meses', '6 meses', '1 ano'];
 
-  // Sistema de dicas personalizadas
-  const obterDicasHabilidade = (categoria, nivel, progresso) => {
-    const dicasPorCategoria = {
-      'Estudo': {
-        'Iniciante': [
-          '<FaBook /> Comece com sessões de 15-20 minutos para criar o hábito',
-          '<FaBullseye /> Defina um horário fixo para estudar todos os dias',
-          '<FaEdit /> Use técnicas simples como resumos e mapas mentais',
-          '<FaSync /> Revise o conteúdo no dia seguinte para fixar'
-        ],
-        'Intermediário': [
-          '<FaClock /> Aplique a técnica Pomodoro (25min estudo + 5min pausa)',
-          '<FaPalette /> Varie as técnicas: flashcards, diagramas, explicação oral',
-          '<FaChartLine /> Acompanhe seu desempenho e identifique pontos fracos',
-          '<FaUsers /> Forme grupos de estudo ou encontre um parceiro'
-        ],
-        'Avançado': [
-          '<FaBrain /> Use técnicas avançadas como método Feynman e spaced repetition',
-          '<FaChartLine /> Crie um sistema de revisão espaçada personalizado',
-          '<FaGraduationCap /> Ensine outros para consolidar seu conhecimento',
-          '<FaBrain /> Aplique o conhecimento em projetos práticos'
-        ]
-      },
-      'Produtividade': {
-        'Iniciante': [
-          '<FaClipboardList /> Faça uma lista simples de 3 tarefas prioritárias por dia',
-          '<FaClock /> Use um timer para controlar o tempo das atividades',
-          '<FaBan /> Elimine uma distração por vez (celular, redes sociais)',
-          '<FaCheck /> Comemore pequenas conquistas para manter a motivação'
-        ],
-        'Intermediário': [
-          '<FaBullseye /> Implemente a matriz de Eisenhower (urgente vs importante)',
-          '<FaMobile /> Use aplicativos de produtividade como Todoist ou Notion',
-          '<FaSync /> Estabeleça rotinas matinais e noturnas consistentes',
-          '<FaChartLine /> Analise semanalmente onde seu tempo está sendo gasto'
-        ],
-        'Avançado': [
-          '<FaRocket /> Domine técnicas como GTD (Getting Things Done)',
-          '<FaRobot /> Automatize tarefas repetitivas sempre que possível',
-          '<FaChartLine /> Otimize fluxos de trabalho com ferramentas avançadas',
-          '<FaPalette /> Desenvolva sistemas personalizados de organização'
-        ]
-      },
-      'Saúde': {
-        'Iniciante': [
-          '<FaWalking /> Comece com caminhadas de 10-15 minutos diários',
-          '<FaWater /> Beba um copo de água ao acordar e antes das refeições',
-          '<FaBed /> Estabeleça um horário fixo para dormir e acordar',
-          '<FaAppleAlt /> Inclua uma fruta ou vegetal em cada refeição'
-        ],
-        'Intermediário': [
-          '<FaRunning /> Alterne entre exercícios aeróbicos e de força',
-          '<FaAppleAlt /> Planeje refeições semanalmente e prepare marmitas',
-          '<FaOm /> Pratique 10 minutos de meditação ou respiração',
-          '<FaMobile /> Use apps para monitorar atividade física e sono'
-        ],
-        'Avançado': [
-          '<FaDumbbell /> Crie um programa de treino periodizado e progressivo',
-          '<FaUtensils /> Calcule macronutrientes e ajuste dieta aos objetivos',
-          '<FaBrain /> Integre práticas de mindfulness no dia a dia',
-          '<FaChartLine /> Monitore biomarcadores e ajuste estratégias'
-        ]
-      },
-      'Criatividade': {
-        'Iniciante': [
-          '<FaPencilAlt /> Dedique 10 minutos diários para desenhar ou escrever',
-          '<FaPalette /> Experimente uma nova técnica criativa por semana',
-          '<FaCamera /> Documente ideias criativas em um caderno ou app',
-          '<FaStar /> Não julgue suas criações, foque no processo'
-        ],
-        'Intermediário': [
-          '<FaTheaterMasks /> Combine diferentes formas de arte (música + visual)',
-          '<FaUsers /> Participe de comunidades criativas online ou presenciais',
-          '<FaRedo /> Estabeleça projetos criativos com prazos definidos',
-          '<FaBook /> Estude trabalhos de artistas que você admira'
-        ],
-        'Avançado': [
-          '<FaRocket /> Desenvolva seu estilo único e assinatura criativa',
-          '<FaMoneyBillWave /> Monetize suas criações através de plataformas digitais',
-          '<FaGraduationCap /> Ensine sua arte para outros e receba feedback',
-          '<FaGlobe /> Participe de concursos e exposições para visibilidade'
-        ]
-      },
-      'Social': {
-        'Iniciante': [
-          '<FaHandPaper /> Cumprimente uma pessoa nova por dia',
-          '<FaEar /> Pratique escuta ativa em conversas',
-          '<FaSmile /> Sorria mais e mantenha contato visual',
-          '<FaMobile /> Limite uso de redes sociais durante interações'
-        ],
-        'Intermediário': [
-          '<FaParty /> Participe de eventos e atividades em grupo',
-          '<FaComments /> Inicie conversas sobre interesses em comum',
-          '<FaHandshake /> Ofereça ajuda e apoio quando apropriado',
-          '<FaPhone /> Mantenha contato regular com amigos e família'
-        ],
-        'Avançado': [
-          '<FaMicrophone /> Desenvolva habilidades de apresentação e oratória',
-          '<FaGlobe /> Construa uma rede profissional sólida',
-          '<FaUsers /> Lidere grupos ou projetos colaborativos',
-          '<FaBrain /> Pratique empatia e inteligência emocional'
-        ]
-      }
-    };
+  // Radar axis definitions
+  const radarAxes = [
+    { name: 'Lógica & Algoritmos', categories: ['Estudo'] },
+    { name: 'Desenvolvimento Back-end', categories: ['Produtividade'] },
+    { name: 'Infraestrutura & Hardware', categories: ['Criatividade'] },
+    { name: 'Gestão & Cuidados', categories: ['Saúde', 'Social'] }
+  ];
 
-    const dicasCategoria = dicasPorCategoria[categoria] || dicasPorCategoria['Estudo'];
-    const dicasNivel = dicasCategoria[nivel] || dicasCategoria['Iniciante'];
-    
-    // Seleciona dicas baseadas no progresso
-    if (progresso < 25) {
-      return dicasNivel.slice(0, 2); // Primeiras 2 dicas para iniciantes
-    } else if (progresso < 75) {
-      return dicasNivel.slice(1, 3); // Dicas intermediárias
-    } else {
-      return dicasNivel.slice(2, 4); // Dicas avançadas
+  // Helper to calculate completion date based on term
+  const calcularDataConclusao = (dataInicio, prazo) => {
+    const data = new Date(dataInicio);
+    switch (prazo) {
+      case '1 dia': data.setDate(data.getDate() + 1); break;
+      case '1 semana': data.setDate(data.getDate() + 7); break;
+      case '2 semanas': data.setDate(data.getDate() + 14); break;
+      case '1 mês': data.setMonth(data.getMonth() + 1); break;
+      case '3 meses': data.setMonth(data.getMonth() + 3); break;
+      case '6 meses': data.setMonth(data.getMonth() + 6); break;
+      case '1 ano': data.setFullYear(data.getFullYear() + 1); break;
+      default: data.setMonth(data.getMonth() + 1);
     }
+    return data.toISOString().split('T')[0];
   };
 
-  // Carregar habilidades do Firebase
+  // No-op (previously seedDefaultSkills)
+
+  // Firebase Firestore Realtime sync
   useEffect(() => {
     if (!user) {
       setCarregando(false);
       return;
     }
 
-    console.log('🔥 Configurando listener Firebase para habilidades...');
     const habilidadesQuery = query(
       collection(db, 'habilidades'),
       where('userId', '==', user.uid)
@@ -187,85 +102,52 @@ const Habilidades = () => {
       snapshot.docs.forEach(doc => {
         habilidadesData.push({ id: doc.id, ...doc.data() });
       });
-      
-      console.log(`📋 ${habilidadesData.length} habilidades carregadas do Firebase`);
       setHabilidades(habilidadesData);
       setCarregando(false);
     }, (error) => {
-      console.error('❌ Erro ao carregar habilidades:', error);
+      console.error('Erro ao conectar Firestore:', error);
       setCarregando(false);
     });
 
-    return () => {
-      console.log('🛑 Desconectando listener de habilidades');
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, [user]);
 
-  // Função para calcular data de conclusão baseada no prazo
-  const calcularDataConclusao = (dataInicio, prazo) => {
-    const data = new Date(dataInicio);
-    
-    switch (prazo) {
-      case '1 dia':
-        data.setDate(data.getDate() + 1);
-        break;
-      case '1 semana':
-        data.setDate(data.getDate() + 7);
-        break;
-      case '2 semanas':
-        data.setDate(data.getDate() + 14);
-        break;
-      case '1 mês':
-        data.setMonth(data.getMonth() + 1);
-        break;
-      case '3 meses':
-        data.setMonth(data.getMonth() + 3);
-        break;
-      case '6 meses':
-        data.setMonth(data.getMonth() + 6);
-        break;
-      case '1 ano':
-        data.setFullYear(data.getFullYear() + 1);
-        break;
-      default:
-        data.setMonth(data.getMonth() + 1); // Default para 1 mês
+  // One-time cleanup trigger to clear old seeded skills for this user
+  useEffect(() => {
+    const clearDatabaseOnce = async () => {
+      if (!user || habilidades.length === 0) return;
+      const hasCleared = localStorage.getItem('learnhub_cleared_seed_v3') === 'true';
+      if (!hasCleared) {
+        console.log('🧹 Limpando dados semeados antigos...');
+        const seedNames = [
+          'Java & Spring Boot',
+          'Manutenção de Impressoras',
+          'Ventoy & Sergei Strelec',
+          'Lógica de Programação',
+          'Cálculos de Nutrição Felina',
+          'Ferramentas de Segurança'
+        ];
+        const seedsToClear = habilidades.filter(h => seedNames.includes(h.nome));
+        for (const h of seedsToClear) {
+          await deletarHabilidadeFirebase(h.id);
+        }
+        localStorage.setItem('learnhub_cleared_seed_v3', 'true');
+        console.log('🧹 Limpeza concluída!');
+      }
+    };
+    if (!carregando) {
+      clearDatabaseOnce();
     }
-    
-    return data.toISOString().split('T')[0];
+  }, [carregando, user, habilidades]);
+
+  // Handle enter transitions
+  const handleEnterDashboard = () => {
+    setShowDashboard(true);
+    sessionStorage.setItem('learnhub_habilidades_entered', 'true');
   };
 
-  // Função para iniciar edição de habilidade
-  const iniciarEdicao = (habilidade) => {
-    setHabilidadeEditando({
-      ...habilidade,
-      dataInicio: habilidade.dataInicio || new Date().toISOString().split('T')[0],
-      prazo: habilidade.prazo || '1 mês'
-    });
-    setModoEdicao(true);
-    setMostrarFormulario(true);
-  };
-
-  // Função para cancelar edição
-  const cancelarEdicao = () => {
-    setHabilidadeEditando(null);
-    setModoEdicao(false);
-    setMostrarFormulario(false);
-    setNovaHabilidade({
-      nome: '',
-      categoria: 'Estudo',
-      descricao: '',
-      nivel: 'Iniciante',
-      meta: '',
-      prazo: '1 mês',
-      dataInicio: new Date().toISOString().split('T')[0]
-    });
-  };
-
-  // Salvar habilidade no Firebase
+  // Firebase mutations wrapper
   const salvarHabilidadeFirebase = async (habilidade) => {
-    if (!user) return null;
-    
     try {
       const docRef = await addDoc(collection(db, 'habilidades'), {
         ...habilidade,
@@ -273,442 +155,1080 @@ const Habilidades = () => {
         createdAt: new Date(),
         updatedAt: new Date()
       });
-      console.log('✅ Habilidade salva no Firebase:', docRef.id);
       return docRef.id;
     } catch (error) {
-      console.error('❌ Erro ao salvar habilidade:', error);
+      console.error('Erro ao salvar no Firebase:', error);
       return null;
     }
   };
 
-  // Atualizar habilidade no Firebase
   const atualizarHabilidadeFirebase = async (id, dadosAtualizados) => {
-    if (!user || !id) return false;
-    
     try {
       const docRef = doc(db, 'habilidades', id);
       await updateDoc(docRef, {
         ...dadosAtualizados,
         updatedAt: new Date()
       });
-      console.log('✅ Habilidade atualizada no Firebase:', id);
       return true;
     } catch (error) {
-      console.error('❌ Erro ao atualizar habilidade:', error);
+      console.error('Erro ao atualizar no Firebase:', error);
       return false;
     }
   };
 
-  // Deletar habilidade do Firebase
   const deletarHabilidadeFirebase = async (id) => {
-    if (!user || !id) return false;
-    
     try {
       const docRef = doc(db, 'habilidades', id);
       await deleteDoc(docRef);
-      console.log('✅ Habilidade deletada do Firebase:', id);
       return true;
     } catch (error) {
-      console.error('❌ Erro ao deletar habilidade:', error);
+      console.error('Erro ao deletar do Firebase:', error);
       return false;
     }
   };
 
-  const adicionarHabilidade = async (e) => {
+  // Action Handlers
+  const handleCreateSkillSubmit = async (e) => {
     e.preventDefault();
-    if (!user) {
-      alert('Você precisa estar logado para gerenciar habilidades!');
-      return;
-    }
+    if (!user || !newSkillName.trim()) return;
 
-    const dadosHabilidade = modoEdicao ? habilidadeEditando : novaHabilidade;
+    setSalvando(true);
+    const dataInicioStr = new Date().toISOString().split('T')[0];
+    const initialProgress = newSkillLevel === 'Avançado' ? 80 : newSkillLevel === 'Intermediário' ? 45 : 10;
     
-    if (dadosHabilidade.nome && dadosHabilidade.descricao) {
-      setSalvando(true);
-      
-      const habilidade = {
-        ...dadosHabilidade,
-        dataConclusao: calcularDataConclusao(dadosHabilidade.dataInicio, dadosHabilidade.prazo),
-        progresso: modoEdicao ? dadosHabilidade.progresso : 0,
-        ativo: modoEdicao ? dadosHabilidade.ativo : true
-      };
-      
-      let sucesso;
-      if (modoEdicao) {
-        sucesso = await atualizarHabilidadeFirebase(habilidadeEditando.id, habilidade);
-      } else {
-        sucesso = await salvarHabilidadeFirebase(habilidade);
+    const skillObj = {
+      nome: newSkillName.trim(),
+      categoria: newSkillCategory,
+      nivel: newSkillLevel,
+      descricao: `Desenvolver competências em ${newSkillName.trim()}.`,
+      meta: 'Mapear progresso e aplicar no dia a dia.',
+      prazo: '1 mês',
+      dataInicio: dataInicioStr,
+      dataConclusao: calcularDataConclusao(dataInicioStr, '1 mês'),
+      progresso: initialProgress,
+      ativo: true
+    };
+
+    const docId = await salvarHabilidadeFirebase(skillObj);
+    if (docId) {
+      setJustAddedId(docId);
+      setSelectedSkillId(docId);
+      setShowFabForm(false);
+      setNewSkillName('');
+      // Trigger a pulse on the axis corresponding to the new skill category
+      const axisIndex = radarAxes.findIndex(a => a.categories.includes(newSkillCategory));
+      if (axisIndex !== -1) {
+        setPulsingAxisIndex(axisIndex);
+        setTimeout(() => setPulsingAxisIndex(null), 1000);
       }
-      
+      setTimeout(() => setJustAddedId(null), 3000);
+    } else {
+      alert('Não foi possível salvar a nova habilidade.');
+    }
+    setSalvando(false);
+  };
+
+  const handleUpdateProgress = async (id, delta) => {
+    const skill = habilidades.find(h => h.id === id);
+    if (!skill) return;
+    const newProg = Math.max(0, Math.min(100, (skill.progresso || 0) + delta));
+    
+    // Auto adjust levels based on progress thresholds
+    let newLvl = skill.nivel;
+    if (newProg >= 75) newLvl = 'Avançado';
+    else if (newProg >= 30) newLvl = 'Intermediário';
+    else newLvl = 'Iniciante';
+
+    await atualizarHabilidadeFirebase(id, { progresso: newProg, nivel: newLvl });
+  };
+
+  const handleToggleStatus = async (id) => {
+    const skill = habilidades.find(h => h.id === id);
+    if (!skill) return;
+    await atualizarHabilidadeFirebase(id, { ativo: !skill.ativo });
+  };
+
+  const handleDeleteSkill = async (id) => {
+    if (window.confirm('Tem certeza que deseja excluir esta habilidade?')) {
+      const sucesso = await deletarHabilidadeFirebase(id);
       if (sucesso) {
-        cancelarEdicao();
-      } else {
-        alert(`Erro ao ${modoEdicao ? 'atualizar' : 'salvar'} habilidade. Tente novamente.`);
+        if (selectedSkillId === id) setSelectedSkillId(null);
       }
-      setSalvando(false);
     }
   };
 
-  const alternarStatus = async (id) => {
-    if (!user) return;
+  // Open edit mode in detail panel
+  const handleOpenEditDetail = (skill) => {
+    setEditNome(skill.nome);
+    setEditDescricao(skill.descricao || '');
+    setEditCategoria(skill.categoria);
+    setEditNivel(skill.nivel);
+    setEditMeta(skill.meta || '');
+    setEditPrazo(skill.prazo || '1 mês');
+    setEditDataInicio(skill.dataInicio || new Date().toISOString().split('T')[0]);
+    setIsEditingDetail(true);
+  };
+
+  const handleSaveEditDetail = async (e) => {
+    e.preventDefault();
+    if (!selectedSkillId) return;
+
+    setSalvando(true);
+    const selectedSkill = habilidades.find(h => h.id === selectedSkillId);
+    if (!selectedSkill) return;
+
+    const dataConclusao = calcularDataConclusao(editDataInicio, editPrazo);
     
-    const habilidade = habilidades.find(hab => hab.id === id);
-    if (habilidade) {
-      await atualizarHabilidadeFirebase(id, { ativo: !habilidade.ativo });
+    const updated = {
+      nome: editNome,
+      descricao: editDescricao,
+      categoria: editCategoria,
+      nivel: editNivel,
+      meta: editMeta,
+      prazo: editPrazo,
+      dataInicio: editDataInicio,
+      dataConclusao
+    };
+
+    const sucesso = await atualizarHabilidadeFirebase(selectedSkillId, updated);
+    if (sucesso) {
+      setIsEditingDetail(false);
+      // Trigger a pulse on the axis corresponding to the edited category
+      const axisIndex = radarAxes.findIndex(a => a.categories.includes(editCategoria));
+      if (axisIndex !== -1) {
+        setPulsingAxisIndex(axisIndex);
+        setTimeout(() => setPulsingAxisIndex(null), 1000);
+      }
+    } else {
+      alert('Erro ao atualizar as informações.');
     }
+    setSalvando(false);
   };
 
-  const atualizarProgresso = async (id, novoProgresso) => {
-    if (!user) return;
+  // Node Clicking Sync Handlers
+  const handleNodeClick = (skill) => {
+    setSelectedSkillId(skill.id);
+    setIsEditingDetail(false);
     
-    const progressoFinal = Math.min(100, Math.max(0, novoProgresso));
-    await atualizarHabilidadeFirebase(id, { progresso: progressoFinal });
+    // Find matching axis
+    const axisIndex = radarAxes.findIndex(a => a.categories.includes(skill.categoria));
+    if (axisIndex !== -1) {
+      setPulsingAxisIndex(axisIndex);
+      setTimeout(() => setPulsingAxisIndex(null), 1000);
+    }
   };
 
-  const removerHabilidade = async (id) => {
-    if (!user) return;
+  // Computed Values
+  const selectedSkill = useMemo(() => {
+    return habilidades.find(h => h.id === selectedSkillId) || null;
+  }, [habilidades, selectedSkillId]);
+
+  // Filter skills displayed in constellation
+  const habilidadesFiltradas = useMemo(() => {
+    return filtroCategoria === 'Todas'
+      ? habilidades
+      : habilidades.filter(h => h.categoria === filtroCategoria);
+  }, [habilidades, filtroCategoria]);
+
+  // Compute average category progress for radar chart axes
+  const radarLevels = useMemo(() => {
+    return radarAxes.map(axis => {
+      const relevantSkills = habilidades.filter(h => axis.categories.includes(h.categoria) && h.ativo);
+      if (relevantSkills.length === 0) return 0.1;
+      const sum = relevantSkills.reduce((acc, c) => acc + (c.progresso || 0), 0);
+      return Math.max(0.1, (sum / relevantSkills.length) / 100);
+    });
+  }, [habilidades]);
+
+  // Mapping coordinate system for tag constellation positioning
+  const getSkillCoordinates = (skill, index, totalInCat) => {
+    // Fixed curated positions for the first 6 elements
+    const fixedPositions = {
+      'Estudo': [
+        { x: 20, y: 25 },
+        { x: 38, y: 15 },
+        { x: 30, y: 38 }
+      ],
+      'Produtividade': [
+        { x: 78, y: 20 },
+        { x: 60, y: 16 },
+        { x: 68, y: 38 }
+      ],
+      'Criatividade': [
+        { x: 22, y: 75 },
+        { x: 38, y: 84 },
+        { x: 18, y: 88 }
+      ],
+      'Saúde': [
+        { x: 74, y: 70 },
+        { x: 86, y: 78 }
+      ],
+      'Social': [
+        { x: 62, y: 84 },
+        { x: 80, y: 88 }
+      ]
+    };
+
+    const cat = skill.categoria;
+    const curated = fixedPositions[cat] || [];
+    if (index < curated.length) {
+      return curated[index];
+    }
+
+    // Dynamic spiral algorithm for additional skills
+    let cx = 50, cy = 50;
+    if (cat === 'Estudo') { cx = 25; cy = 25; }
+    else if (cat === 'Produtividade') { cx = 75; cy = 25; }
+    else if (cat === 'Criatividade') { cx = 25; cy = 75; }
+    else { cx = 75; cy = 75; } // Saúde & Social
+
+    const goldenAngle = 2.39996;
+    const spiralIndex = index - curated.length;
+    const angle = (spiralIndex * goldenAngle) + 0.6;
+    const radius = 16 + (spiralIndex * 4);
     
-    if (window.confirm('Tem certeza que deseja remover esta habilidade?')) {
-      await deletarHabilidadeFirebase(id);
-    }
+    return {
+      x: Math.max(8, Math.min(92, cx + radius * Math.cos(angle))),
+      y: Math.max(8, Math.min(92, cy + radius * Math.sin(angle)))
+    };
   };
 
-  const habilidadesFiltradas = filtroCategoria === 'Todas' 
-    ? habilidades 
-    : habilidades.filter(hab => hab.categoria === filtroCategoria);
+  // Map siblings and compile absolute coordinates
+  const skillPositionsMap = useMemo(() => {
+    const map = {};
+    categorias.forEach(cat => {
+      const sibs = habilidadesFiltradas.filter(h => h.categoria === cat);
+      sibs.forEach((skill, idx) => {
+        map[skill.id] = getSkillCoordinates(skill, idx, sibs.length);
+      });
+    });
+    return map;
+  }, [habilidadesFiltradas]);
 
-  const getNivelCor = (nivel) => {
-    switch(nivel) {
-      case 'Iniciante': return '#4CAF50';
-      case 'Intermediário': return '#FF9800';
-      case 'Avançado': return '#F44336';
-      default: return '#2196F3';
-    }
+  // SVG lines connecting siblings in the constellation
+  const renderConnections = () => {
+    const paths = [];
+    categorias.forEach(cat => {
+      const sibs = habilidadesFiltradas.filter(h => h.categoria === cat);
+      for (let i = 0; i < sibs.length - 1; i++) {
+        const s1 = sibs[i];
+        const s2 = sibs[i+1];
+        const p1 = skillPositionsMap[s1.id];
+        const p2 = skillPositionsMap[s2.id];
+
+        if (p1 && p2) {
+          const mx = (p1.x + p2.x) / 2;
+          const my = (p1.y + p2.y) / 2;
+          const dx = p2.x - p1.x;
+          const dy = p2.y - p1.y;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          const qx = mx + (dy / (len || 1)) * 6;
+          const qy = my - (dx / (len || 1)) * 6;
+
+          const isMasteredConn = (s1.progresso >= 75) && (s2.progresso >= 75);
+          const stroke = isMasteredConn ? '#9CA3AF' : '#111111';
+          const opacity = isMasteredConn ? 0.35 : 0.08;
+          const dash = isMasteredConn ? 'none' : '4 4';
+
+          paths.push(
+            <path
+              key={`conn-${s1.id}-${s2.id}`}
+              d={`M ${p1.x}% ${p1.y}% Q ${qx}% ${qy}% ${p2.x}% ${p2.y}%`}
+              fill="none"
+              stroke={stroke}
+              strokeOpacity={opacity}
+              strokeWidth={isMasteredConn ? 2.5 : 1.2}
+              strokeDasharray={dash}
+              style={isMasteredConn ? { filter: 'drop-shadow(0 0 3px rgba(156,163,175,0.4))' } : {}}
+            />
+          );
+        }
+      }
+    });
+    return paths;
   };
 
-  // Verificar autenticação
+  // Get matching icon based on skill name
+  const getSkillIcon = (name) => {
+    const n = name.toLowerCase();
+    if (n.includes('java') || n.includes('spring') || n.includes('api') || n.includes('back-end') || n.includes('servidor')) {
+      return Server;
+    }
+    if (n.includes('impressora') || n.includes('manutenção') || n.includes('ferramenta') || n.includes('chave')) {
+      return Wrench;
+    }
+    if (n.includes('ventoy') || n.includes('strelec') || n.includes('pendrive') || n.includes('diagnóstico') || n.includes('sistema')) {
+      return HardDrive;
+    }
+    if (n.includes('lógica') || n.includes('programação') || n.includes('algoritmo') || n.includes('código')) {
+      return Cpu;
+    }
+    if (n.includes('nutrição') || n.includes('felina') || n.includes('balança') || n.includes('cálculo') || n.includes('dieta')) {
+      return Scale;
+    }
+    if (n.includes('segurança') || n.includes('escudo') || n.includes('proteção') || n.includes('harden')) {
+      return Shield;
+    }
+    return Sparkles;
+  };
+
+  // Get tips based on selected skill progress
+  const getSelectedSkillTips = (skill) => {
+    if (!skill) return [];
+    const tipsConfig = {
+      'Estudo': {
+        'Iniciante': [
+          'Agende sessões curtas de 15 minutos focadas no básico.',
+          'Escreva resumos curtos no Notion sobre a matéria do dia.'
+        ],
+        'Intermediário': [
+          'Use a técnica Pomodoro com 25 minutos de imersão total.',
+          'Consolide explicandos os tópicos aprendidos para outra pessoa.'
+        ],
+        'Avançado': [
+          'Ensine os conceitos ou desenvolva soluções práticas com o tema.',
+          'Aplique sistemas de repetição espaçada (ex: Anki).'
+        ]
+      },
+      'Produtividade': {
+        'Iniciante': [
+          'Mantenha uma lista fixa com apenas 3 tarefas cruciais por dia.',
+          'Desative as notificações do smartphone durante o fluxo.'
+        ],
+        'Intermediário': [
+          'Classifique afazeres pela Matriz Eisenhower (Urgente vs Importante).',
+          'Revise seus gargalos de tempo no final da semana.'
+        ],
+        'Avançado': [
+          'Automatize microtarefas repetitivas usando scripts ou integrações.',
+          'Implemente a arquitetura e fluxos do método GTD (Get Things Done).'
+        ]
+      },
+      'Saúde': {
+        'Iniciante': [
+          'Realize caminhadas de 10 minutos após o almoço.',
+          'Beba um copo de água cheio ao acordar.'
+        ],
+        'Intermediário': [
+          'Mapeie e planeje suas refeições com antecedência na semana.',
+          'Reserve 10 minutos diários para práticas de mindfulness.'
+        ],
+        'Avançado': [
+          'Formule treinos progressivos segmentados.',
+          'Monitore marcadores de sono e ajuste hábitos noturnos.'
+        ]
+      },
+      'Criatividade': {
+        'Iniciante': [
+          'Crie rabiscos ou anote 3 ideias no papel sem julgamentos.',
+          'Separe 10 minutos para experimentar novas estéticas visuais.'
+        ],
+        'Intermediário': [
+          'Busque referências cruzadas fora do seu nicho de atuação.',
+          'Una disciplinas diferentes num mesmo projeto de portfólio.'
+        ],
+        'Avançado': [
+          'Publique criações e colete feedbacks ativos da comunidade.',
+          'Desenvolva projetos de longo prazo com metas de entrega.'
+        ]
+      },
+      'Social': {
+        'Iniciante': [
+          'Cumprimente ativamente um colega diferente na rotina diária.',
+          'Foque em escuta ativa durante conversas casuais.'
+        ],
+        'Intermediário': [
+          'Participe de fóruns e encontros de comunidade de interesse comum.',
+          'Ofereça colaboração prática voluntária em pequenos projetos.'
+        ],
+        'Avançado': [
+          'Lidere debates ou mentorias na sua comunidade local.',
+          'Pratique a comunicação empática e inteligência emocional em crises.'
+        ]
+      }
+    };
+
+    const catTips = tipsConfig[skill.categoria] || tipsConfig['Estudo'];
+    return catTips[skill.nivel] || catTips['Iniciante'];
+  };
+
+  // Render loadings / auth alerts
   if (loading) {
-    return (
-      <div className="modulo-habilidades">
-        <div className="carregando">
-          <p>Carregando...</p>
-        </div>
-      </div>
-    );
+    return <Loading message="Conectando à sua teia de conhecimentos..." />;
   }
 
   if (!user) {
     return (
-      <div className="modulo-habilidades">
-        <div className="nao-autenticado">
+      <div className="modulo-habilidades-wrapper flex items-center justify-center p-8">
+        <div className="habilidade-no-auth">
           <h2>Acesso Restrito</h2>
-          <p>Você precisa estar logado para acessar o módulo de habilidades.</p>
-          <button onClick={() => navigate('/login')}>Fazer Login</button>
+          <p>Faça login na plataforma LearnHub para gerenciar e visualizar suas habilidades estruturadas.</p>
+          <button onClick={() => navigate('/login')}>Ir para o Login</button>
         </div>
       </div>
     );
   }
 
+  // Precomputed coordinates of SVG endpoints for radar pulsing animations
+  const svgCenter = 160;
+  const svgRadius = 100;
+  const getAxisEndCoords = (idx) => {
+    const angle = -Math.PI / 2 + (idx * Math.PI / 2);
+    return {
+      x: svgCenter + svgRadius * Math.cos(angle),
+      y: svgCenter + svgRadius * Math.sin(angle)
+    };
+  };
+
+  // Point positions of radar polygon representing skill categories
+  const polygonPoints = radarLevels.map((val, idx) => {
+    const angle = -Math.PI / 2 + (idx * Math.PI / 2);
+    const r = svgRadius * val;
+    return `${svgCenter + r * Math.cos(angle)},${svgCenter + r * Math.sin(angle)}`;
+  }).join(' ');
+
   return (
-    <div className="modulo-habilidades">
-      <div className="volta-dashboard-container">
-        <button 
-          className="volta-dashboard-btn"
-          onClick={() => navigate('/dashboard')}
-        >
-          Voltar ao Dashboard
-        </button>
-      </div>
-      
-      <div className="habilidades-container">
-      <div className="habilidades-header">
-        <h2>Gerenciamento de Habilidades</h2>
-        <p>Desenvolva e acompanhe seus hábitos de estudo e crescimento pessoal</p>
-      </div>
-
-      <div className="habilidades-controles">
-        <div className="filtros">
-          <label>Filtrar por categoria:</label>
-          <select 
-            value={filtroCategoria} 
-            onChange={(e) => setFiltroCategoria(e.target.value)}
-          >
-            {categorias.map(cat => (
-              <option key={cat} value={cat}>{cat}</option>
-            ))}
-          </select>
-        </div>
+    <div className="modulo-habilidades-wrapper">
+      <AnimatePresence mode="wait">
         
-        <button 
-          className="btn-adicionar"
-          onClick={() => {
-            if (mostrarFormulario) {
-              cancelarEdicao();
-            } else {
-              setMostrarFormulario(true);
-            }
-          }}
-        >
-          {mostrarFormulario ? 'Cancelar' : '+ Nova Habilidade'}
-        </button>
-      </div>
-
-      {mostrarFormulario && (
-        <div className="formulario-habilidade">
-          <h3>{modoEdicao ? 'Editar Habilidade' : 'Adicionar Nova Habilidade'}</h3>
-          <form onSubmit={adicionarHabilidade}>
-            <div className="form-row">
-              <div className="form-group">
-                <label>Nome da Habilidade:</label>
-                <input
-                  type="text"
-                  value={modoEdicao ? habilidadeEditando.nome : novaHabilidade.nome}
-                  onChange={(e) => {
-                    if (modoEdicao) {
-                      setHabilidadeEditando({...habilidadeEditando, nome: e.target.value});
-                    } else {
-                      setNovaHabilidade({...novaHabilidade, nome: e.target.value});
-                    }
-                  }}
-                  placeholder="Ex: Leitura diária, Exercícios..."
-                  required
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Categoria:</label>
-                <select
-                  value={modoEdicao ? habilidadeEditando.categoria : novaHabilidade.categoria}
-                  onChange={(e) => {
-                    if (modoEdicao) {
-                      setHabilidadeEditando({...habilidadeEditando, categoria: e.target.value});
-                    } else {
-                      setNovaHabilidade({...novaHabilidade, categoria: e.target.value});
-                    }
-                  }}
-                >
-                  {categorias.slice(1).map(cat => (
-                    <option key={cat} value={cat}>{cat}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="form-group">
-              <label>Descrição:</label>
-              <textarea
-                value={modoEdicao ? habilidadeEditando.descricao : novaHabilidade.descricao}
-                onChange={(e) => {
-                  if (modoEdicao) {
-                    setHabilidadeEditando({...habilidadeEditando, descricao: e.target.value});
-                  } else {
-                    setNovaHabilidade({...novaHabilidade, descricao: e.target.value});
-                  }
-                }}
-                placeholder="Descreva como você pretende desenvolver esta habilidade..."
-                required
-              />
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Nível:</label>
-                <select
-                  value={modoEdicao ? habilidadeEditando.nivel : novaHabilidade.nivel}
-                  onChange={(e) => {
-                    if (modoEdicao) {
-                      setHabilidadeEditando({...habilidadeEditando, nivel: e.target.value});
-                    } else {
-                      setNovaHabilidade({...novaHabilidade, nivel: e.target.value});
-                    }
-                  }}
-                >
-                  {niveis.map(nivel => (
-                    <option key={nivel} value={nivel}>{nivel}</option>
-                  ))}
-                </select>
-              </div>
-              
-              <div className="form-group">
-                <label>Prazo:</label>
-                <select
-                  value={modoEdicao ? habilidadeEditando.prazo : novaHabilidade.prazo}
-                  onChange={(e) => {
-                    if (modoEdicao) {
-                      setHabilidadeEditando({...habilidadeEditando, prazo: e.target.value});
-                    } else {
-                      setNovaHabilidade({...novaHabilidade, prazo: e.target.value});
-                    }
-                  }}
-                >
-                  {prazos.map(prazo => (
-                    <option key={prazo} value={prazo}>{prazo}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-
-            <div className="form-row">
-              <div className="form-group">
-                <label>Meta:</label>
-                <input
-                  type="text"
-                  value={modoEdicao ? habilidadeEditando.meta : novaHabilidade.meta}
-                  onChange={(e) => {
-                    if (modoEdicao) {
-                      setHabilidadeEditando({...habilidadeEditando, meta: e.target.value});
-                    } else {
-                      setNovaHabilidade({...novaHabilidade, meta: e.target.value});
-                    }
-                  }}
-                  placeholder="Qual seu objetivo com esta habilidade?"
-                />
-              </div>
-              
-              <div className="form-group">
-                <label>Data de Início:</label>
-                <input
-                  type="date"
-                  value={modoEdicao ? habilidadeEditando.dataInicio : novaHabilidade.dataInicio}
-                  onChange={(e) => {
-                    if (modoEdicao) {
-                      setHabilidadeEditando({...habilidadeEditando, dataInicio: e.target.value});
-                    } else {
-                      setNovaHabilidade({...novaHabilidade, dataInicio: e.target.value});
-                    }
-                  }}
-                  required
-                />
-              </div>
-            </div>
-
-            <div className="form-actions">
-              <button type="submit" className="btn-salvar" disabled={salvando}>
-                {salvando ? 'Salvando...' : (modoEdicao ? 'Atualizar Habilidade' : 'Salvar Habilidade')}
-              </button>
-              <button type="button" className="btn-cancelar" onClick={() => {
-                setMostrarFormulario(false);
-                cancelarEdicao();
-              }} disabled={salvando}>
-                Cancelar
-              </button>
-            </div>
-          </form>
-        </div>
-      )}
-
-      {carregando ? (
-        <div className="carregando">
-          <p>Carregando suas habilidades...</p>
-        </div>
-      ) : (
-        <div className="habilidades-grid">
-          {habilidadesFiltradas.map(habilidade => (
-          <div key={habilidade.id} className={`habilidade-card ${!habilidade.ativo ? 'inativa' : ''}`}>
-            <div className="card-header">
-              <div className="titulo-categoria">
-                <h3>{habilidade.nome}</h3>
-                <span className="categoria">{habilidade.categoria}</span>
-              </div>
-              <div className="nivel-badge" style={{backgroundColor: getNivelCor(habilidade.nivel)}}>
-                {habilidade.nivel}
-              </div>
-            </div>
-
-            <p className="descricao">{habilidade.descricao}</p>
+        {/* LANDING PAGE INTRO SCREEN */}
+        {!showDashboard ? (
+          <motion.div
+            key="landing"
+            className="habilidades-landing"
+            exit={{ 
+              opacity: 0, 
+              scale: 1.08, 
+              filter: 'blur(15px)',
+              transition: { duration: 0.5, ease: [0.43, 0.13, 0.23, 0.96] }
+            }}
+          >
+            <img 
+              src={HabilidadesBg} 
+              alt="Habilidades Background" 
+              className="habilidades-landing-bg" 
+            />
+            <div className="habilidades-landing-overlay" />
             
-            {habilidade.meta && (
-              <div className="meta">
-                <strong>Meta:</strong> {habilidade.meta}
+            <div className="habilidades-landing-content">
+              <motion.span 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 0.8, y: 0 }}
+                transition={{ delay: 0.2 }}
+                className="text-[11px] text-[#9CA3AF] font-bold uppercase tracking-[0.25em]"
+              >
+                LearnHub Mapeamento
+              </motion.span>
+              
+              <motion.h1 
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ type: 'spring', stiffness: 50, delay: 0.3 }}
+                className="habilidades-landing-title"
+              >
+                Habilidades
+              </motion.h1>
+              
+              <motion.p 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 0.8 }}
+                transition={{ delay: 0.5, duration: 0.8 }}
+                className="habilidades-landing-subtitle"
+              >
+                Mapeie seu arsenal técnico, controle o nível de maestria em tempo real e domine novas esferas de conhecimento.
+              </motion.p>
+              
+              <motion.button
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ type: 'spring', stiffness: 100, delay: 0.6 }}
+                className="habilidades-landing-btn"
+                onClick={handleEnterDashboard}
+              >
+                Acessar Meu Arsenal
+              </motion.button>
+            </div>
+          </motion.div>
+        ) : (
+          
+          /* PREMIUM DASHBOARD VIEW */
+          <motion.div
+            key="dashboard"
+            initial={{ opacity: 0, y: 20, filter: 'blur(5px)' }}
+            animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+            className="w-full"
+          >
+            {/* Header section */}
+            <header className="habilidades-main-header">
+              <div className="habilidades-colossal-title-wrapper">
+                <h2 className="habilidades-colossal-title">HABILIDADES</h2>
+                <span className="habilidades-minimalist-subtitle">O seu arsenal em constante evolução.</span>
               </div>
-            )}
+              <button 
+                className="habilidades-back-dashboard-btn"
+                onClick={() => navigate('/dashboard')}
+              >
+                <ArrowLeft size={15} /> Voltar ao Painel
+              </button>
+            </header>
 
-            <div className="prazo-info">
-              <div className="prazo-item">
-                <strong>Prazo:</strong> {habilidade.prazo || '1 mês'}
-              </div>
-              {habilidade.dataInicio && (
-                <div className="prazo-item">
-                  <strong>Início:</strong> {new Date(habilidade.dataInicio).toLocaleDateString('pt-BR')}
+            {/* Main Area layout split view */}
+            <main className="habilidades-dashboard-grid">
+              
+              {/* LEFT COLUMN: Radar Chart + Details Card */}
+              <div className="habilidades-left-col">
+                
+                {/* Levitating Radar Card */}
+                <div className="habilidades-radar-card">
+                  <svg viewBox="0 0 320 320" className="w-full h-full p-6">
+                    {/* Dark grid Concentric Circles */}
+                    <circle cx="160" cy="160" r="33" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
+                    <circle cx="160" cy="160" r="66" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
+                    <circle cx="160" cy="160" r="100" fill="none" stroke="rgba(255, 255, 255, 0.06)" strokeWidth="1" />
+
+                    {/* Standard Axis lines */}
+                    {radarAxes.map((axis, idx) => {
+                      const end = getAxisEndCoords(idx);
+                      const isPulsing = pulsingAxisIndex === idx;
+                      return (
+                        <g key={idx}>
+                          {/* Inner line */}
+                          <line
+                            x1="160"
+                            y1="160"
+                            x2={end.x}
+                            y2={end.y}
+                            stroke={isPulsing ? '#9CA3AF' : 'rgba(255, 255, 255, 0.15)'}
+                            strokeWidth={isPulsing ? 2.5 : 1}
+                            className="transition-colors duration-300"
+                          />
+                          {/* Pulsing overlay effect */}
+                          {isPulsing && (
+                            <motion.line
+                              x1="160"
+                              y1="160"
+                              x2={end.x}
+                              y2={end.y}
+                              stroke="#9CA3AF"
+                              strokeWidth={4.5}
+                              initial={{ pathLength: 0, opacity: 1 }}
+                              animate={{ pathLength: 1, opacity: 0 }}
+                              transition={{ duration: 0.6, ease: 'easeOut' }}
+                            />
+                          )}
+                        </g>
+                      );
+                    })}
+
+                    {/* Dynamic green neon polygon with respiration loop */}
+                    <motion.polygon
+                      points={polygonPoints}
+                      fill="rgba(156, 163, 175, 0.22)"
+                      stroke="#9CA3AF"
+                      strokeWidth="2.5"
+                      animate={{ 
+                        points: polygonPoints,
+                        fillOpacity: [0.22, 0.35, 0.22] 
+                      }}
+                      transition={{ 
+                        points: { type: 'spring', stiffness: 70, damping: 13 },
+                        fillOpacity: { repeat: Infinity, duration: 4, ease: 'easeInOut' }
+                      }}
+                      style={{ filter: 'drop-shadow(0 0 6px rgba(156, 163, 175, 0.5))' }}
+                    />
+
+                    {/* Outer anchor points on the polygon */}
+                    {radarLevels.map((val, idx) => {
+                      const angle = -Math.PI / 2 + (idx * Math.PI / 2);
+                      const r = svgRadius * val;
+                      const px = svgCenter + r * Math.cos(angle);
+                      const py = svgCenter + r * Math.sin(angle);
+                      return (
+                        <circle
+                          key={idx}
+                          cx={px}
+                          cy={py}
+                          r="4"
+                          fill="#FFFFFF"
+                          stroke="#9CA3AF"
+                          strokeWidth="1.5"
+                          style={{ filter: 'drop-shadow(0 0 3px rgba(156,163,175,0.8))' }}
+                        />
+                      );
+                    })}
+
+                    {/* Axis Labels positioning */}
+                    {radarAxes.map((axis, idx) => {
+                      const angle = -Math.PI / 2 + (idx * Math.PI / 2);
+                      const labelRadius = 115;
+                      const lx = svgCenter + labelRadius * Math.cos(angle);
+                      const ly = svgCenter + labelRadius * Math.sin(angle);
+                      
+                      let textAnchor = 'middle';
+                      if (idx === 1) textAnchor = 'start';
+                      if (idx === 3) textAnchor = 'end';
+
+                      const isPulsing = pulsingAxisIndex === idx;
+
+                      return (
+                        <text
+                          key={idx}
+                          x={lx}
+                          y={ly + (idx === 0 ? -4 : idx === 2 ? 10 : 3)}
+                          fill={isPulsing ? '#9CA3AF' : '#888888'}
+                          fontSize="8.5"
+                          fontWeight="700"
+                          textAnchor={textAnchor}
+                          className="transition-colors duration-300 uppercase tracking-wider font-sans select-none"
+                          style={isPulsing ? { textShadow: '0 0 5px rgba(156,163,175,0.5)' } : {}}
+                        >
+                          {axis.name}
+                        </text>
+                      );
+                    })}
+                  </svg>
                 </div>
-              )}
-              {habilidade.dataConclusao && (
-                <div className="prazo-item">
-                  <strong>Conclusão:</strong> {new Date(habilidade.dataConclusao).toLocaleDateString('pt-BR')}
+
+                {/* DETAILS PANEL / GENERAL PROFILE SUMMARY */}
+                <div className="relative">
+                  <AnimatePresence mode="wait">
+                    {selectedSkill ? (
+                      
+                      /* SKILL DETAILS CARD */
+                      <motion.div
+                        key={`detail-${selectedSkill.id}`}
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -15 }}
+                        transition={{ duration: 0.25 }}
+                        className="habilidade-detail-card"
+                      >
+                        {/* Detail layout standard view */}
+                        {!isEditingDetail ? (
+                          <>
+                            <div className="habilidade-detail-header">
+                              <div className="habilidade-detail-title-group">
+                                <h3>{selectedSkill.nome}</h3>
+                                <span className="habilidade-detail-category">
+                                  {selectedSkill.categoria}
+                                </span>
+                              </div>
+                              <span 
+                                className="habilidade-detail-level-badge"
+                                style={{ 
+                                  backgroundColor: selectedSkill.nivel === 'Avançado' ? '#9CA3AF' : selectedSkill.nivel === 'Intermediário' ? '#6B7280' : '#374151',
+                                  color: '#FFFFFF'
+                                }}
+                              >
+                                {selectedSkill.nivel}
+                              </span>
+                            </div>
+
+                            <p className="habilidade-detail-desc">
+                              {selectedSkill.descricao || 'Nenhuma descrição adicionada.'}
+                            </p>
+
+                            {selectedSkill.meta && (
+                              <div className="habilidade-detail-meta">
+                                <strong>Objetivo:</strong> {selectedSkill.meta}
+                              </div>
+                            )}
+
+                            {/* Progress bar controller */}
+                            <div className="habilidade-detail-progress-section">
+                              <div className="habilidade-detail-progress-label">
+                                <span>Progresso da Maestria</span>
+                                <span className="text-[#9CA3AF]">{selectedSkill.progresso || 0}%</span>
+                              </div>
+                              <div className="habilidade-detail-progress-bar-bg">
+                                <div 
+                                  className="habilidade-detail-progress-bar-fill" 
+                                  style={{ width: `${selectedSkill.progresso || 0}%` }}
+                                />
+                              </div>
+                              <div className="habilidade-detail-progress-controls">
+                                <button 
+                                  disabled={!selectedSkill.ativo || (selectedSkill.progresso || 0) <= 0}
+                                  className="habilidade-detail-progress-btn"
+                                  onClick={() => handleUpdateProgress(selectedSkill.id, -10)}
+                                >
+                                  -10%
+                                </button>
+                                <button 
+                                  disabled={!selectedSkill.ativo || (selectedSkill.progresso || 0) >= 100}
+                                  className="habilidade-detail-progress-btn"
+                                  onClick={() => handleUpdateProgress(selectedSkill.id, 10)}
+                                >
+                                  +10%
+                                </button>
+                              </div>
+                            </div>
+
+                            {/* Chronology info */}
+                            <div className="habilidade-detail-dates">
+                              <div>
+                                <strong>INÍCIO</strong>
+                                <div>{selectedSkill.dataInicio ? new Date(selectedSkill.dataInicio).toLocaleDateString('pt-BR') : '-'}</div>
+                              </div>
+                              <div>
+                                <strong>PREVISÃO</strong>
+                                <div>{selectedSkill.dataConclusao ? new Date(selectedSkill.dataConclusao).toLocaleDateString('pt-BR') : '-'}</div>
+                              </div>
+                            </div>
+
+                            {/* Micro tips list */}
+                            <div className="habilidade-detail-tips-box">
+                              <span className="habilidade-detail-tips-title">
+                                <Lightbulb size={12} /> Sugestões de Evolução
+                              </span>
+                              <div className="habilidade-detail-tips-list">
+                                {getSelectedSkillTips(selectedSkill).map((tip, idx) => (
+                                  <div key={idx} className="habilidade-detail-tip-item">
+                                    <Check size={10} />
+                                    <span>{tip}</span>
+                                  </div>
+                                ))}
+                              </div>
+                            </div>
+
+                            {/* Action drawers */}
+                            <div className="habilidade-detail-actions">
+                              <button 
+                                className="habilidade-detail-action-btn"
+                                onClick={() => handleOpenEditDetail(selectedSkill)}
+                              >
+                                <Edit3 size={12} /> Editar Habilidade
+                              </button>
+                              <button 
+                                className={`habilidade-detail-action-btn btn-status-toggle`}
+                                onClick={() => handleToggleStatus(selectedSkill.id)}
+                              >
+                                {selectedSkill.ativo ? <Pause size={12} /> : <Play size={12} />}
+                                {selectedSkill.ativo ? 'Pausar' : 'Reativar'}
+                              </button>
+                              <button 
+                                className="habilidade-detail-action-btn btn-delete"
+                                onClick={() => handleDeleteSkill(selectedSkill.id)}
+                              >
+                                <Trash2 size={12} /> Excluir
+                              </button>
+                            </div>
+                          </>
+                        ) : (
+                          
+                          /* EDIT FORM WITHIN CARD */
+                          <form onSubmit={handleSaveEditDetail} className="flex flex-col gap-3">
+                            <h4 className="text-sm font-extrabold uppercase text-[#9CA3AF] m-0">Editar Habilidade</h4>
+                            
+                            <div className="habilidade-fab-form-field">
+                              <label>Habilidade</label>
+                              <input 
+                                type="text" 
+                                value={editNome} 
+                                onChange={(e) => setEditNome(e.target.value)} 
+                                required
+                              />
+                            </div>
+
+                            <div className="habilidade-fab-form-field">
+                              <label>Descrição</label>
+                              <textarea 
+                                value={editDescricao} 
+                                onChange={(e) => setEditDescricao(e.target.value)} 
+                                rows={2}
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="habilidade-fab-form-field">
+                                <label>Categoria</label>
+                                <select value={editCategoria} onChange={(e) => setEditCategoria(e.target.value)}>
+                                  {categorias.map(cat => (
+                                    <option key={cat} value={cat}>{cat}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="habilidade-fab-form-field">
+                                <label>Nível</label>
+                                <select value={editNivel} onChange={(e) => setEditNivel(e.target.value)}>
+                                  {niveis.map(lvl => (
+                                    <option key={lvl} value={lvl}>{lvl}</option>
+                                  ))}
+                                </select>
+                              </div>
+                            </div>
+
+                            <div className="habilidade-fab-form-field">
+                              <label>Meta / Objetivo</label>
+                              <input 
+                                type="text" 
+                                value={editMeta} 
+                                onChange={(e) => setEditMeta(e.target.value)} 
+                              />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="habilidade-fab-form-field">
+                                <label>Prazo</label>
+                                <select value={editPrazo} onChange={(e) => setEditPrazo(e.target.value)}>
+                                  {prazos.map(pr => (
+                                    <option key={pr} value={pr}>{pr}</option>
+                                  ))}
+                                </select>
+                              </div>
+                              <div className="habilidade-fab-form-field">
+                                <label>Data Início</label>
+                                <input 
+                                  type="date" 
+                                  value={editDataInicio} 
+                                  onChange={(e) => setEditDataInicio(e.target.value)}
+                                  required
+                                />
+                              </div>
+                            </div>
+
+                            <div className="flex gap-2 mt-2">
+                              <button 
+                                type="submit" 
+                                className="habilidade-fab-form-submit flex-1"
+                                disabled={salvando}
+                              >
+                                {salvando ? 'Salvando...' : 'Salvar Alterações'}
+                              </button>
+                              <button 
+                                type="button" 
+                                className="habilidade-detail-action-btn flex-1"
+                                onClick={() => setIsEditingDetail(false)}
+                              >
+                                Cancelar
+                              </button>
+                            </div>
+                          </form>
+                        )}
+                      </motion.div>
+                    ) : (
+                      
+                      /* PROFILE BRIEF SUMMARY CARD (When no node is active) */
+                      <motion.div
+                        key="no-selected"
+                        initial={{ opacity: 0, y: 15 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -15 }}
+                        className="habilidade-profile-summary"
+                      >
+                        <h3>Meu Arsenal Geral</h3>
+                        <p>
+                          Clique em qualquer nó da constelação à direita para analisar as métricas individuais da habilidade, receber dicas personalizadas de estudo e atualizar o progresso de maestria.
+                        </p>
+                        <div className="border-t border-outline-variant/10 pt-4 flex flex-col gap-2">
+                          <div className="flex justify-between text-xs font-semibold">
+                            <span>Habilidades Cadastradas</span>
+                            <span className="font-bold">{habilidades.length}</span>
+                          </div>
+                          <div className="flex justify-between text-xs font-semibold">
+                            <span>Dominadas (Maestria $\ge 75\%$)</span>
+                            <span className="font-bold text-[#9CA3AF]">{habilidades.filter(h => h.progresso >= 75).length}</span>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
                 </div>
-              )}
-            </div>
+              </div>
 
-            <div className="dicas-container">
-              <h4><FaLightbulb /> Dicas Personalizadas</h4>
-              <div className="dicas-lista">
-                {obterDicasHabilidade(habilidade.categoria, habilidade.nivel, habilidade.progresso).map((dica, index) => (
-                  <div key={index} className="dica-item">
-                    {dica}
-                  </div>
-                ))}
-              </div>
-            </div>
+              {/* RIGHT COLUMN: Constellation tags mapping */}
+              <div className="habilidades-right-col">
+                
+                {/* Category filters bar */}
+                <div className="habilidades-filter-tabs">
+                  <button 
+                    className={`habilidade-filter-tab ${filtroCategoria === 'Todas' ? 'active' : ''}`}
+                    onClick={() => setFiltroCategoria('Todas')}
+                  >
+                    Todas
+                  </button>
+                  {categorias.map(cat => (
+                    <button 
+                      key={cat} 
+                      className={`habilidade-filter-tab ${filtroCategoria === cat ? 'active' : ''}`}
+                      onClick={() => setFiltroCategoria(cat)}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
 
-            <div className="progresso-container">
-              <div className="progresso-header">
-                <span>Progresso</span>
-                <span>{habilidade.progresso}%</span>
-              </div>
-              <div className="barra-progresso">
-                <div 
-                  className="progresso-fill"
-                  style={{width: `${habilidade.progresso}%`}}
-                ></div>
-              </div>
-              <div className="controles-progresso">
-                <button 
-                  onClick={() => atualizarProgresso(habilidade.id, habilidade.progresso - 10)}
-                  disabled={habilidade.progresso <= 0}
-                >
-                  -10%
-                </button>
-                <button 
-                  onClick={() => atualizarProgresso(habilidade.id, habilidade.progresso + 10)}
-                  disabled={habilidade.progresso >= 100}
-                >
-                  +10%
-                </button>
-              </div>
-            </div>
+                {/* Constellation Canvas area */}
+                <div className="habilidades-constellation-panel">
+                  
+                  {/* Background SVG connections drawer */}
+                  <svg className="habilidades-constellation-svg">
+                    {renderConnections()}
+                  </svg>
 
-            <div className="card-actions">
+                  {/* Absolute positioned floating node pills */}
+                  <AnimatePresence>
+                    {habilidadesFiltradas.map((skill, index) => {
+                      const coords = skillPositionsMap[skill.id] || { x: 50, y: 50 };
+                      const Icon = getSkillIcon(skill.nome);
+                      const isNew = skill.id === justAddedId;
+                      const isSelected = skill.id === selectedSkillId;
+                      
+                      // Node style hierarchy
+                      let statusClass = 'status-estudo';
+                      if ((skill.progresso || 0) >= 75) statusClass = 'status-dominado';
+                      else if ((skill.progresso || 0) < 20) statusClass = 'status-alvo';
+
+                      // Float animation variables
+                      const floatDuration = 3.5 + (index % 3) * 0.8;
+                      const floatOffset = index % 2 === 0 ? [0, -7, 0] : [0, -4, 0];
+
+                      return (
+                        <motion.div
+                          key={skill.id}
+                          className={`habilidade-node-pill ${statusClass}`}
+                          style={{
+                            left: `${coords.x}%`,
+                            top: `${coords.y}%`,
+                            opacity: skill.ativo ? 1 : 0.45,
+                            borderWidth: isSelected ? '2px' : '1.5px',
+                            borderColor: isSelected ? '#9CA3AF' : undefined,
+                            boxShadow: isSelected ? '0 0 25px rgba(156, 163, 175, 0.4)' : undefined,
+                          }}
+                          initial={isNew ? { left: '85%', top: '85%', scale: 0.1, opacity: 0 } : { scale: 0.9, opacity: 0 }}
+                          animate={{ 
+                            left: `${coords.x}%`,
+                            top: `${coords.y}%`,
+                            scale: 1, 
+                            opacity: 1,
+                            y: floatOffset
+                          }}
+                          exit={{ scale: 0.8, opacity: 0 }}
+                          whileHover={{ 
+                            scale: 1.06, 
+                            y: -10,
+                            boxShadow: (skill.progresso || 0) >= 75 
+                              ? '0 12px 30px rgba(156, 163, 175, 0.35)' 
+                              : '0 12px 25px rgba(0, 0, 0, 0.25)',
+                            transition: { duration: 0.2 }
+                          }}
+                          transition={isNew ? {
+                            type: 'spring',
+                            stiffness: 85,
+                            damping: 10
+                          } : {
+                            y: {
+                              repeat: Infinity,
+                              duration: floatDuration,
+                              ease: 'easeInOut'
+                            },
+                            default: { duration: 0.4 }
+                          }}
+                          onClick={() => handleNodeClick(skill)}
+                        >
+                          <Icon size={13} className="flex-shrink-0" />
+                          <span>{skill.nome}</span>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+                  
+                  {/* Empty state overlay inside canvas */}
+                  {habilidadesFiltradas.length === 0 && (
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-center p-8 pointer-events-none select-none">
+                      <Sparkles size={32} className="text-[#cccccc] mb-3 animate-pulse" />
+                      <span className="text-sm font-bold text-[#111111] mb-1">
+                        Sua Constelação está Vazia
+                      </span>
+                      <span className="text-xs text-[#888888] max-w-xs leading-relaxed">
+                        Crie suas próprias habilidades clicando no botão de "+" no canto inferior direito para começar a mapear seu arsenal!
+                      </span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </main>
+
+            {/* FLOATING ACTION BUTTON (FAB) FOR ZERO-FRICTION ADDITION */}
+            <div className="habilidade-fab-container">
+              <AnimatePresence>
+                {showFabForm && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8, y: 15 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.8, y: 15 }}
+                    transition={{ duration: 0.2 }}
+                    className="habilidade-fab-form-card"
+                  >
+                    <h4>Nova Habilidade</h4>
+                    <form onSubmit={handleCreateSkillSubmit} className="flex flex-col gap-2">
+                      <div className="habilidade-fab-form-field">
+                        <label>Nome da Habilidade</label>
+                        <input 
+                          type="text" 
+                          value={newSkillName} 
+                          onChange={(e) => setNewSkillName(e.target.value)} 
+                          placeholder="Ex: React Native, Docker..." 
+                          required
+                          autoFocus
+                        />
+                      </div>
+                      
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="habilidade-fab-form-field">
+                          <label>Categoria</label>
+                          <select 
+                            value={newSkillCategory} 
+                            onChange={(e) => setNewSkillCategory(e.target.value)}
+                          >
+                            {categorias.map(cat => (
+                              <option key={cat} value={cat}>{cat}</option>
+                            ))}
+                          </select>
+                        </div>
+                        
+                        <div className="habilidade-fab-form-field">
+                          <label>Nível Inicial</label>
+                          <select 
+                            value={newSkillLevel} 
+                            onChange={(e) => setNewSkillLevel(e.target.value)}
+                          >
+                            {niveis.map(lvl => (
+                              <option key={lvl} value={lvl}>{lvl}</option>
+                            ))}
+                          </select>
+                        </div>
+                      </div>
+
+                      <button 
+                        type="submit" 
+                        className="habilidade-fab-form-submit mt-1" 
+                        disabled={salvando || !newSkillName.trim()}
+                      >
+                        {salvando ? 'Criando...' : 'Adicionar à Teia'}
+                      </button>
+                    </form>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+              
               <button 
-                className="btn-editar"
-                onClick={() => iniciarEdicao(habilidade)}
+                className="habilidade-fab-trigger"
+                onClick={() => setShowFabForm(!showFabForm)}
+                style={{
+                  backgroundColor: showFabForm ? '#4B5563' : '#333333',
+                  color: '#FFFFFF',
+                  boxShadow: showFabForm ? '0 8px 25px rgba(75, 85, 99, 0.4)' : '0 8px 25px rgba(51, 51, 51, 0.4)'
+                }}
               >
-                Editar
-              </button>
-              <button 
-                className={`btn-status ${habilidade.ativo ? 'ativo' : 'inativo'}`}
-                onClick={() => alternarStatus(habilidade.id)}
-              >
-                {habilidade.ativo ? 'Pausar' : 'Ativar'}
-              </button>
-              <button 
-                className="btn-remover"
-                onClick={() => removerHabilidade(habilidade.id)}
-              >
-                Remover
+                {showFabForm ? <X size={24} /> : <Plus size={28} strokeWidth={3} />}
               </button>
             </div>
-          </div>
-          ))}
-        </div>
-      )}
 
-      {!carregando && habilidadesFiltradas.length === 0 && (
-        <div className="sem-habilidades">
-          <p>{filtroCategoria === 'Todas' ? 'Você ainda não possui habilidades cadastradas.' : `Nenhuma habilidade encontrada para a categoria "${filtroCategoria}".`}</p>
-          <button onClick={() => setMostrarFormulario(true)}>Adicionar primeira habilidade</button>
-        </div>
-      )}
-      </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

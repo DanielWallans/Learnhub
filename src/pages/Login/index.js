@@ -4,9 +4,11 @@ import { auth, db } from "../../firebaseConfig";
 import { signInWithEmailAndPassword } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useAuth } from "../../context/AuthContext";
-import "./login.css";
+import { motion, AnimatePresence } from "framer-motion";
+import { FaCogs, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaSignInAlt, FaChevronLeft, FaShieldAlt, FaGraduationCap, FaKey, FaUserPlus } from "react-icons/fa";
 
 function Login() {
+  const [tipoUsuario, setTipoUsuario] = useState("aluno"); // "aluno" ou "admin"
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
@@ -15,13 +17,16 @@ function Login() {
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  // Quando currentUser é atualizado e existe, redireciona
+  // Redireciona usuário caso já esteja logado
   useEffect(() => {
     if (currentUser && !loading) {
-      console.log("Login: currentUser detectado, redirecionando...");
-      navigate("/home");
+      if (tipoUsuario === "admin") {
+        navigate("/home");
+      } else {
+        navigate("/dashboard");
+      }
     }
-  }, [currentUser, loading, navigate]);
+  }, [currentUser, loading, navigate, tipoUsuario]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -29,48 +34,51 @@ function Login() {
     setErro("");
 
     try {
-      console.log("Login: Iniciando autenticação...");
       const userCredential = await signInWithEmailAndPassword(auth, email, senha);
       const user = userCredential.user;
-      console.log("Login: Firebase Auth sucesso:", user.uid, user.email);
       
-      // Verifica se o usuário existe na coleção "usuarios", se não existir, cria
-      console.log("Login: Verificando na coleção usuarios...");
-      const userDoc = await getDoc(doc(db, "usuarios", user.uid));
-      console.log("Login: Documento existe na coleção usuarios:", userDoc.exists());
-      
-      if (!userDoc.exists()) {
-        console.log("Login: Criando documento na coleção usuarios...");
-        await setDoc(doc(db, "usuarios", user.uid), {
-          uid: user.uid,
-          email: user.email,
-          criadoEm: new Date().toISOString()
-        });
-        console.log("Login: Documento criado com sucesso!");
+      if (tipoUsuario === "admin") {
+        // Fluxo administrativo
+        const userDoc = await getDoc(doc(db, "usuarios", user.uid));
+        if (!userDoc.exists()) {
+          await setDoc(doc(db, "usuarios", user.uid), {
+            uid: user.uid,
+            email: user.email,
+            criadoEm: new Date().toISOString()
+          });
+        }
+        navigate("/home");
+      } else {
+        // Fluxo de estudante
+        const userDoc = await getDoc(doc(db, "alunos", user.uid));
+        if (!userDoc.exists()) {
+          await setDoc(doc(db, "alunos", user.uid), {
+            uid: user.uid,
+            email: user.email,
+            criadoEm: new Date().toISOString()
+          });
+        }
+        navigate("/dashboard");
       }
-      
-      console.log("Login: Documento criado/verificado. Aguardando AuthContext...");
-      // Remove a navegação manual - deixa o useEffect fazer quando currentUser for atualizado
     } catch (error) {
-      console.error("Login: Erro completo:", error);
+      console.error("Login: Erro de autenticação:", error);
       
-      // Tratamento de diferentes tipos de erro
-      let mensagemErro = "Erro ao fazer login";
+      let mensagemErro = "Erro ao fazer login. Verifique suas credenciais.";
       switch (error.code) {
         case "auth/user-not-found":
-          mensagemErro = "Email não encontrado";
+          mensagemErro = "E-mail não encontrado.";
           break;
         case "auth/wrong-password":
-          mensagemErro = "Senha incorreta";
+          mensagemErro = "Senha incorreta.";
           break;
         case "auth/invalid-email":
-          mensagemErro = "Email inválido";
+          mensagemErro = "E-mail inválido.";
           break;
         case "auth/too-many-requests":
-          mensagemErro = "Muitas tentativas. Tente novamente mais tarde";
+          mensagemErro = "Muitas tentativas. Tente novamente mais tarde.";
           break;
         default:
-          mensagemErro = "Verifique suas credenciais e tente novamente";
+          mensagemErro = "Verifique suas credenciais e tente novamente.";
       }
       setErro(mensagemErro);
     } finally {
@@ -79,162 +87,192 @@ function Login() {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-box">
-        {/* Logo com ícone */}
-        <div className="login-header">
-          <div className="login-logo-icon">
-            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-              <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-            </svg>
-          </div>
-          <h1 className="login-logo">LearnHub</h1>
-          <p className="login-subtitle">Acesse sua conta</p>
-        </div>
+    <div className="min-h-screen bg-background text-on-surface flex items-center justify-center p-6 relative overflow-hidden font-body-md">
+      {/* Efeitos luminosos de fundo */}
+      <div className="bg-effects">
+        <div className="particle particle-1"></div>
+        <div className="particle particle-2"></div>
+      </div>
 
-        {/* Formulário */}
-        <form onSubmit={handleLogin} className="login-form">
-          {/* Campo Email */}
-          <div className="input-group">
-            <label className="input-label">Email</label>
-            <div className="input-container">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-                <polyline points="22,6 12,13 2,6"/>
-              </svg>
-              <input
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="login-input"
-                required
-                disabled={loading}
-              />
-            </div>
+      <motion.div 
+        className="max-w-md w-full z-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <div className="glass-card p-8 rounded-[32px] border border-outline-variant/30 shadow-xl flex flex-col items-center">
+          
+          {/* Header */}
+          <div className="flex flex-col items-center mb-6 text-center">
+            <motion.div 
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-secondary text-on-primary flex items-center justify-center mb-4 text-2xl shadow-md"
+              whileHover={{ rotate: 10 }}
+            >
+              {tipoUsuario === "aluno" ? <FaGraduationCap /> : <FaCogs />}
+            </motion.div>
+            <h1 className="font-display text-3xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-1">LearnHub</h1>
+            <p className="text-xs text-on-surface-variant/80 mt-1">
+              {tipoUsuario === "aluno" 
+                ? "Acesse sua conta para continuar seus estudos" 
+                : "Acesse o painel administrativo do sistema"
+              }
+            </p>
           </div>
 
-          {/* Campo Senha */}
-          <div className="input-group">
-            <label className="input-label">Senha</label>
-            <div className="input-container">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <circle cx="12" cy="16" r="1"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <input
-                type={mostrarSenha ? "text" : "password"}
-                placeholder="Digite sua senha"
-                value={senha}
-                onChange={(e) => setSenha(e.target.value)}
-                className="login-input"
-                required
-                disabled={loading}
-              />
-              <button
-                type="button"
-                className="toggle-password"
-                onClick={() => setMostrarSenha(!mostrarSenha)}
-                disabled={loading}
-              >
-                {mostrarSenha ? (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                    <line x1="1" y1="1" x2="23" y2="23"/>
-                  </svg>
-                ) : (
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                    <circle cx="12" cy="12" r="3"/>
-                  </svg>
-                )}
-              </button>
-            </div>
+          {/* Tipo de Usuário Tabs Selector */}
+          <div className="w-full bg-surface-container dark:bg-surface-container-high p-1 rounded-2xl flex gap-1 mb-6 border border-outline-variant/15 z-20">
+            <button
+              type="button"
+              onClick={() => { setTipoUsuario("aluno"); setErro(""); }}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all relative flex items-center justify-center gap-2 ${
+                tipoUsuario === "aluno"
+                  ? "bg-surface-container-lowest dark:bg-inverse-surface text-primary shadow-sm ring-1 ring-outline-variant/10"
+                  : "text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              <FaGraduationCap className="text-sm" />
+              <span>Estudante</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => { setTipoUsuario("admin"); setErro(""); }}
+              className={`flex-1 py-2.5 rounded-xl text-xs font-bold transition-all relative flex items-center justify-center gap-2 ${
+                tipoUsuario === "admin"
+                  ? "bg-surface-container-lowest dark:bg-inverse-surface text-primary shadow-sm ring-1 ring-outline-variant/10"
+                  : "text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              <FaCogs className="text-sm" />
+              <span>Administrativo</span>
+            </button>
           </div>
 
-          {/* Mensagem de erro */}
-          {erro && (
-            <div className="error-message">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="15" y1="9" x2="9" y2="15"/>
-                <line x1="9" y1="9" x2="15" y2="15"/>
-              </svg>
-              {erro}
+          {/* Form */}
+          <form onSubmit={handleLogin} className="w-full flex flex-col gap-5">
+            
+            {/* Email */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email</label>
+              <div className="relative">
+                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
+                <input
+                  type="email"
+                  placeholder={tipoUsuario === "aluno" ? "seu.email@exemplo.com" : "admin@learnhub.com"}
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border border-outline-variant/20 rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white"
+                  required
+                  disabled={loading}
+                />
+              </div>
             </div>
-          )}
 
-          {/* Botão de Login */}
-          <button 
-            className={`login-button ${loading ? 'loading' : ''}`} 
-            type="submit"
-            disabled={loading}
-          >
-            {loading ? (
-              <>
-                <div className="spinner"></div>
-                Entrando...
-              </>
-            ) : (
-              <>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                  <polyline points="10,17 15,12 10,7"/>
-                  <line x1="15" y1="12" x2="3" y2="12"/>
-                </svg>
-                Entrar
-              </>
-            )}
-          </button>
-        </form>
+            {/* Senha */}
+            <div className="flex flex-col gap-1.5">
+              <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Senha</label>
+              <div className="relative">
+                <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
+                <input
+                  type={mostrarSenha ? "text" : "password"}
+                  placeholder="Digite sua senha"
+                  value={senha}
+                  onChange={(e) => setSenha(e.target.value)}
+                  className="w-full pl-11 pr-11 py-3 bg-surface-container-low dark:bg-surface-container border border-outline-variant/20 rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white"
+                  required
+                  disabled={loading}
+                />
+                <button
+                  type="button"
+                  onClick={() => setMostrarSenha(!mostrarSenha)}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
+                  disabled={loading}
+                >
+                  {mostrarSenha ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
 
-        {/* Links úteis */}
-        <div className="login-links">
+            {/* Error Message */}
+            <AnimatePresence>
+              {erro && (
+                <motion.div 
+                  className="flex items-center gap-2 text-xs font-bold text-error bg-error/10 border border-error/20 p-3.5 rounded-2xl"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <FaLock className="text-sm shrink-0" />
+                  <span>{erro}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Button */}
+            <motion.button
+              type="submit"
+              className="w-full py-4 bg-gradient-to-r from-primary to-secondary text-on-primary font-bold rounded-2xl flex items-center justify-center gap-2 shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all active:scale-95 disabled:opacity-50"
+              disabled={loading}
+              whileTap={{ scale: 0.98 }}
+            >
+              {loading ? (
+                <>
+                  <div className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></div>
+                  <span>Acessando...</span>
+                </>
+              ) : (
+                <>
+                  <FaSignInAlt />
+                  <span>Entrar</span>
+                </>
+              )}
+            </motion.button>
+          </form>
+
+          {/* Auxiliary Links */}
+          <div className="w-full flex justify-between gap-4 mt-6 text-sm">
+            <button 
+              type="button"
+              className="text-on-surface-variant hover:text-primary transition-all font-semibold flex items-center gap-1.5" 
+              onClick={() => navigate("/esqueci-senha")}
+              disabled={loading}
+            >
+              <FaKey className="text-xs" />
+              <span>Esqueci a senha</span>
+            </button>
+
+            <button 
+              type="button"
+              className="text-on-surface-variant hover:text-primary transition-all font-semibold flex items-center gap-1.5" 
+              onClick={() => navigate(tipoUsuario === "aluno" ? "/cadastro-aluno" : "/cadastros")}
+              disabled={loading}
+            >
+              <FaUserPlus className="text-xs" />
+              <span>Criar conta</span>
+            </button>
+          </div>
+
+          {/* Divider */}
+          <div className="h-px bg-outline-variant/20 w-full my-6"></div>
+
+          {/* Back to Home Button */}
           <button 
             type="button"
-            className="forgot-password" 
-            onClick={() => navigate("/esqueci-senha")}
+            className="text-xs font-bold text-on-surface-variant hover:text-on-surface flex items-center gap-1.5 transition-colors"
+            onClick={() => navigate("/home")}
             disabled={loading}
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <circle cx="8" cy="15" r="4"/>
-              <path d="M10.85 12.15L19 4"/>
-              <path d="M18 5l1.5-1.5"/>
-              <path d="M15 8l1.5-1.5"/>
-            </svg>
-            Esqueci minha senha
+            <FaChevronLeft />
+            <span>Voltar ao início</span>
           </button>
 
-          <button 
-            type="button"
-            className="register-link" 
-            onClick={() => navigate("/cadastros")}
-            disabled={loading}
-          >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-              <circle cx="8.5" cy="7" r="4"/>
-              <line x1="20" y1="8" x2="20" y2="14"/>
-              <line x1="23" y1="11" x2="17" y2="11"/>
-            </svg>
-            Criar conta
-          </button>
-        </div>
-
-        {/* Informações adicionais */}
-        <div className="login-footer">
-          <div className="security-info">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <circle cx="12" cy="16" r="1"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
+          {/* Security Note */}
+          <div className="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant/70 uppercase tracking-widest mt-6">
+            <FaShieldAlt className="text-primary text-xs" />
             <span>Seus dados estão protegidos</span>
           </div>
+
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

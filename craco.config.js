@@ -2,6 +2,9 @@ const path = require('path');
 
 module.exports = {
   webpack: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
     configure: (webpackConfig, { env, paths }) => {
       // Desabilitar cache completamente em desenvolvimento
       if (env === 'development') {

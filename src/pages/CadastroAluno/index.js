@@ -3,7 +3,26 @@ import { useNavigate } from "react-router-dom";
 import { db, auth } from "../../firebaseConfig";
 import { createUserWithEmailAndPassword, onAuthStateChanged } from "firebase/auth";
 import { collection, setDoc, doc, getDocs, query, where } from "firebase/firestore";
-import "./cadastroAluno.css";
+import { motion, AnimatePresence } from "framer-motion";
+import { 
+  FaUser, 
+  FaCalendarAlt, 
+  FaIdCard, 
+  FaPhone, 
+  FaEnvelope, 
+  FaLock, 
+  FaEye, 
+  FaEyeSlash, 
+  FaArrowLeft, 
+  FaArrowRight, 
+  FaCheck, 
+  FaGraduationCap, 
+  FaUniversity, 
+  FaBook,
+  FaClock,
+  FaShieldAlt,
+  FaRedo
+} from "react-icons/fa";
 
 function CadastroAluno() {
   const [formData, setFormData] = useState({
@@ -48,7 +67,6 @@ function CadastroAluno() {
 
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Limpar erro do campo quando usuário começar a digitar
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: "" }));
     }
@@ -112,11 +130,9 @@ function CadastroAluno() {
     setErrors({});
 
     try {
-      // Criando usuário no Firebase Authentication
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.senha);
       const user = userCredential.user;
 
-      // Salvando usuário no Firestore
       await setDoc(doc(db, "alunos", user.uid), { 
         uid: user.uid, 
         ...formData,
@@ -188,268 +204,209 @@ function CadastroAluno() {
   };
 
   const renderStep1 = () => (
-    <div className="step-content">
-      <h3 className="step-title">Dados Pessoais</h3>
+    <div className="flex flex-col gap-4">
+      <h3 className="font-display text-lg font-bold text-on-surface mb-2">Dados Pessoais</h3>
       
-      <div className="input-group">
-        <label htmlFor="nomeCompleto" className="input-label">Nome Completo</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-            <circle cx="12" cy="7" r="4"/>
-          </svg>
+      {/* Nome Completo */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="nomeCompleto" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nome Completo</label>
+        <div className="relative">
+          <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="nomeCompleto"
             type="text"
             placeholder="Digite seu nome completo"
             value={formData.nomeCompleto}
             onChange={(e) => updateField('nomeCompleto', e.target.value)}
-            className={`cadastro-input ${errors.nomeCompleto ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.nomeCompleto ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
           />
         </div>
-        {errors.nomeCompleto && <span className="error-text">{errors.nomeCompleto}</span>}
+        {errors.nomeCompleto && <span className="text-xs font-semibold text-error mt-0.5">{errors.nomeCompleto}</span>}
       </div>
 
-      <div className="input-group">
-        <label htmlFor="dataNascimento" className="input-label">Data de Nascimento</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-            <line x1="16" y1="2" x2="16" y2="6"/>
-            <line x1="8" y1="2" x2="8" y2="6"/>
-            <line x1="3" y1="10" x2="21" y2="10"/>
-          </svg>
+      {/* Data Nascimento */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="dataNascimento" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Data de Nascimento</label>
+        <div className="relative">
+          <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="dataNascimento"
             type="date"
             value={formData.dataNascimento}
             onChange={(e) => updateField('dataNascimento', e.target.value)}
-            className={`cadastro-input ${errors.dataNascimento ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.dataNascimento ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
           />
         </div>
-        {errors.dataNascimento && <span className="error-text">{errors.dataNascimento}</span>}
+        {errors.dataNascimento && <span className="text-xs font-semibold text-error mt-0.5">{errors.dataNascimento}</span>}
       </div>
 
-      <div className="input-group">
-        <label htmlFor="cpf" className="input-label">CPF</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14,2 14,8 20,8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10,9 9,9 8,9"/>
-          </svg>
+      {/* CPF */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="cpf" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">CPF</label>
+        <div className="relative">
+          <FaIdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="cpf"
             type="text"
             placeholder="000.000.000-00"
             value={formData.cpf}
             onChange={(e) => updateField('cpf', formatCPF(e.target.value))}
-            className={`cadastro-input ${errors.cpf ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.cpf ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
             maxLength="14"
           />
         </div>
-        {errors.cpf && <span className="error-text">{errors.cpf}</span>}
+        {errors.cpf && <span className="text-xs font-semibold text-error mt-0.5">{errors.cpf}</span>}
       </div>
 
-      <div className="input-group">
-        <label htmlFor="telefone" className="input-label">Telefone</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
-          </svg>
+      {/* Telefone */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="telefone" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Telefone</label>
+        <div className="relative">
+          <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="telefone"
             type="text"
             placeholder="(00) 00000-0000"
             value={formData.telefone}
             onChange={(e) => updateField('telefone', formatTelefone(e.target.value))}
-            className={`cadastro-input ${errors.telefone ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.telefone ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
             maxLength="15"
           />
         </div>
-        {errors.telefone && <span className="error-text">{errors.telefone}</span>}
+        {errors.telefone && <span className="text-xs font-semibold text-error mt-0.5">{errors.telefone}</span>}
       </div>
 
-      <div className="input-group">
-        <label htmlFor="emailContato" className="input-label">Email para Contato</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
+      {/* Email Contato */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="emailContato" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email para Contato</label>
+        <div className="relative">
+          <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="emailContato"
             type="email"
             placeholder="seu.email@exemplo.com"
             value={formData.emailContato}
             onChange={(e) => updateField('emailContato', e.target.value)}
-            className={`cadastro-input ${errors.emailContato ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.emailContato ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
           />
         </div>
-        {errors.emailContato && <span className="error-text">{errors.emailContato}</span>}
+        {errors.emailContato && <span className="text-xs font-semibold text-error mt-0.5">{errors.emailContato}</span>}
       </div>
     </div>
   );
 
   const renderStep2 = () => (
-    <div className="step-content">
-      <h3 className="step-title">Dados de Acesso</h3>
+    <div className="flex flex-col gap-4">
+      <h3 className="font-display text-lg font-bold text-on-surface mb-2">Dados de Acesso</h3>
       
-      <div className="input-group">
-        <label htmlFor="email" className="input-label">Email de Login</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
-            <polyline points="22,6 12,13 2,6"/>
-          </svg>
+      {/* Email Login */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="email" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Email de Login</label>
+        <div className="relative">
+          <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="email"
             type="email"
             placeholder="Email para fazer login"
             value={formData.email}
             onChange={(e) => updateField('email', e.target.value)}
-            className={`cadastro-input ${errors.email ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.email ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
           />
         </div>
-        {errors.email && <span className="error-text">{errors.email}</span>}
+        {errors.email && <span className="text-xs font-semibold text-error mt-0.5">{errors.email}</span>}
       </div>
 
-      <div className="input-group">
-        <label htmlFor="senha" className="input-label">Senha</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <circle cx="12" cy="16" r="1"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
+      {/* Senha */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="senha" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Senha</label>
+        <div className="relative">
+          <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="senha"
             type={showPassword ? "text" : "password"}
             placeholder="Mínimo 6 caracteres"
             value={formData.senha}
             onChange={(e) => updateField('senha', e.target.value)}
-            className={`cadastro-input ${errors.senha ? 'error' : ''}`}
+            className={`w-full pl-11 pr-11 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.senha ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
           />
           <button
             type="button"
             onClick={() => setShowPassword(!showPassword)}
-            className="password-toggle"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
           >
-            {showPassword ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                <line x1="1" y1="1" x2="23" y2="23"/>
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            )}
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
-        {errors.senha && <span className="error-text">{errors.senha}</span>}
+        {errors.senha && <span className="text-xs font-semibold text-error mt-0.5">{errors.senha}</span>}
       </div>
 
-      <div className="input-group">
-        <label htmlFor="confirmSenha" className="input-label">Confirmar Senha</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-            <circle cx="12" cy="16" r="1"/>
-            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-          </svg>
+      {/* Confirmar Senha */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="confirmSenha" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Confirmar Senha</label>
+        <div className="relative">
+          <FaLock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <input
             id="confirmSenha"
             type={showConfirmPassword ? "text" : "password"}
             placeholder="Digite a senha novamente"
             value={formData.confirmSenha}
             onChange={(e) => updateField('confirmSenha', e.target.value)}
-            className={`cadastro-input ${errors.confirmSenha ? 'error' : ''}`}
+            className={`w-full pl-11 pr-11 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.confirmSenha ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
           />
           <button
             type="button"
             onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            className="password-toggle"
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-on-surface-variant hover:text-on-surface transition-colors"
           >
-            {showConfirmPassword ? (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
-                <line x1="1" y1="1" x2="23" y2="23"/>
-              </svg>
-            ) : (
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
-                <circle cx="12" cy="12" r="3"/>
-              </svg>
-            )}
+            {showConfirmPassword ? <FaEyeSlash /> : <FaEye />}
           </button>
         </div>
-        {errors.confirmSenha && <span className="error-text">{errors.confirmSenha}</span>}
+        {errors.confirmSenha && <span className="text-xs font-semibold text-error mt-0.5">{errors.confirmSenha}</span>}
       </div>
 
-      <div className="matricula-section">
-        <div className="input-group">
-          <label htmlFor="matricula" className="input-label">Matrícula</label>
-          <div className="matricula-wrapper">
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-              </svg>
-              <input
-                id="matricula"
-                type="text"
-                placeholder="Clique em gerar matrícula"
-                value={formData.matricula}
-                readOnly
-                className={`cadastro-input readonly ${errors.matricula ? 'error' : ''}`}
-              />
-            </div>
-            <button
-              type="button"
-              onClick={gerarMatricula}
-              className="generate-btn"
-              disabled={loading}
-            >
-              {loading ? (
-                <div className="spinner-small"></div>
-              ) : (
-                <>
-                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="23,4 23,10 17,10"/>
-                    <polyline points="1,20 1,14 7,14"/>
-                    <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/>
-                  </svg>
-                  Gerar
-                </>
-              )}
-            </button>
+      {/* Matrícula */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="matricula" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Matrícula</label>
+        <div className="flex gap-2">
+          <div className="relative flex-1">
+            <FaIdCard className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
+            <input
+              id="matricula"
+              type="text"
+              placeholder="Gere uma matrícula..."
+              value={formData.matricula}
+              readOnly
+              className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.matricula ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:outline-none cursor-not-allowed dark:text-white font-mono font-bold text-primary`}
+            />
           </div>
-          {errors.matricula && <span className="error-text">{errors.matricula}</span>}
+          <button
+            type="button"
+            onClick={gerarMatricula}
+            className="px-5 bg-primary/10 border border-primary/20 text-primary hover:bg-primary/25 rounded-2xl font-bold flex items-center justify-center gap-2 transition-colors active:scale-95 disabled:opacity-50"
+            disabled={loading}
+          >
+            {loading ? <div className="w-5 h-5 border-2 border-primary border-t-transparent rounded-full animate-spin"></div> : <><FaRedo className="text-xs" /><span>Gerar</span></>}
+          </button>
         </div>
+        {errors.matricula && <span className="text-xs font-semibold text-error mt-0.5">{errors.matricula}</span>}
       </div>
     </div>
   );
 
   const renderStep3 = () => (
-    <div className="step-content">
-      <h3 className="step-title">Dados Acadêmicos</h3>
+    <div className="flex flex-col gap-4">
+      <h3 className="font-display text-lg font-bold text-on-surface mb-2">Dados Acadêmicos</h3>
       
-      <div className="input-group">
-        <label htmlFor="nivelEnsino" className="input-label">Nível de Ensino</label>
-        <div className="input-wrapper">
-          <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-            <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-            <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-          </svg>
+      {/* Nivel de Ensino */}
+      <div className="flex flex-col gap-1.5">
+        <label htmlFor="nivelEnsino" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nível de Ensino</label>
+        <div className="relative">
+          <FaGraduationCap className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
           <select
             id="nivelEnsino"
             value={formData.nivelEnsino}
             onChange={(e) => updateField('nivelEnsino', e.target.value)}
-            className={`cadastro-input ${errors.nivelEnsino ? 'error' : ''}`}
+            className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.nivelEnsino ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white appearance-none`}
           >
             <option value="">Selecione o nível de ensino</option>
             <option value="Ensino Fundamental">Ensino Fundamental</option>
@@ -457,64 +414,60 @@ function CadastroAluno() {
             <option value="Ensino Superior">Ensino Superior</option>
           </select>
         </div>
-        {errors.nivelEnsino && <span className="error-text">{errors.nivelEnsino}</span>}
+        {errors.nivelEnsino && <span className="text-xs font-semibold text-error mt-0.5">{errors.nivelEnsino}</span>}
       </div>
 
+      {/* Fundamental e Médio */}
       {(formData.nivelEnsino === "Ensino Fundamental" || formData.nivelEnsino === "Ensino Médio") && (
-        <>
-          <div className="input-group">
-            <label htmlFor="anoSerie" className="input-label">Ano/Série Atual</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                <polyline points="14,2 14,8 20,8"/>
-                <line x1="16" y1="13" x2="8" y2="13"/>
-                <line x1="16" y1="17" x2="8" y2="17"/>
-              </svg>
+        <motion.div 
+          className="flex flex-col gap-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {/* Ano Serie */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="anoSerie" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Ano/Série Atual</label>
+            <div className="relative">
+              <FaBook className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <input
                 id="anoSerie"
                 type="text"
                 placeholder="Ex: 9º ano, 2º ano"
                 value={formData.anoSerie}
                 onChange={(e) => updateField('anoSerie', e.target.value)}
-                className={`cadastro-input ${errors.anoSerie ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.anoSerie ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
               />
             </div>
-            {errors.anoSerie && <span className="error-text">{errors.anoSerie}</span>}
+            {errors.anoSerie && <span className="text-xs font-semibold text-error mt-0.5">{errors.anoSerie}</span>}
           </div>
 
-          <div className="input-group">
-            <label htmlFor="nomeEscola" className="input-label">Nome da Escola</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M3 21h18"/>
-                <path d="M5 21V7l8-4v18"/>
-                <path d="M19 21V11l-6-4"/>
-              </svg>
+          {/* Nome Escola */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="nomeEscola" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nome da Escola</label>
+            <div className="relative">
+              <FaUniversity className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <input
                 id="nomeEscola"
                 type="text"
                 placeholder="Nome da sua escola"
                 value={formData.nomeEscola}
                 onChange={(e) => updateField('nomeEscola', e.target.value)}
-                className={`cadastro-input ${errors.nomeEscola ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.nomeEscola ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
               />
             </div>
-            {errors.nomeEscola && <span className="error-text">{errors.nomeEscola}</span>}
+            {errors.nomeEscola && <span className="text-xs font-semibold text-error mt-0.5">{errors.nomeEscola}</span>}
           </div>
 
-          <div className="input-group">
-            <label htmlFor="turno" className="input-label">Turno</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <circle cx="12" cy="12" r="10"/>
-                <polyline points="12,6 12,12 16,14"/>
-              </svg>
+          {/* Turno */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="turno" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Turno</label>
+            <div className="relative">
+              <FaClock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <select
                 id="turno"
                 value={formData.turno}
                 onChange={(e) => updateField('turno', e.target.value)}
-                className={`cadastro-input ${errors.turno ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.turno ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white appearance-none`}
               >
                 <option value="">Selecione o turno</option>
                 <option value="Manhã">Manhã</option>
@@ -522,85 +475,79 @@ function CadastroAluno() {
                 <option value="Noite">Noite</option>
               </select>
             </div>
-            {errors.turno && <span className="error-text">{errors.turno}</span>}
+            {errors.turno && <span className="text-xs font-semibold text-error mt-0.5">{errors.turno}</span>}
           </div>
-        </>
+        </motion.div>
       )}
 
+      {/* Ensino Superior */}
       {formData.nivelEnsino === "Ensino Superior" && (
-        <>
-          <div className="input-group">
-            <label htmlFor="nomeInstituicao" className="input-label">Nome da Instituição</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-              </svg>
+        <motion.div 
+          className="flex flex-col gap-4"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+        >
+          {/* Nome Instituição */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="nomeInstituicao" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Nome da Instituição</label>
+            <div className="relative">
+              <FaUniversity className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <input
                 id="nomeInstituicao"
                 type="text"
                 placeholder="Nome da universidade/faculdade"
                 value={formData.nomeInstituicao}
                 onChange={(e) => updateField('nomeInstituicao', e.target.value)}
-                className={`cadastro-input ${errors.nomeInstituicao ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.nomeInstituicao ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
               />
             </div>
-            {errors.nomeInstituicao && <span className="error-text">{errors.nomeInstituicao}</span>}
+            {errors.nomeInstituicao && <span className="text-xs font-semibold text-error mt-0.5">{errors.nomeInstituicao}</span>}
           </div>
 
-          <div className="input-group">
-            <label htmlFor="curso" className="input-label">Curso</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-              </svg>
+          {/* Curso */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="curso" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Curso</label>
+            <div className="relative">
+              <FaBook className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <input
                 id="curso"
                 type="text"
                 placeholder="Nome do seu curso"
                 value={formData.curso}
                 onChange={(e) => updateField('curso', e.target.value)}
-                className={`cadastro-input ${errors.curso ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.curso ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
               />
             </div>
-            {errors.curso && <span className="error-text">{errors.curso}</span>}
+            {errors.curso && <span className="text-xs font-semibold text-error mt-0.5">{errors.curso}</span>}
           </div>
 
-          <div className="input-group">
-            <label htmlFor="semestrePeriodo" className="input-label">Semestre/Período Atual</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
-                <line x1="16" y1="2" x2="16" y2="6"/>
-                <line x1="8" y1="2" x2="8" y2="6"/>
-                <line x1="3" y1="10" x2="21" y2="10"/>
-              </svg>
+          {/* Semestre Periodo */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="semestrePeriodo" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Semestre/Período Atual</label>
+            <div className="relative">
+              <FaCalendarAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <input
                 id="semestrePeriodo"
                 type="text"
                 placeholder="Ex: 5º semestre, 3º período"
                 value={formData.semestrePeriodo}
                 onChange={(e) => updateField('semestrePeriodo', e.target.value)}
-                className={`cadastro-input ${errors.semestrePeriodo ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.semestrePeriodo ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white`}
               />
             </div>
-            {errors.semestrePeriodo && <span className="error-text">{errors.semestrePeriodo}</span>}
+            {errors.semestrePeriodo && <span className="text-xs font-semibold text-error mt-0.5">{errors.semestrePeriodo}</span>}
           </div>
 
-          <div className="input-group">
-            <label htmlFor="modalidade" className="input-label">Modalidade</label>
-            <div className="input-wrapper">
-              <svg className="input-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="3" width="20" height="14" rx="2" ry="2"/>
-                <line x1="8" y1="21" x2="16" y2="21"/>
-                <line x1="12" y1="17" x2="12" y2="21"/>
-              </svg>
+          {/* Modalidade */}
+          <div className="flex flex-col gap-1.5">
+            <label htmlFor="modalidade" className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">Modalidade</label>
+            <div className="relative">
+              <FaClock className="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <select
                 id="modalidade"
                 value={formData.modalidade}
                 onChange={(e) => updateField('modalidade', e.target.value)}
-                className={`cadastro-input ${errors.modalidade ? 'error' : ''}`}
+                className={`w-full pl-11 pr-4 py-3 bg-surface-container-low dark:bg-surface-container border ${errors.modalidade ? 'border-error' : 'border-outline-variant/20'} rounded-2xl text-body-md focus:ring-2 focus:ring-primary focus:outline-none transition-all dark:text-white appearance-none`}
               >
                 <option value="">Selecione a modalidade</option>
                 <option value="Presencial">Presencial</option>
@@ -608,86 +555,112 @@ function CadastroAluno() {
                 <option value="Híbrido">Híbrido</option>
               </select>
             </div>
-            {errors.modalidade && <span className="error-text">{errors.modalidade}</span>}
+            {errors.modalidade && <span className="text-xs font-semibold text-error mt-0.5">{errors.modalidade}</span>}
           </div>
-        </>
+        </motion.div>
       )}
     </div>
   );
 
   return (
-    <div className="cadastro-aluno-container">
-      <div className="cadastro-aluno-wrapper">
-        {/* Header */}
-        <div className="cadastro-header">
-          <div className="logo-container">
-            <div className="logo-icon">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M22 10v6M2 10l10-5 10 5-10 5z"/>
-                <path d="M6 12v5c3 3 9 3 12 0v-5"/>
-              </svg>
-            </div>
-            <h1 className="logo-text">LearnHub</h1>
-          </div>
-          <h2 className="cadastro-aluno-title">Criar Conta de Estudante</h2>
-          <p className="cadastro-subtitle">Preencha os dados para criar sua conta</p>
-        </div>
+    <div className="min-h-screen bg-background text-on-surface flex items-center justify-center p-6 relative overflow-hidden font-body-md">
+      {/* Efeitos de fundo */}
+      <div className="bg-effects">
+        <div className="particle particle-1"></div>
+        <div className="particle particle-2"></div>
+      </div>
 
-        {/* Progress Bar */}
-        <div className="progress-container">
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${(currentStep / 3) * 100}%` }}
-            ></div>
+      <motion.div 
+        className="max-w-xl w-full z-10 my-10"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <div className="glass-card p-8 sm:p-10 rounded-[32px] border border-outline-variant/30 shadow-xl flex flex-col">
+          
+          {/* Header */}
+          <div className="flex flex-col items-center mb-8 text-center">
+            <motion.div 
+              className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-primary to-secondary text-on-primary flex items-center justify-center mb-4 text-2xl shadow-md"
+              whileHover={{ scale: 1.05 }}
+            >
+              <FaGraduationCap />
+            </motion.div>
+            <h1 className="font-display text-3xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent mb-1">LearnHub</h1>
+            <h2 className="text-sm font-bold text-on-surface-variant uppercase tracking-wider">Criar Conta de Estudante</h2>
+            <p className="text-xs text-on-surface-variant/80 mt-1">Preencha as informações necessárias para se registrar</p>
           </div>
-          <div className="progress-steps">
-            <div className={`progress-step ${currentStep >= 1 ? 'active' : ''}`}>
-              <span className="step-number">1</span>
-              <span className="step-label">Dados Pessoais</span>
-            </div>
-            <div className={`progress-step ${currentStep >= 2 ? 'active' : ''}`}>
-              <span className="step-number">2</span>
-              <span className="step-label">Acesso</span>
-            </div>
-            <div className={`progress-step ${currentStep >= 3 ? 'active' : ''}`}>
-              <span className="step-number">3</span>
-              <span className="step-label">Acadêmicos</span>
-            </div>
-          </div>
-        </div>
 
-        {/* Form Container */}
-        <div className="cadastro-aluno-box">
-          <form onSubmit={handleCadastro} className="cadastro-form">
-            {currentStep === 1 && renderStep1()}
-            {currentStep === 2 && renderStep2()}
-            {currentStep === 3 && renderStep3()}
-
-            {/* Error message */}
-            {errors.submit && (
-              <div className="error-message">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <line x1="15" y1="9" x2="9" y2="15"/>
-                  <line x1="9" y1="9" x2="15" y2="15"/>
-                </svg>
-                {errors.submit}
+          {/* Stepper Progress Visualizer */}
+          <div className="flex items-center justify-between w-full mb-10 relative">
+            <div className="absolute top-1/2 left-0 right-0 h-1 bg-surface-container-high dark:bg-surface-container -translate-y-1/2 -z-10 rounded-full">
+              <motion.div 
+                className="h-full bg-gradient-to-r from-primary to-secondary rounded-full"
+                animate={{ width: `${((currentStep - 1) / 2) * 100}%` }}
+                transition={{ duration: 0.3 }}
+              ></motion.div>
+            </div>
+            {[1, 2, 3].map((step) => (
+              <div key={step} className="flex flex-col items-center">
+                <div 
+                  className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm transition-all duration-300 ${
+                    currentStep === step 
+                      ? 'bg-primary text-on-primary ring-4 ring-primary/20 scale-110' 
+                      : currentStep > step 
+                      ? 'bg-secondary text-on-secondary' 
+                      : 'bg-surface-container-high dark:bg-surface-container text-on-surface-variant'
+                  }`}
+                >
+                  {currentStep > step ? <FaCheck className="text-xs" /> : step}
+                </div>
+                <span className={`text-[10px] font-bold uppercase tracking-wider mt-2 transition-colors duration-300 ${currentStep === step ? 'text-primary' : 'text-on-surface-variant/80'}`}>
+                  {step === 1 ? 'Pessoal' : step === 2 ? 'Acesso' : 'Acadêmico'}
+                </span>
               </div>
-            )}
+            ))}
+          </div>
 
-            {/* Navigation Buttons */}
-            <div className="form-navigation">
+          {/* Form */}
+          <form onSubmit={handleCadastro} className="flex-1 flex flex-col gap-6">
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentStep}
+                initial={{ opacity: 0, x: 15 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -15 }}
+                transition={{ duration: 0.25 }}
+              >
+                {currentStep === 1 && renderStep1()}
+                {currentStep === 2 && renderStep2()}
+                {currentStep === 3 && renderStep3()}
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Error Message */}
+            <AnimatePresence>
+              {errors.submit && (
+                <motion.div 
+                  className="flex items-center gap-2 text-xs font-bold text-error bg-error/10 border border-error/20 p-3.5 rounded-2xl"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                >
+                  <FaShieldAlt className="text-sm shrink-0" />
+                  <span>{errors.submit}</span>
+                </motion.div>
+              )}
+            </AnimatePresence>
+
+            {/* Navigation buttons */}
+            <div className="flex gap-4 mt-4">
               {currentStep > 1 && (
                 <button
                   type="button"
                   onClick={prevStep}
-                  className="nav-button secondary"
+                  className="flex-1 py-3.5 border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:border-on-surface-variant font-bold rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all text-sm"
                 >
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="15,18 9,12 15,6"/>
-                  </svg>
-                  Anterior
+                  <FaArrowLeft />
+                  <span>Anterior</span>
                 </button>
               )}
 
@@ -695,60 +668,57 @@ function CadastroAluno() {
                 <button
                   type="button"
                   onClick={nextStep}
-                  className="nav-button primary"
+                  className="flex-1 py-3.5 bg-primary text-on-primary hover:bg-primary/95 font-bold rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all text-sm shadow-md"
                 >
-                  Próximo
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                    <polyline points="9,18 15,12 9,6"/>
-                  </svg>
+                  <span>Próximo</span>
+                  <FaArrowRight />
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className={`nav-button primary ${loading ? 'loading' : ''}`}
+                  className="flex-1 py-3.5 bg-gradient-to-r from-primary to-secondary text-on-primary font-bold rounded-2xl flex items-center justify-center gap-2 active:scale-95 transition-all text-sm shadow-md disabled:opacity-50"
                   disabled={loading}
                 >
                   {loading ? (
                     <>
-                      <div className="spinner"></div>
-                      Criando conta...
+                      <div className="w-5 h-5 border-2 border-on-primary border-t-transparent rounded-full animate-spin"></div>
+                      <span>Criando conta...</span>
                     </>
                   ) : (
                     <>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
-                        <polyline points="22,4 12,14.01 9,11.01"/>
-                      </svg>
-                      Criar Conta
+                      <FaCheck />
+                      <span>Concluir Cadastro</span>
                     </>
                   )}
                 </button>
               )}
             </div>
           </form>
-        </div>
 
-        {/* Footer */}
-        <div className="cadastro-footer">
-          <p>
-            Já tem uma conta?{' '}
+          {/* Footer */}
+          <div className="flex flex-col items-center gap-3 mt-8 pt-6 border-t border-outline-variant/20">
+            <p className="text-sm text-on-surface-variant">
+              Já tem uma conta?{" "}
+              <button
+                type="button"
+                onClick={() => navigate('/login-aluno')}
+                className="text-primary font-bold hover:underline inline"
+              >
+                Faça login aqui
+              </button>
+            </p>
             <button
               type="button"
-              onClick={() => navigate('/login-aluno')}
-              className="link-button inline"
+              onClick={() => navigate('/home')}
+              className="text-xs text-on-surface-variant/80 hover:text-on-surface font-semibold flex items-center gap-1 transition-colors"
             >
-              Faça login aqui
+              <FaArrowLeft className="text-[10px]" />
+              <span>Voltar ao início</span>
             </button>
-          </p>
-          <button
-            type="button"
-            onClick={() => navigate('/home')}
-            className="link-button"
-          >
-            Voltar ao início
-          </button>
+          </div>
+
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

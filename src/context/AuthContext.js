@@ -15,8 +15,13 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    const startTime = Date.now();
+
     // Monitora mudanças no estado de autenticação
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      let resolvedUser = null;
+      let resolvedType = null;
+
       if (user) {
         try {
           // Verifica primeiro na coleção "usuarios" (login principal)
@@ -32,23 +37,25 @@ export const AuthProvider = ({ children }) => {
           console.log("AuthContext: Verificando usuário:", user.uid, "Tipo:", foundUserType, "Existe:", userDoc.exists());
           
           if (userDoc.exists()) {
-            setCurrentUser(user);
-            setUserType(foundUserType);
+            resolvedUser = user;
+            resolvedType = foundUserType;
           } else {
             console.warn("AuthContext: Usuário não encontrado em nenhuma coleção:", user.uid);
-            setCurrentUser(null);
-            setUserType(null);
           }
         } catch (error) {
           console.error("AuthContext: Erro ao verificar usuário no Firestore:", error);
-          setCurrentUser(null);
-          setUserType(null);
         }
-      } else {
-        setCurrentUser(null);
-        setUserType(null);
       }
-      setLoading(false);
+
+      // Garantir tempo de carregamento mínimo de 2.5s (2500ms) para um carregamento suave e cinemático
+      const elapsed = Date.now() - startTime;
+      const remainingTime = Math.max(0, 2500 - elapsed);
+
+      setTimeout(() => {
+        setCurrentUser(resolvedUser);
+        setUserType(resolvedType);
+        setLoading(false);
+      }, remainingTime);
     });
 
     return unsubscribe;

@@ -1,7 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { createPortal } from 'react-dom';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebaseConfig';
+import { motion, AnimatePresence } from 'framer-motion';
+import { 
+  User, Mail, Phone, Calendar, GraduationCap, Building, 
+  BookOpen, Clock, Globe, Camera, Save, X, Edit3, 
+  CheckCircle2, Link as LinkIcon, Sparkles 
+} from 'lucide-react';
 import './modalPerfil.css';
 
 const ModalPerfil = ({ 
@@ -17,8 +23,15 @@ const ModalPerfil = ({
   const [editedData, setEditedData] = useState({});
   const [saving, setSaving] = useState(false);
   const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [activeTab, setActiveTab] = useState('pessoais'); // 'pessoais' | 'academicos'
+  const [imageError, setImageError] = useState(false);
+  const [showPhotoInput, setShowPhotoInput] = useState(false);
 
-  // Se o modal não está aberto, não renderiza nada
+  // Reset image error state when photo changes
+  useEffect(() => {
+    setImageError(false);
+  }, [foto, editedData.foto]);
+
   if (!isOpen) return null;
 
   const handleSaveProfile = async () => {
@@ -29,12 +42,12 @@ const ModalPerfil = ({
       const docRef = doc(db, 'alunos', user.uid);
       await updateDoc(docRef, editedData);
       
-      // Chama a função callback para atualizar os dados no componente pai
       if (onUpdateProfile) {
         onUpdateProfile(editedData);
       }
       
       setEditMode(false);
+      setShowPhotoInput(false);
       setEditedData({});
       
       setShowSuccessMessage(true);
@@ -51,221 +64,362 @@ const ModalPerfil = ({
   const handleEditClick = () => {
     setEditMode(true);
     setEditedData({
-      nome: dadosAluno?.nome || '',
+      nome: dadosAluno?.nome || nome || '',
       emailContato: dadosAluno?.emailContato || user?.email || '',
       telefone: dadosAluno?.telefone || '',
       dataNascimento: dadosAluno?.dataNascimento || '',
       nomeInstituicao: dadosAluno?.nomeInstituicao || '',
       curso: dadosAluno?.curso || '',
       semestrePeriodo: dadosAluno?.semestrePeriodo || '',
-      modalidade: dadosAluno?.modalidade || ''
+      modalidade: dadosAluno?.modalidade || '',
+      foto: dadosAluno?.foto || foto || ''
     });
   };
 
   const handleCancel = () => {
     setEditMode(false);
+    setShowPhotoInput(false);
     setEditedData({});
   };
 
+  // Helper to extract initials
+  const getInitials = (fullName) => {
+    if (!fullName) return '?';
+    const parts = fullName.trim().split(/\s+/);
+    if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+    return (parts[0].charAt(0) + parts[parts.length - 1].charAt(0)).toUpperCase();
+  };
+
+  const currentPhoto = editMode ? (editedData.foto || foto) : (dadosAluno?.foto || foto);
+  const currentNome = editMode ? (editedData.nome || nome) : (dadosAluno?.nome || nome);
+  const initials = getInitials(currentNome);
+
   const modalContent = (
-    <div className="modal-perfil-bg" onClick={onClose}>
-      <div className="modal-perfil-moderno" onClick={(e) => e.stopPropagation()}>
-        <div className="modal-perfil-header">
-          <div className="modal-perfil-avatar-section">
-            <div className="modal-perfil-avatar">
-              <img src={foto} alt="Perfil" />
-              <div className="avatar-badge-online"></div>
-            </div>
-            <div className="modal-perfil-info">
-              <h2 className="modal-perfil-nome">{nome}</h2>
-              <p className="modal-perfil-email">{dadosAluno?.emailContato || user?.email}</p>
-            </div>
-          </div>
-          <button 
-            className="modal-close-btn"
-            onClick={onClose}
-          >
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M18 6L6 18M6 6l12 12" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
+    <motion.div 
+      className="modal-perfil-bg" 
+      onClick={onClose}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      {/* Glow blobs in background for depth */}
+      <div className="bg-glow-blob blob-1"></div>
+      <div className="bg-glow-blob blob-2"></div>
+
+      <motion.div 
+        className="modal-perfil-moderno glass-modal" 
+        onClick={(e) => e.stopPropagation()}
+        initial={{ scale: 0.92, opacity: 0, y: 30 }}
+        animate={{ scale: 1, opacity: 1, y: 0 }}
+        exit={{ scale: 0.92, opacity: 0, y: 30 }}
+        transition={{ type: "spring", damping: 25, stiffness: 220 }}
+      >
+        {/* Banner com Mesh Gradient */}
+        <div className="modal-perfil-banner">
+          <div className="banner-mesh"></div>
+          <button className="modal-close-btn-modern" onClick={onClose} aria-label="Fechar">
+            <X size={18} />
           </button>
         </div>
-        
-        <div className="modal-perfil-content">
-          {!editMode ? (
-            // Modo Visualização
-            <div className="perfil-view-mode">
-              <div className="perfil-section">
-                <h3 className="section-title">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
-                  Informações Pessoais
-                </h3>
-                <div className="perfil-info-grid">
-                  <div className="info-item">
-                    <label>Nome Completo</label>
-                    <span>{dadosAluno?.nome || 'Não informado'}</span>
-                  </div>
-                  <div className="info-item">
-                    <label>Email Principal</label>
-                    <span>{user?.email || 'Não informado'}</span>
-                  </div>
-                  <div className="info-item">
-                    <label>Email de Contato</label>
-                    <span>{dadosAluno?.emailContato || 'Não informado'}</span>
-                  </div>
-                  <div className="info-item">
-                    <label>Telefone</label>
-                    <span>{dadosAluno?.telefone || 'Não informado'}</span>
-                  </div>
-                  <div className="info-item">
-                    <label>Data de Nascimento</label>
-                    <span>{dadosAluno?.dataNascimento || 'Não informado'}</span>
-                  </div>
+
+        {/* Header content with avatar overlapping banner */}
+        <div className="modal-perfil-header-new">
+          <div className="avatar-outer-wrapper">
+            <div 
+              className={`avatar-inner-ring ${editMode ? 'editable' : ''}`}
+              onClick={() => editMode && setShowPhotoInput(!showPhotoInput)}
+            >
+              {currentPhoto && !imageError ? (
+                <img 
+                  src={currentPhoto} 
+                  alt="Perfil" 
+                  onError={() => setImageError(true)} 
+                  className="avatar-img-modern"
+                />
+              ) : (
+                <div className="avatar-placeholder-initials">
+                  {initials}
                 </div>
-              </div>
+              )}
               
-              {/* Seção Acadêmica */}
-              <div className="perfil-section">
-                <h3 className="section-title">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M22 10v6M2 10v8a2 2 0 002 2h16a2 2 0 002-2v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M7 15v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 15v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M17 15v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 10l10-8 10 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Informações Acadêmicas
-                </h3>
-                <div className="perfil-info-grid">
-                  <div className="info-item">
-                    <label>Instituição</label>
-                    <span>{dadosAluno?.nomeInstituicao || 'Não informado'}</span>
+              {editMode && (
+                <div className="avatar-edit-overlay">
+                  <Camera size={20} className="camera-icon-anim" />
+                  <span>Alterar</span>
+                </div>
+              )}
+            </div>
+            <div className="avatar-status-indicator-online"></div>
+          </div>
+
+          <div className="header-details-modern">
+            <h2 className="header-name-modern">
+              {currentNome}
+              <Sparkles size={16} className="sparkle-title-icon" />
+            </h2>
+            <p className="header-subtitle-modern">
+              {dadosAluno?.curso ? `${dadosAluno.curso} • ${dadosAluno.nomeInstituicao || 'Estudante'}` : (dadosAluno?.emailContato || user?.email)}
+            </p>
+          </div>
+        </div>
+
+        {/* Tab Navigation Selector */}
+        <div className="modal-tabs-container">
+          <button 
+            className={`tab-btn-modern ${activeTab === 'pessoais' ? 'active' : ''}`}
+            onClick={() => setActiveTab('pessoais')}
+          >
+            <User size={16} />
+            <span>Dados Pessoais</span>
+            {activeTab === 'pessoais' && (
+              <motion.div className="active-tab-line" layoutId="activeTabLine" />
+            )}
+          </button>
+          <button 
+            className={`tab-btn-modern ${activeTab === 'academicos' ? 'active' : ''}`}
+            onClick={() => setActiveTab('academicos')}
+          >
+            <GraduationCap size={16} />
+            <span>Acadêmico</span>
+            {activeTab === 'academicos' && (
+              <motion.div className="active-tab-line" layoutId="activeTabLine" />
+            )}
+          </button>
+        </div>
+
+        {/* Modal Scrollable Content Container */}
+        <div className="modal-perfil-content-new">
+          <AnimatePresence mode="wait">
+            {showPhotoInput && editMode && (
+              <motion.div 
+                className="photo-url-drawer glass-card-input"
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <div className="input-field-glow">
+                  <label className="input-label-modern">
+                    <LinkIcon size={12} style={{ marginRight: '6px' }} />
+                    URL da Foto de Perfil
+                  </label>
+                  <input 
+                    type="text" 
+                    className="input-element-modern"
+                    value={editedData.foto || ''}
+                    onChange={(e) => setEditedData({...editedData, foto: e.target.value})}
+                    placeholder="Cole o link (URL) de uma imagem hospedada"
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          <motion.div
+            key={activeTab + (editMode ? '-edit' : '-view')}
+            initial={{ opacity: 0, x: 15 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -15 }}
+            transition={{ duration: 0.25 }}
+            className="tab-content-panel"
+          >
+            {!editMode ? (
+              /* --- VIEW MODE --- */
+              activeTab === 'pessoais' ? (
+                <div className="cards-grid-modern">
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <User size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Nome Completo</span>
+                      <span className="card-value-modern">{dadosAluno?.nome || 'Não informado'}</span>
+                    </div>
                   </div>
-                  <div className="info-item">
-                    <label>Curso</label>
-                    <span>{dadosAluno?.curso || 'Não informado'}</span>
+
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <Mail size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Email Principal</span>
+                      <span className="card-value-modern">{user?.email || 'Não informado'}</span>
+                    </div>
                   </div>
-                  <div className="info-item">
-                    <label>Semestre/Período</label>
-                    <span>{dadosAluno?.semestrePeriodo || 'Não informado'}</span>
+
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <Globe size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Email de Contato</span>
+                      <span className="card-value-modern">{dadosAluno?.emailContato || 'Não informado'}</span>
+                    </div>
                   </div>
-                  <div className="info-item">
-                    <label>Modalidade</label>
-                    <span>{dadosAluno?.modalidade || 'Não informado'}</span>
+
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <Phone size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Telefone</span>
+                      <span className="card-value-modern">{dadosAluno?.telefone || 'Não informado'}</span>
+                    </div>
+                  </div>
+
+                  <div className="info-card-modern full-width">
+                    <div className="card-icon-wrapper">
+                      <Calendar size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Data de Nascimento</span>
+                      <span className="card-value-modern">
+                        {dadosAluno?.dataNascimento ? new Date(dadosAluno.dataNascimento + 'T00:00:00').toLocaleDateString('pt-BR') : 'Não informado'}
+                      </span>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ) : (
-            // Modo Edição
-            <div className="perfil-edit-mode">
-              <div className="perfil-section">
-                <h3 className="section-title">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <circle cx="12" cy="7" r="4" stroke="currentColor" strokeWidth="2"/>
-                  </svg>
-                  Editar Informações Pessoais
-                </h3>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Nome Completo</label>
+              ) : (
+                <div className="cards-grid-modern">
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <Building size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Instituição</span>
+                      <span className="card-value-modern">{dadosAluno?.nomeInstituicao || 'Não informado'}</span>
+                    </div>
+                  </div>
+
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <BookOpen size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Curso</span>
+                      <span className="card-value-modern">{dadosAluno?.curso || 'Não informado'}</span>
+                    </div>
+                  </div>
+
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <Clock size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Semestre / Período</span>
+                      <span className="card-value-modern">{dadosAluno?.semestrePeriodo || 'Não informado'}</span>
+                    </div>
+                  </div>
+
+                  <div className="info-card-modern">
+                    <div className="card-icon-wrapper">
+                      <Globe size={18} />
+                    </div>
+                    <div className="card-texts">
+                      <span className="card-label-modern">Modalidade de Ensino</span>
+                      <span className="card-value-modern">{dadosAluno?.modalidade || 'Não informado'}</span>
+                    </div>
+                  </div>
+                </div>
+              )
+            ) : (
+              /* --- EDIT MODE --- */
+              activeTab === 'pessoais' ? (
+                <div className="form-grid-modern">
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Nome Completo</label>
                     <input 
                       type="text" 
+                      className="input-element-modern"
                       value={editedData.nome || ''}
                       onChange={(e) => setEditedData({...editedData, nome: e.target.value})}
-                      placeholder="Digite seu nome completo"
+                      placeholder="Nome completo"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Email Principal</label>
+
+                  <div className="input-field-glow readonly">
+                    <label className="input-label-modern">Email Principal (Conta)</label>
                     <input 
                       type="email" 
+                      className="input-element-modern disabled"
                       value={user?.email || ''}
                       disabled
-                      style={{
-                        opacity: 0.7,
-                        cursor: 'not-allowed',
-                        backgroundColor: 'rgba(15, 23, 42, 0.5)'
-                      }}
-                      placeholder="Email da conta (não editável)"
+                      placeholder="Não editável"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Email de Contato</label>
+
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Email de Contato</label>
                     <input 
                       type="email" 
+                      className="input-element-modern"
                       value={editedData.emailContato || ''}
                       onChange={(e) => setEditedData({...editedData, emailContato: e.target.value})}
-                      placeholder="Digite seu email de contato"
+                      placeholder="Email de contato secundário"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Telefone</label>
+
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Telefone</label>
                     <input 
                       type="tel" 
+                      className="input-element-modern"
                       value={editedData.telefone || ''}
                       onChange={(e) => setEditedData({...editedData, telefone: e.target.value})}
-                      placeholder="Digite seu telefone"
+                      placeholder="DDD + Número"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Data de Nascimento</label>
+
+                  <div className="input-field-glow full-width">
+                    <label className="input-label-modern">Data de Nascimento</label>
                     <input 
                       type="date" 
+                      className="input-element-modern"
                       value={editedData.dataNascimento || ''}
                       onChange={(e) => setEditedData({...editedData, dataNascimento: e.target.value})}
                     />
                   </div>
                 </div>
-              </div>
-              
-              {/* Seção Acadêmica - Modo Edição */}
-              <div className="perfil-section">
-                <h3 className="section-title">
-                  <svg viewBox="0 0 24 24" fill="none">
-                    <path d="M22 10v6M2 10v8a2 2 0 002 2h16a2 2 0 002-2v-8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M7 15v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M12 15v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M17 15v4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M2 10l10-8 10 8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Editar Informações Acadêmicas
-                </h3>
-                <div className="form-grid">
-                  <div className="form-group">
-                    <label>Instituição</label>
+              ) : (
+                <div className="form-grid-modern">
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Instituição de Ensino</label>
                     <input 
                       type="text" 
+                      className="input-element-modern"
                       value={editedData.nomeInstituicao || ''}
                       onChange={(e) => setEditedData({...editedData, nomeInstituicao: e.target.value})}
-                      placeholder="Nome da instituição de ensino"
+                      placeholder="Nome da faculdade/escola"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Curso</label>
+
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Curso</label>
                     <input 
                       type="text" 
+                      className="input-element-modern"
                       value={editedData.curso || ''}
                       onChange={(e) => setEditedData({...editedData, curso: e.target.value})}
-                      placeholder="Nome do seu curso"
+                      placeholder="Nome do curso acadêmico"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Semestre/Período</label>
+
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Semestre / Período</label>
                     <input 
                       type="text" 
+                      className="input-element-modern"
                       value={editedData.semestrePeriodo || ''}
                       onChange={(e) => setEditedData({...editedData, semestrePeriodo: e.target.value})}
-                      placeholder="Ex: 3º Semestre, 5º Período"
+                      placeholder="Ex: 5º Semestre"
                     />
                   </div>
-                  <div className="form-group">
-                    <label>Modalidade</label>
+
+                  <div className="input-field-glow">
+                    <label className="input-label-modern">Modalidade</label>
                     <select 
+                      className="input-element-modern select-input-modern"
                       value={editedData.modalidade || ''}
                       onChange={(e) => setEditedData({...editedData, modalidade: e.target.value})}
                     >
@@ -276,77 +430,82 @@ const ModalPerfil = ({
                     </select>
                   </div>
                 </div>
-              </div>
-            </div>
-          )}
+              )
+            )}
+          </motion.div>
         </div>
 
-        <div className="modal-perfil-actions">
+        {/* Modal Footer Controls */}
+        <div className="modal-perfil-actions-new">
           {!editMode ? (
             <button 
-              className="btn-modal-primary"
+              className="btn-modern-primary glass-btn glow-purple"
               onClick={handleEditClick}
             >
-              <svg viewBox="0 0 24 24" fill="none">
-                <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              Editar Perfil
+              <Edit3 size={16} />
+              <span>Editar Perfil</span>
             </button>
           ) : (
-            <>
+            <div className="edit-actions-wrapper">
               <button 
-                className="btn-modal-secondary"
+                className="btn-modern-secondary glass-btn"
                 onClick={handleCancel}
+                disabled={saving}
               >
                 Cancelar
               </button>
               <button 
-                className="btn-modal-primary"
+                className="btn-modern-primary glass-btn glow-blue"
                 onClick={handleSaveProfile}
                 disabled={saving}
               >
                 {saving ? (
                   <>
-                    <div className="modal-perfil-spinner"></div>
-                    Salvando...
+                    <div className="btn-spinner-modern"></div>
+                    <span>Salvando...</span>
                   </>
                 ) : (
                   <>
-                    <svg viewBox="0 0 24 24" fill="none">
-                      <path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <polyline points="17,21 17,13 7,13 7,21" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                      <polyline points="7,3 7,8 15,8" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
-                    Salvar Alterações
+                    <Save size={16} />
+                    <span>Salvar Alterações</span>
                   </>
                 )}
               </button>
-            </>
+            </div>
           )}
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 
-  // Renderiza via portal se estiver aberto
   return (
     <>
       {createPortal(modalContent, document.body)}
       
-      {/* Mensagem de Sucesso */}
-      {showSuccessMessage && createPortal(
-        <div className="success-message">
-          <div className="success-content">
-            <svg viewBox="0 0 24 24" fill="none">
-              <path d="M22 11.08V12a10 10 0 11-5.93-9.14" stroke="currentColor" strokeWidth="2"/>
-              <polyline points="22,4 12,14.01 9,11.01" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            <span>Perfil atualizado com sucesso!</span>
-          </div>
-        </div>,
-        document.body
-      )}
+      {/* Alerta de Sucesso */}
+      <AnimatePresence>
+        {showSuccessMessage && (
+          createPortal(
+            <motion.div 
+              className="success-alert-container"
+              initial={{ opacity: 0, y: 50, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 20, scale: 0.9 }}
+            >
+              <div className="success-alert-content glass-card">
+                <div className="success-icon-bg">
+                  <CheckCircle2 size={24} className="success-icon-anim" />
+                </div>
+                <div className="success-texts">
+                  <h4>Atualizado!</h4>
+                  <p>Suas informações foram salvas com sucesso.</p>
+                </div>
+              </div>
+            </motion.div>,
+            document.body
+          )
+        )}
+      </AnimatePresence>
     </>
   );
 };

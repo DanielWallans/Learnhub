@@ -1,1926 +1,1396 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { db, auth } from '../firebaseConfig';
+import { motion, AnimatePresence } from 'framer-motion';
+import { auth, db } from '../firebaseConfig';
 import { 
   collection, 
   query, 
   where, 
-  getDocs, 
+  onSnapshot, 
+  doc, 
   addDoc, 
   updateDoc, 
-  deleteDoc,
-  doc,
-  onSnapshot,
-  getDoc
+  deleteDoc, 
+  setDoc,
+  onStateChanged
 } from 'firebase/firestore';
-import { useAuthState } from 'react-firebase-hooks/auth';
+import { 
+  Clock, 
+  Target, 
+  Briefcase, 
+  Search, 
+  Pencil, 
+  Handshake, 
+  Trophy, 
+  X, 
+  Clipboard, 
+  ArrowLeft, 
+  Trash2, 
+  Plus, 
+  Check, 
+  ChevronRight, 
+  AlertCircle,
+  HelpCircle,
+  CircleDot,
+  BookOpen,
+  Globe,
+  Users,
+  Code,
+  FileText,
+  Link
+} from 'lucide-react';
+import CarreiraBg from '../IMG/CARREIRA.jpg';
+import Loading from './Loading';
 import './carreira.css';
-import {
-  FaGraduationCap,
-  FaBriefcase,
-  FaUsers,
-  FaBullseye,
-  FaPlus,
-  FaTrash,
-  FaLinkedin,
-  FaCalendar,
-  FaCheck,
-  FaClock,
-  FaTimes,
-  FaClipboardList,
-  FaLightbulb,
-  FaBolt,
-  FaChartBar,
-  FaComments,
-  FaArrowLeft,
-  FaStar,
-  FaTrophy,
-  FaHeart,
-  FaGem,
-  FaLink,
-  FaRocket,
-  FaLaptop,
-  FaUserFriends,
-  FaSearch,
-  FaEdit,
-  FaPhone,
-  FaBook,
-  FaCloudUploadAlt,
-  FaNetworkWired
-} from 'react-icons/fa';
 
-const ModuloCarreira = () => {
-  const navigate = useNavigate();
-  const [user, loading, error] = useAuthState(auth);
-  const [activeTab, setActiveTab] = useState('estagios');
+// Hexagon Checkpoint Component
+const RoundedHexagon = ({ color, isActive, children, onClick, pulse }) => {
+  const glowFilter = isActive ? `drop-shadow(0 0 15px ${color}aa)` : `drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4))`;
   
-  // Estados para Gerenciador de Estágios
-  const [candidaturas, setCandidaturas] = useState([]);
-
-  // Estados para Plano de Desenvolvimento
-  const [metas, setMetas] = useState({
-    curtoPrazo: [],
-    longoPrazo: []
-  });
-
-  // Memoização das abas para evitar re-renders desnecessários
-  const tabs = useMemo(() => [
-    { 
-      id: 'estagios', 
-      nome: 'Estágios & Trainees', 
-      icone: FaBriefcase,
-      cor: '#3b82f6',
-      descricao: 'Gerencie suas candidaturas'
-    },
-    { 
-      id: 'networking', 
-      nome: 'Networking', 
-      icone: FaUsers,
-      cor: '#10b981',
-      descricao: 'Construa sua rede profissional'
-    },
-    { 
-      id: 'desenvolvimento', 
-      nome: 'Plano de Desenvolvimento', 
-      icone: FaBullseye,
-      cor: '#f59e0b',
-      descricao: 'Defina e acompanhe metas'
-    }
-  ], []);
-
-  // Handlers memoizados
-  const handleTabChange = useCallback((tabId) => {
-    setActiveTab(tabId);
-  }, []);
-
-  const handleBackToDashboard = useCallback(() => {
-    navigate('/dashboard');
-  }, [navigate]);
-
-  // Renderização do componente ativo
-  const renderActiveTab = () => {
-    switch (activeTab) {
-      case 'estagios':
-        return <GerenciadorEstagios />;
-      case 'networking':
-        return <NetworkingGuide />;
-      case 'desenvolvimento':
-        return <PlanoDesenvolvimento />;
-      default:
-        return <GerenciadorEstagios />;
-    }
-  };
-
-  // Carregar dados do Firebase ou localStorage
-  useEffect(() => {
-    if (user) {
-      // Carregar dados do Firebase se usuário logado
-      loadFirebaseData();
-      setupRealtimeListeners();
-    } else {
-      // Carregar dados do localStorage como fallback
-      loadLocalStorageData();
-    }
-
-    // Cleanup listeners
-    return () => {
-      // Limpar listeners quando componente desmontar
-    };
-  }, [user]);
-
-  // Early return para loading
-  if (loading) {
-    return (
-      <div className="modulo-carreira">
-        <div className="carreira-container">
-          <div className="loading-container" style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            minHeight: '60vh',
-            flexDirection: 'column',
-            gap: '1rem'
-          }}>
-            <div className="loading-spinner" style={{
-              width: '40px',
-              height: '40px',
-              border: '3px solid #f3f4f6',
-              borderTop: '3px solid #6366f1',
-              borderRadius: '50%',
-              animation: 'spin 1s linear infinite'
-            }}></div>
-            <p style={{ color: '#6b7280', fontSize: '0.9rem' }}>Carregando módulo carreira...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  const setupRealtimeListeners = () => {
-    if (!user) return;
-
-    console.log('🔄 Configurando listeners em tempo real...');
-
-    // Listener para candidaturas
-    const candidaturasQuery = query(
-      collection(db, 'candidaturas'), 
-      where('userId', '==', user.uid)
-    );
-    
-    const unsubscribeCandidaturas = onSnapshot(candidaturasQuery, (snapshot) => {
-      console.log('📡 Listener candidaturas ativado - documentos:', snapshot.docs.length);
-      const candidaturasData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      
-      // Log dos documentos recebidos
-      console.log('📄 Candidaturas do Firebase:');
-      candidaturasData.forEach(c => console.log(`  - ${c.id}: ${c.empresa}`));
-      
-      setCandidaturas(candidaturasData);
-      localStorage.setItem('carreira_candidaturas', JSON.stringify(candidaturasData));
-      console.log('✅ Estado de candidaturas atualizado via listener');
-    }, (error) => {
-      console.error('❌ Erro no listener de candidaturas:', error);
-    });
-
-    // Listener para metas
-    const metasQuery = query(
-      collection(db, 'metas_carreira'), 
-      where('userId', '==', user.uid)
-    );
-    
-    const unsubscribeMetas = onSnapshot(metasQuery, (snapshot) => {
-      console.log('📡 Listener metas ativado - documentos:', snapshot.docs.length);
-      const metasData = {
-        curtoPrazo: [],
-        longoPrazo: []
-      };
-      
-      snapshot.docs.forEach(doc => {
-        const meta = { id: doc.id, ...doc.data() };
-        if (meta.tipo === 'curtoPrazo') {
-          metasData.curtoPrazo.push(meta);
-        } else {
-          metasData.longoPrazo.push(meta);
-        }
-      });
-      
-      // Log das metas recebidas
-      console.log('📄 Metas do Firebase:');
-      console.log(`  - Curto prazo: ${metasData.curtoPrazo.length}`);
-      console.log(`  - Longo prazo: ${metasData.longoPrazo.length}`);
-      metasData.curtoPrazo.forEach(m => console.log(`    - ${m.id}: ${m.texto}`));
-      metasData.longoPrazo.forEach(m => console.log(`    - ${m.id}: ${m.texto}`));
-      
-      setMetas(metasData);
-      localStorage.setItem('carreira_metas', JSON.stringify(metasData));
-      console.log('✅ Estado de metas atualizado via listener');
-    }, (error) => {
-      console.error('❌ Erro no listener de metas:', error);
-    });
-
-    // Retornar função de cleanup
-    return () => {
-      console.log('🛑 Desconectando listeners Firebase');
-      unsubscribeCandidaturas();
-      unsubscribeMetas();
-    };
-  };
-
-  const loadFirebaseData = async () => {
-    if (!user) return;
-
-    try {
-      // Carregar candidaturas
-      const candidaturasQuery = query(
-        collection(db, 'candidaturas'), 
-        where('userId', '==', user.uid)
-      );
-      const candidaturasSnapshot = await getDocs(candidaturasQuery);
-      const candidaturasData = candidaturasSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data()
-      }));
-      setCandidaturas(candidaturasData);
-
-      // Carregar metas
-      const metasQuery = query(
-        collection(db, 'metas_carreira'), 
-        where('userId', '==', user.uid)
-      );
-      const metasSnapshot = await getDocs(metasQuery);
-      const metasData = {
-        curtoPrazo: [],
-        longoPrazo: []
-      };
-      
-      metasSnapshot.docs.forEach(doc => {
-        const meta = { id: doc.id, ...doc.data() };
-        if (meta.tipo === 'curtoPrazo') {
-          metasData.curtoPrazo.push(meta);
-        } else {
-          metasData.longoPrazo.push(meta);
-        }
-      });
-      
-      setMetas(metasData);
-    } catch (error) {
-      console.error('Erro ao carregar dados do Firebase:', error);
-      // Fallback para localStorage em caso de erro
-      loadLocalStorageData();
-    }
-  };
-
-  const loadLocalStorageData = () => {
-    const savedCandidaturas = localStorage.getItem('carreira_candidaturas');
-    const savedMetas = localStorage.getItem('carreira_metas');
-
-    if (savedCandidaturas) setCandidaturas(JSON.parse(savedCandidaturas));
-    if (savedMetas) setMetas(JSON.parse(savedMetas));
-  };
-
-  // Função para salvar candidatura no Firebase
-  const salvarCandidaturaFirebase = async (candidatura) => {
-    if (!user) return null;
-    
-    try {
-      const docRef = await addDoc(collection(db, 'candidaturas'), {
-        ...candidatura,
-        userId: user.uid,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao salvar candidatura:', error);
-      return null;
-    }
-  };
-
-  // Função para salvar meta no Firebase
-  const salvarMetaFirebase = async (meta) => {
-    if (!user) return null;
-    
-    try {
-      const docRef = await addDoc(collection(db, 'metas_carreira'), {
-        ...meta,
-        userId: user.uid,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      });
-      return docRef.id;
-    } catch (error) {
-      console.error('Erro ao salvar meta:', error);
-      return null;
-    }
-  };
-
-  // Função para deletar do Firebase
-  const deletarDoFirebase = async (collection_name, id) => {
-    if (!user || !id) {
-      console.log('❌ Usuário não logado ou ID inválido');
-      return false;
-    }
-    
-    try {
-      console.log(`🗑️ === INICIANDO EXCLUSÃO FIREBASE ===`);
-      console.log(`📋 Coleção: ${collection_name}`);
-      console.log(`🆔 ID para deletar: ${id}`);
-      console.log(`🔤 Tipo do ID: ${typeof id}`);
-      console.log(`👤 User ID: ${user.uid}`);
-      
-      // Primeiro, verificar se o documento realmente existe
-      const docRef = doc(db, collection_name, String(id));
-      console.log(`📄 Referência criada: ${docRef.path}`);
-      
-      // Usar getDoc ao invés de getDocs com query
-      const docSnap = await getDoc(docRef);
-      console.log(`📋 Documento existe? ${docSnap.exists()}`);
-      
-      if (!docSnap.exists()) {
-        console.log('⚠️ DOCUMENTO NÃO EXISTE - Listando todos os documentos do usuário:');
-        
-        // Listar todos os documentos do usuário para debug
-        const userDocsQuery = query(collection(db, collection_name), where('userId', '==', user.uid));
-        const userDocs = await getDocs(userDocsQuery);
-        console.log(`� Documentos encontrados para o usuário: ${userDocs.docs.length}`);
-        
-        userDocs.docs.forEach((doc, index) => {
-          console.log(`  ${index + 1}. ID: "${doc.id}" | Data:`, {
-            empresa: doc.data().empresa,
-            vaga: doc.data().vaga,
-            userId: doc.data().userId
-          });
-        });
-        
-        return false; // Retornar false se não existe
-      }
-      
-      // Verificar se o documento pertence ao usuário
-      const docData = docSnap.data();
-      if (docData.userId !== user.uid) {
-        console.log('❌ ERRO: Documento não pertence ao usuário atual');
-        console.log(`   Doc userId: ${docData.userId}`);
-        console.log(`   User atual: ${user.uid}`);
-        return false;
-      }
-      
-      console.log('✅ Documento validado - Iniciando exclusão...');
-      console.log('📄 Dados do documento:', {
-        empresa: docData.empresa,
-        vaga: docData.vaga,
-        userId: docData.userId
-      });
-      
-      // Executar a exclusão
-      await deleteDoc(docRef);
-      console.log(`🔥 DELETEION EXECUTADO com sucesso!`);
-      
-      // Aguardar um pouco para garantir sincronização
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // Verificar se realmente foi deletado
-      const verificaDoc = await getDoc(docRef);
-      if (!verificaDoc.exists()) {
-        console.log(`✅ CONFIRMADO: Documento ${id} foi REMOVIDO do Firebase`);
-        return true;
-      } else {
-        console.log(`❌ ERRO: Documento ${id} ainda existe após exclusão!`);
-        return false;
-      }
-      
-    } catch (error) {
-      console.error(`❌ ERRO CRÍTICO ao deletar ${collection_name}/${id}:`, error);
-      console.error('🔴 Código do erro:', error.code);
-      console.error('🔴 Mensagem:', error.message);
-      console.error('🔴 Stack completo:', error.stack);
-      
-      // Tratar erros específicos
-      if (error.code === 'not-found') {
-        console.log('⚠️ Documento não encontrado - pode ter sido deletado por outro processo');
-        return true;
-      }
-      
-      if (error.code === 'permission-denied') {
-        console.log('🚫 Erro de permissão - verificar regras do Firestore');
-        return false;
-      }
-      
-      return false;
-    }
-  };
-
-  // Função para forçar sincronização
-  const forcarSincronizacao = async () => {
-    if (!user) return;
-    
-    console.log('🔄 FORÇANDO SINCRONIZAÇÃO com Firebase...');
-    
-    try {
-      // Listar todos os documentos do usuário no Firebase
-      console.log('📋 Listando candidaturas no Firebase:');
-      const candidaturasQuery = query(
-        collection(db, 'candidaturas'), 
-        where('userId', '==', user.uid)
-      );
-      const candidaturasSnap = await getDocs(candidaturasQuery);
-      console.log(`📄 ${candidaturasSnap.docs.length} candidaturas encontradas no Firebase`);
-      candidaturasSnap.docs.forEach(doc => {
-        console.log(`  - ${doc.id}: ${doc.data().empresa || 'N/A'}`);
-      });
-
-      console.log('📋 Listando metas no Firebase:');
-      const metasQuery = query(
-        collection(db, 'metas_carreira'), 
-        where('userId', '==', user.uid)
-      );
-      const metasSnap = await getDocs(metasQuery);
-      console.log(`📄 ${metasSnap.docs.length} metas encontradas no Firebase`);
-      metasSnap.docs.forEach(doc => {
-        console.log(`  - ${doc.id}: ${doc.data().texto || 'N/A'} (${doc.data().tipo})`);
-      });
-      
-      // Recarregar dados
-      await loadFirebaseData();
-      console.log('✅ Sincronização concluída!');
-      
-    } catch (error) {
-      console.error('❌ Erro na sincronização:', error);
-    }
-  };
-
-  // Função para debugar documentos do Firebase
-  const debugarFirebase = async () => {
-    if (!user) {
-      console.log('❌ Usuário não logado');
-      return;
-    }
-    
-    try {
-      console.log('🔍 === DEBUG FIREBASE COMPLETO ===');
-      console.log('👤 User ID:', user.uid);
-      console.log('📱 Estado Local:');
-      console.log('  - Candidaturas:', candidaturas.length);
-      console.log('  - Metas CP:', metas.curtoPrazo.length);
-      console.log('  - Metas LP:', metas.longoPrazo.length);
-      
-      // Listar candidaturas do Firebase
-      const candidaturasQuery = query(collection(db, 'candidaturas'), where('userId', '==', user.uid));
-      const candidaturasSnap = await getDocs(candidaturasQuery);
-      console.log('📋 Candidaturas no Firebase:', candidaturasSnap.docs.length);
-      candidaturasSnap.docs.forEach(doc => {
-        const data = doc.data();
-        console.log(`  - ID: ${doc.id}`, {
-          empresa: data.empresa,
-          vaga: data.vaga,
-          userId: data.userId,
-          createdAt: data.createdAt
-        });
-      });
-      
-      // Listar metas do Firebase
-      const metasQuery = query(collection(db, 'metas_carreira'), where('userId', '==', user.uid));
-      const metasSnap = await getDocs(metasQuery);
-      console.log('🎯 Metas no Firebase:', metasSnap.docs.length);
-      metasSnap.docs.forEach(doc => {
-        const data = doc.data();
-        console.log(`  - ID: ${doc.id}`, {
-          texto: data.texto,
-          tipo: data.tipo,
-          userId: data.userId,
-          createdAt: data.createdAt
-        });
-      });
-      
-      console.log('🔍 === FIM DEBUG ===');
-      
-      return {
-        candidaturasFirebase: candidaturasSnap.docs.length,
-        metasFirebase: metasSnap.docs.length,
-        candidaturasLocal: candidaturas.length,
-        metasLocal: metas.curtoPrazo.length + metas.longoPrazo.length
-      };
-    } catch (error) {
-      console.error('❌ Erro no debug:', error);
-      return null;
-    }
-  };
-
-  // Função para deletar meta específica (lida com IDs diferentes)
-  const deletarMetaFirebase = async (id) => {
-    if (!user || !id) {
-      console.log('❌ Usuário não logado ou ID inválido para meta');
-      return false;
-    }
-    
-    try {
-      console.log(`🎯 === EXCLUSÃO DE META ESPECÍFICA ===`);
-      console.log(`🆔 ID da meta: ${id}`);
-      console.log(`👤 User ID: ${user.uid}`);
-      
-      // Buscar a meta pelo userId e outros critérios se necessário
-      const metasQuery = query(
-        collection(db, 'metas_carreira'), 
-        where('userId', '==', user.uid)
-      );
-      const metasSnap = await getDocs(metasQuery);
-      
-      console.log(`📋 Metas encontradas no Firebase: ${metasSnap.docs.length}`);
-      
-      let metaEncontrada = null;
-      metasSnap.docs.forEach(doc => {
-        console.log(`🔍 Verificando meta ${doc.id}:`, doc.data());
-        if (doc.id === String(id)) {
-          metaEncontrada = doc;
-        }
-      });
-      
-      if (!metaEncontrada) {
-        console.log('❌ Meta não encontrada no Firebase');
-        // Tentar buscar por texto como fallback
-        const metaLocal = [...metas.curtoPrazo, ...metas.longoPrazo].find(m => m.id === id);
-        if (metaLocal) {
-          console.log('🔍 Tentando buscar por texto da meta:', metaLocal.texto);
-          const metaPorTexto = metasSnap.docs.find(doc => doc.data().texto === metaLocal.texto);
-          if (metaPorTexto) {
-            metaEncontrada = metaPorTexto;
-            console.log('✅ Meta encontrada por texto!');
-          }
-        }
-      }
-      
-      if (!metaEncontrada) {
-        console.log('❌ Meta definitivamente não encontrada - considerando como já deletada');
-        return true;
-      }
-      
-      console.log('🗑️ Deletando meta encontrada:', metaEncontrada.id);
-      await deleteDoc(metaEncontrada.ref);
-      
-      console.log('✅ Meta deletada com sucesso do Firebase');
-      return true;
-      
-    } catch (error) {
-      console.error('❌ Erro ao deletar meta:', error);
-      return false;
-    }
-  };
-  const limparDocumentosOrfaos = async () => {
-    if (!user) {
-      console.log('❌ Usuário não logado');
-      return;
-    }
-    
-    try {
-      console.log('🧹 === LIMPANDO DOCUMENTOS ÓRFÃOS ===');
-      
-      // Buscar todos os documentos do usuário no Firebase
-      const candidaturasQuery = query(collection(db, 'candidaturas'), where('userId', '==', user.uid));
-      const candidaturasSnap = await getDocs(candidaturasQuery);
-      
-      console.log(`📋 Encontrados ${candidaturasSnap.docs.length} documentos no Firebase`);
-      console.log(`📱 Estado local tem ${candidaturas.length} candidaturas`);
-      
-      const idsLocais = candidaturas.map(c => c.id);
-      console.log('🗂️ IDs locais:', idsLocais);
-      
-      let documentosRemovidos = 0;
-      
-      for (const doc of candidaturasSnap.docs) {
-        const docId = doc.id;
-        const docData = doc.data();
-        
-        console.log(`🔍 Analisando documento: ${docId}`);
-        console.log(`   Empresa: ${docData.empresa}`);
-        console.log(`   Existe no estado local? ${idsLocais.includes(docId)}`);
-        
-        // Se o documento não existe no estado local, deletar
-        if (!idsLocais.includes(docId)) {
-          console.log(`🗑️ REMOVENDO documento órfão: ${docId}`);
-          try {
-            await deleteDoc(doc.ref);
-            documentosRemovidos++;
-            console.log(`✅ Documento ${docId} removido com sucesso`);
-          } catch (error) {
-            console.error(`❌ Erro ao remover ${docId}:`, error);
-          }
-        }
-      }
-      
-      console.log(`🎯 LIMPEZA CONCLUÍDA: ${documentosRemovidos} documentos removidos`);
-      
-      // Forçar recarregamento dos dados
-      await loadFirebaseData();
-      
-      return documentosRemovidos;
-      
-    } catch (error) {
-      console.error('❌ Erro na limpeza:', error);
-      return 0;
-    }
-  };
-
-  // COMPONENTE: Gerenciador de Estágios
-  const GerenciadorEstagios = () => {
-    const [novaCandidatura, setNovaCandidatura] = useState({
-      empresa: '',
-      vaga: '',
-      dataEnvio: '',
-      fase: 'enviado',
-      observacoes: ''
-    });
-    const [editandoCandidatura, setEditandoCandidatura] = useState(null);
-
-    // Funções para candidatura
-    const updateCandidatura = (campo, valor) => {
-      setNovaCandidatura(prev => ({ ...prev, [campo]: valor }));
-    };
-
-    const iniciarEdicao = (candidatura) => {
-      setEditandoCandidatura(candidatura.id);
-      setNovaCandidatura({
-        empresa: candidatura.empresa,
-        vaga: candidatura.vaga,
-        dataEnvio: candidatura.dataEnvio,
-        fase: candidatura.fase,
-        observacoes: candidatura.observacoes || ''
-      });
-    };
-
-    const cancelarEdicao = () => {
-      setEditandoCandidatura(null);
-      setNovaCandidatura({ empresa: '', vaga: '', dataEnvio: '', fase: 'enviado', observacoes: '' });
-    };
-
-    const salvarEdicao = async () => {
-      if (editandoCandidatura && novaCandidatura.empresa && novaCandidatura.vaga) {
-        if (user && editandoCandidatura) {
-          // Atualizar no Firebase
-          try {
-            const candidaturaRef = doc(db, 'candidaturas', String(editandoCandidatura));
-            await updateDoc(candidaturaRef, {
-              ...novaCandidatura,
-              updatedAt: new Date()
-            });
-          } catch (error) {
-            console.error('Erro ao atualizar candidatura:', error);
-          }
-        }
-        
-        // Atualizar estado local
-        const candidaturasAtualizadas = candidaturas.map(c => 
-          c.id === editandoCandidatura ? { ...c, ...novaCandidatura } : c
-        );
-        setCandidaturas(candidaturasAtualizadas);
-        localStorage.setItem('carreira_candidaturas', JSON.stringify(candidaturasAtualizadas));
-        
-        // Resetar formulário
-        cancelarEdicao();
-      }
-    };
-
-    const adicionarCandidatura = async () => {
-      if (novaCandidatura.empresa && novaCandidatura.vaga) {
-        const candidaturaData = { ...novaCandidatura, id: Date.now() };
-        
-        if (user) {
-          // Salvar no Firebase
-          const firebaseId = await salvarCandidaturaFirebase(candidaturaData);
-          if (firebaseId) {
-            candidaturaData.id = firebaseId;
-          }
-        }
-        
-        // Atualizar estado local
-        const novasCandidaturas = [...candidaturas, candidaturaData];
-        setCandidaturas(novasCandidaturas);
-        
-        // Salvar no localStorage como backup
-        localStorage.setItem('carreira_candidaturas', JSON.stringify(novasCandidaturas));
-        
-        // Limpar formulário
-        setNovaCandidatura({ empresa: '', vaga: '', dataEnvio: '', fase: 'enviado', observacoes: '' });
-      }
-    };
-
-    const removerCandidatura = async (id) => {
-      console.log('🚨 === INICIANDO REMOÇÃO DE CANDIDATURA ===');
-      console.log('🆔 ID para deletar:', id);
-      console.log('🆔 Tipo do ID:', typeof id);
-      console.log('👤 Usuário logado:', !!user);
-      console.log('🗂️ Total candidaturas antes:', candidaturas.length);
-      
-      // Validar se o ID existe nas candidaturas locais
-      const candidaturaLocal = candidaturas.find(c => c.id === id);
-      if (!candidaturaLocal) {
-        console.log('❌ ERRO: Candidatura não encontrada no estado local');
-        console.log('🔍 IDs disponíveis:', candidaturas.map(c => c.id));
-        return;
-      }
-      
-      console.log('📋 Candidatura encontrada:', candidaturaLocal);
-      
-      // PRIMEIRO: Deletar do Firebase se usuário logado
-      if (user && id) {
-        console.log('🔥 Tentando deletar do Firebase...');
-        try {
-          const sucesso = await deletarDoFirebase('candidaturas', String(id));
-          console.log('🔥 Resultado do Firebase:', sucesso ? 'SUCESSO' : 'FALHA');
-          
-          if (!sucesso) {
-            console.log('❌ FALHA no Firebase - Continuando com exclusão local');
-            console.log('⚠️ O item será removido localmente mesmo com falha no Firebase');
-          }
-        } catch (error) {
-          console.error('🔥 ERRO CRÍTICO no Firebase:', error);
-          console.log('⚠️ Continuando com exclusão local mesmo com erro no Firebase');
-        }
-      } else {
-        console.log('⚠️ PULANDO Firebase - Usuário não logado ou ID inválido');
-      }
-      
-      // SEGUNDO: Atualizar estado local
-      console.log('💾 Atualizando estado local...');
-      const novasCandidaturas = candidaturas.filter(c => c.id !== id);
-      console.log('🗂️ Total candidaturas depois:', novasCandidaturas.length);
-      
-      setCandidaturas(novasCandidaturas);
-      localStorage.setItem('carreira_candidaturas', JSON.stringify(novasCandidaturas));
-      
-      console.log('✅ REMOÇÃO LOCAL CONCLUÍDA');
-      console.log('⏳ Aguardando confirmação do listener Firebase...');
-      
-      // Opcional: Forçar uma verificação após um tempo
-      setTimeout(() => {
-        console.log('🔍 Verificação pós-exclusão - candidaturas atuais:', candidaturas.length);
-      }, 1000);
-    };
-
-    const fases = [
-      { value: 'enviado', label: 'Enviado', icon: FaClock, color: '#f59e0b' },
-      { value: 'entrevista', label: 'Entrevista', icon: FaUsers, color: '#3b82f6' },
-      { value: 'aprovado', label: 'Aprovado', icon: FaCheck, color: '#10b981' },
-      { value: 'rejeitado', label: 'Rejeitado', icon: FaTimes, color: '#ef4444' }
-    ];
-
-    // Calcular estatísticas - Memoizado para performance
-    const estatisticas = useMemo(() => {
-      const totalCandidaturas = candidaturas.length;
-      const candidaturasEnviadas = candidaturas.filter(c => c.fase === 'enviado').length;
-      const entrevistas = candidaturas.filter(c => c.fase === 'entrevista').length;
-      const aprovados = candidaturas.filter(c => c.fase === 'aprovado').length;
-      const taxaSucesso = totalCandidaturas > 0 ? Math.round((aprovados / totalCandidaturas) * 100) : 0;
-      
-      return {
-        totalCandidaturas,
-        candidaturasEnviadas,
-        entrevistas,
-        aprovados,
-        taxaSucesso
-      };
-    }, []);
-
-    return (
-      <div className="feature-content">
-        <div className="feature-header">
-          <h2><FaBriefcase /> Gerenciador de Estágios & Trainees</h2>
-          <p>Acompanhe suas candidaturas e processos seletivos com organização</p>
-        </div>
-
-        {/* Dashboard de Estatísticas */}
-        <div className="estagios-dashboard">
-          <div className="stats-overview-estagios">
-            <div className="stat-card main-stat-estagios">
-              <div className="stat-icon">
-                <FaBriefcase />
-              </div>
-              <div className="stat-content">
-                <h3>Total de Candidaturas</h3>
-                <div className="stat-number">{estatisticas.totalCandidaturas}</div>
-                <div className="stat-detail">Processos acompanhados</div>
-              </div>
-              <div className="briefcase-animation">
-                <div className="floating-resume"></div>
-                <div className="floating-resume delay-1"></div>
-                <div className="floating-resume delay-2"></div>
-              </div>
-            </div>
-
-            <div className="stat-card enviadas">
-              <div className="stat-icon enviadas-icon">
-                <FaClock />
-              </div>
-              <div className="stat-content">
-                <h3>Enviadas</h3>
-                <div className="stat-number">{estatisticas.candidaturasEnviadas}</div>
-                <div className="progress-bar-mini">
-                  <div className="progress-fill-mini enviadas-fill" style={{width: estatisticas.totalCandidaturas > 0 ? `${(estatisticas.candidaturasEnviadas/estatisticas.totalCandidaturas)*100}%` : '0%'}}></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="stat-card entrevistas">
-              <div className="stat-icon entrevistas-icon">
-                <FaUsers />
-              </div>
-              <div className="stat-content">
-                <h3>Entrevistas</h3>
-                <div className="stat-number">{estatisticas.entrevistas}</div>
-                <div className="progress-bar-mini">
-                  <div className="progress-fill-mini entrevistas-fill" style={{width: estatisticas.totalCandidaturas > 0 ? `${(estatisticas.entrevistas/estatisticas.totalCandidaturas)*100}%` : '0%'}}></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="stat-card aprovados">
-              <div className="stat-icon aprovados-icon">
-                <FaCheck />
-              </div>
-              <div className="stat-content">
-                <h3>Aprovados</h3>
-                <div className="stat-number">{estatisticas.aprovados}</div>
-                <div className="success-rate">Taxa: {estatisticas.taxaSucesso}%</div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Formulário Nova Candidatura */}
-        <div className="candidatura-form-modern">
-          <div className="form-header">
-            <h3><FaPlus /> {editandoCandidatura ? 'Editar Candidatura' : 'Nova Candidatura'}</h3>
-            <p>{editandoCandidatura ? 'Modifique os dados da candidatura' : 'Adicione uma nova oportunidade ao seu acompanhamento'}</p>
-          </div>
-          
-          <div className="form-content">
-            <div className="form-grid">
-              <div className="input-group">
-                <label>Empresa</label>
-                <input
-                  type="text"
-                  placeholder="Nome da empresa"
-                  value={novaCandidatura.empresa}
-                  onChange={(e) => updateCandidatura('empresa', e.target.value)}
-                  className="input-modern"
-                />
-              </div>
-              
-              <div className="input-group">
-                <label>Vaga</label>
-                <input
-                  type="text"
-                  placeholder="Título da vaga"
-                  value={novaCandidatura.vaga}
-                  onChange={(e) => updateCandidatura('vaga', e.target.value)}
-                  className="input-modern"
-                />
-              </div>
-              
-              <div className="input-group">
-                <label>Data de Envio</label>
-                <input
-                  type="date"
-                  value={novaCandidatura.dataEnvio}
-                  onChange={(e) => updateCandidatura('dataEnvio', e.target.value)}
-                  className="input-modern"
-                />
-              </div>
-              
-              <div className="input-group">
-                <label>Status Atual</label>
-                <select
-                  value={novaCandidatura.fase}
-                  onChange={(e) => updateCandidatura('fase', e.target.value)}
-                  className="select-modern"
-                >
-                  {fases.map(fase => (
-                    <option key={fase.value} value={fase.value}>{fase.label}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-            
-            <div className="input-group full-width">
-              <label>Observações</label>
-              <textarea
-                placeholder="Detalhes sobre o processo, contatos, próximos passos..."
-                rows="3"
-                value={novaCandidatura.observacoes}
-                onChange={(e) => updateCandidatura('observacoes', e.target.value)}
-                className="textarea-modern"
-              />
-            </div>
-            
-            <div className="form-actions">
-              {editandoCandidatura ? (
-                <>
-                  <button className="btn-primary btn-save-candidatura" onClick={salvarEdicao}>
-                    <FaCheck /> Salvar Alterações
-                  </button>
-                  <button className="btn-secondary btn-cancel-candidatura" onClick={cancelarEdicao}>
-                    <FaTimes /> Cancelar
-                  </button>
-                </>
-              ) : (
-                <button className="btn-primary btn-add-candidatura" onClick={adicionarCandidatura}>
-                  <FaPlus /> Adicionar Candidatura
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Lista de Candidaturas */}
-        <div className="candidaturas-section">
-          <div className="section-header-estagios">
-            <h3><FaClipboardList /> Suas Candidaturas</h3>
-            <div className="candidaturas-count">
-              {estatisticas.totalCandidaturas} {estatisticas.totalCandidaturas === 1 ? 'candidatura' : 'candidaturas'}
-            </div>
-          </div>
-          
-          {candidaturas.length === 0 ? (
-            <div className="empty-state-estagios">
-              <div className="empty-icon-estagios">
-                <FaBriefcase />
-              </div>
-              <h4>Nenhuma candidatura cadastrada</h4>
-              <p>Comece adicionando suas primeiras candidaturas para acompanhar o progresso</p>
-            </div>
-          ) : (
-            <div className="candidaturas-grid-modern">
-              {candidaturas.map(candidatura => {
-                const faseInfo = fases.find(f => f.value === candidatura.fase);
-                const FaseIcon = faseInfo.icon;
-                
-                return (
-                  <div key={candidatura.id} className={`candidatura-card-modern ${candidatura.fase}`}>
-                    <div className="candidatura-header-modern">
-                      <div className="empresa-info">
-                        <h4>{candidatura.empresa}</h4>
-                        <p className="vaga-titulo">{candidatura.vaga}</p>
-                      </div>
-                      <div className={`fase-badge-modern ${candidatura.fase}`}>
-                        <FaseIcon className="fase-icon" />
-                        <span>{faseInfo.label}</span>
-                      </div>
-                    </div>
-                    
-                    <div className="candidatura-details">
-                      {candidatura.dataEnvio && (
-                        <div className="detail-item">
-                          <FaCalendar className="detail-icon" />
-                          <span>Enviado em {new Date(candidatura.dataEnvio).toLocaleDateString('pt-BR')}</span>
-                        </div>
-                      )}
-                      
-                      {candidatura.observacoes && (
-                        <div className="observacoes-modern">
-                          <p>{candidatura.observacoes}</p>
-                        </div>
-                      )}
-                    </div>
-                    
-                    <div className="candidatura-actions">
-                      <button 
-                        className="btn-edit-modern"
-                        onClick={() => iniciarEdicao(candidatura)}
-                        title="Editar candidatura"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button 
-                        className="btn-delete-modern"
-                        onClick={() => removerCandidatura(candidatura.id)}
-                        title="Remover candidatura"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                    
-                    <div className={`status-indicator ${candidatura.fase}`}></div>
-                  </div>
-                );
-              })}
-            </div>
-          )}
-        </div>
-
-        {/* Dicas para Candidaturas */}
-        <div className="candidatura-tips">
-          <div className="tips-header">
-            <h3><FaLightbulb /> Dicas para Candidaturas de Sucesso</h3>
-            <p>Estratégias para se destacar nos processos seletivos</p>
-          </div>
-          
-          <div className="tips-grid">
-            <div className="tip-card">
-              <div className="tip-icon research">
-                <FaSearch />
-              </div>
-              <div className="tip-content">
-                <h4>Pesquise a Empresa</h4>
-                <p>Conheça a cultura, valores e projetos da empresa antes de se candidatar</p>
-              </div>
-            </div>
-            
-            <div className="tip-card">
-              <div className="tip-icon customize">
-                <FaEdit />
-              </div>
-              <div className="tip-content">
-                <h4>Personalize sua Candidatura</h4>
-                <p>Adapte seu currículo e carta de apresentação para cada vaga específica</p>
-              </div>
-            </div>
-            
-            <div className="tip-card">
-              <div className="tip-icon follow">
-                <FaPhone />
-              </div>
-              <div className="tip-content">
-                <h4>Faça Follow-up</h4>
-                <p>Entre em contato após 1-2 semanas para demonstrar interesse genuíno</p>
-              </div>
-            </div>
-            
-            <div className="tip-card">
-              <div className="tip-icon prepare">
-                <FaBullseye />
-              </div>
-              <div className="tip-content">
-                <h4>Prepare-se para Entrevistas</h4>
-                <p>Pratique respostas para perguntas comuns e prepare perguntas sobre a empresa</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // COMPONENTE: Networking
-  const NetworkingGuide = () => {
-    const [linkedinProgress, setLinkedinProgress] = useState(0);
-
-    // Calcular progresso do LinkedIn baseado nos checkboxes
-    const updateLinkedinProgress = () => {
-      const checkboxes = document.querySelectorAll('.checklist-item input[type="checkbox"]');
-      const checked = document.querySelectorAll('.checklist-item input[type="checkbox"]:checked');
-      const progress = checkboxes.length > 0 ? (checked.length / checkboxes.length) * 100 : 0;
-      setLinkedinProgress(progress);
-    };
-
-    return (
-      <div className="feature-content">
-        <div className="feature-header">
-          <h2><FaUsers /> Rede de Contatos (Networking)</h2>
-          <p>Construa sua rede profissional e amplie suas oportunidades</p>
-        </div>
-
-        <div className="networking-dashboard">
-          {/* Estatísticas de Networking */}
-          <div className="networking-stats">
-            <div className="stat-card networking-main">
-              <div className="stat-icon">
-                <FaUsers />
-              </div>
-              <div className="stat-content">
-                <h3>Sua Rede Profissional</h3>
-                <div className="stat-number">Expandindo</div>
-                <div className="stat-detail">Construa conexões valiosas</div>
-              </div>
-              <div className="networking-visual">
-                <div className="connection-dots">
-                  <div className="dot active"></div>
-                  <div className="dot"></div>
-                  <div className="dot active"></div>
-                  <div className="dot"></div>
-                  <div className="connection-line"></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="stat-card linkedin-progress">
-              <div className="stat-icon linkedin-icon">
-                <FaLinkedin />
-              </div>
-              <div className="stat-content">
-                <h3>LinkedIn</h3>
-                <div className="stat-number">{Math.round(linkedinProgress)}%</div>
-                <div className="progress-circle-mini">
-                  <svg width="40" height="40">
-                    <circle cx="20" cy="20" r="16" fill="none" stroke="#e2e8f0" strokeWidth="3"/>
-                    <circle 
-                      cx="20" 
-                      cy="20" 
-                      r="16" 
-                      fill="none" 
-                      stroke="#0077b5" 
-                      strokeWidth="3"
-                      strokeDasharray={`${linkedinProgress * 1.005} 100.5`}
-                      strokeLinecap="round"
-                      transform="rotate(-90 20 20)"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="networking-sections">
-          {/* LinkedIn Profissional */}
-          <div className="networking-card linkedin-card">
-            <div className="card-header">
-              <div className="header-content">
-                <h3><FaLinkedin /> LinkedIn Profissional</h3>
-                <p>Complete seu perfil para maximizar oportunidades</p>
-              </div>
-              <div className="progress-badge">
-                {Math.round(linkedinProgress)}% Completo
-              </div>
-            </div>
-
-            <div className="checklist-modern">
-              <div className="checklist-item">
-                <input type="checkbox" id="foto" onChange={updateLinkedinProgress} />
-                <label htmlFor="foto">
-                  <span className="checkmark-modern">
-                    <FaCheck className="check-icon-modern" />
-                  </span>
-                  <div className="item-content">
-                    <span className="item-title">Foto profissional de qualidade</span>
-                    <span className="item-desc">Uma foto clara e profissional aumenta visualizações</span>
-                  </div>
-                </label>
-              </div>
-              
-              <div className="checklist-item">
-                <input type="checkbox" id="headline" onChange={updateLinkedinProgress} />
-                <label htmlFor="headline">
-                  <span className="checkmark-modern">
-                    <FaCheck className="check-icon-modern" />
-                  </span>
-                  <div className="item-content">
-                    <span className="item-title">Headline atrativa e clara</span>
-                    <span className="item-desc">Descreva sua área e objetivo profissional</span>
-                  </div>
-                </label>
-              </div>
-              
-              <div className="checklist-item">
-                <input type="checkbox" id="resumo" onChange={updateLinkedinProgress} />
-                <label htmlFor="resumo">
-                  <span className="checkmark-modern">
-                    <FaCheck className="check-icon-modern" />
-                  </span>
-                  <div className="item-content">
-                    <span className="item-title">Resumo completo e bem escrito</span>
-                    <span className="item-desc">Conte sua história profissional</span>
-                  </div>
-                </label>
-              </div>
-              
-              <div className="checklist-item">
-                <input type="checkbox" id="experiencias" onChange={updateLinkedinProgress} />
-                <label htmlFor="experiencias">
-                  <span className="checkmark-modern">
-                    <FaCheck className="check-icon-modern" />
-                  </span>
-                  <div className="item-content">
-                    <span className="item-title">Experiências detalhadas</span>
-                    <span className="item-desc">Inclua projetos, estágios e trabalhos voluntários</span>
-                  </div>
-                </label>
-              </div>
-              
-              <div className="checklist-item">
-                <input type="checkbox" id="habilidades" onChange={updateLinkedinProgress} />
-                <label htmlFor="habilidades">
-                  <span className="checkmark-modern">
-                    <FaCheck className="check-icon-modern" />
-                  </span>
-                  <div className="item-content">
-                    <span className="item-title">Habilidades relevantes</span>
-                    <span className="item-desc">Adicione pelo menos 10 habilidades da sua área</span>
-                  </div>
-                </label>
-              </div>
-              
-              <div className="checklist-item">
-                <input type="checkbox" id="conexoes" onChange={updateLinkedinProgress} />
-                <label htmlFor="conexoes">
-                  <span className="checkmark-modern">
-                    <FaCheck className="check-icon-modern" />
-                  </span>
-                  <div className="item-content">
-                    <span className="item-title">Pelo menos 50 conexões</span>
-                    <span className="item-desc">Conecte-se com colegas, professores e profissionais</span>
-                  </div>
-                </label>
-              </div>
-            </div>
-          </div>
-
-          {/* Estratégias de Networking */}
-          <div className="networking-card strategies-card">
-            <div className="card-header">
-              <div className="header-content">
-                <h3><FaComments /> Estratégias de Networking</h3>
-                <p>Dicas para construir relacionamentos profissionais autênticos</p>
-              </div>
-            </div>
-            
-            <div className="strategies-grid">
-              <div className="strategy-item">
-                <div className="strategy-icon genuine">
-                  <FaHeart />
-                </div>
-                <div className="strategy-content">
-                  <h4>Seja Genuíno</h4>
-                  <p>Construa relacionamentos reais, não apenas colete contatos. Mostre interesse sincero nas pessoas.</p>
-                </div>
-              </div>
-              
-              <div className="strategy-item">
-                <div className="strategy-icon value">
-                  <FaGem />
-                </div>
-                <div className="strategy-content">
-                  <h4>Ofereça Valor</h4>
-                  <p>Pense em como você pode ajudar antes de pedir ajuda. Compartilhe conhecimento e oportunidades.</p>
-                </div>
-              </div>
-              
-              <div className="strategy-item">
-                <div className="strategy-icon maintain">
-                  <FaLink />
-                </div>
-                <div className="strategy-content">
-                  <h4>Mantenha Contato</h4>
-                  <p>Não desapareça após o primeiro contato. Cultive relacionamentos com interações regulares.</p>
-                </div>
-              </div>
-              
-              <div className="strategy-item">
-                <div className="strategy-icon proactive">
-                  <FaRocket />
-                </div>
-                <div className="strategy-content">
-                  <h4>Seja Proativo</h4>
-                  <p>Não espere as oportunidades chegarem. Participe de eventos e tome iniciativa.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Eventos e Oportunidades */}
-          <div className="networking-card events-card">
-            <div className="card-header">
-              <div className="header-content">
-                <h3><FaBullseye /> Eventos e Oportunidades</h3>
-                <p>Onde encontrar e como aproveitar oportunidades de networking</p>
-              </div>
-            </div>
-            
-            <div className="events-grid">
-              <div className="event-item online">
-                <div className="event-icon">
-                  <FaLaptop />
-                </div>
-                <div className="event-content">
-                  <h4>Eventos Online</h4>
-                  <p>Webinars, lives no LinkedIn e conferências virtuais são ótimas para começar</p>
-                  <div className="event-tags">
-                    <span className="tag">Acessível</span>
-                    <span className="tag">Global</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="event-item university">
-                <div className="event-icon">
-                  <FaGraduationCap />
-                </div>
-                <div className="event-content">
-                  <h4>Feiras de Carreira</h4>
-                  <p>Participe de feiras nas universidades e leve currículos impressos</p>
-                  <div className="event-tags">
-                    <span className="tag">Presencial</span>
-                    <span className="tag">Local</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="event-item meetups">
-                <div className="event-icon">
-                  <FaUserFriends />
-                </div>
-                <div className="event-content">
-                  <h4>Meetups e Grupos</h4>
-                  <p>Participe de grupos no Telegram/WhatsApp e meetups da sua área</p>
-                  <div className="event-tags">
-                    <span className="tag">Comunidade</span>
-                    <span className="tag">Específico</span>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="event-item pitch">
-                <div className="event-icon">
-                  <FaBullseye />
-                </div>
-                <div className="event-content">
-                  <h4>Elevator Pitch</h4>
-                  <p>Pratique sua apresentação pessoal de 30 segundos para causar boa impressão</p>
-                  <div className="event-tags">
-                    <span className="tag">Essencial</span>
-                    <span className="tag">Prática</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Dicas Avançadas */}
-          <div className="networking-card tips-card">
-            <div className="card-header">
-              <div className="header-content">
-                <h3><FaLightbulb /> Dicas Avançadas</h3>
-                <p>Estratégias para se destacar no networking profissional</p>
-              </div>
-            </div>
-            
-            <div className="advanced-tips">
-              <div className="tip-item">
-                <div className="tip-number">01</div>
-                <div className="tip-content">
-                  <h4>Pesquise antes dos eventos</h4>
-                  <p>Identifique palestrantes e participantes interessantes. Prepare perguntas específicas e relevantes.</p>
-                </div>
-              </div>
-              
-              <div className="tip-item">
-                <div className="tip-number">02</div>
-                <div className="tip-content">
-                  <h4>Follow-up em até 48h</h4>
-                  <p>Envie uma mensagem personalizada mencionando onde se conheceram e sugerindo próximos passos.</p>
-                </div>
-              </div>
-              
-              <div className="tip-item">
-                <div className="tip-number">03</div>
-                <div className="tip-content">
-                  <h4>Crie conteúdo relevante</h4>
-                  <p>Compartilhe insights, artigos e experiências. Isso ajuda a construir sua presença digital.</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  // COMPONENTE: Plano de Desenvolvimento
-  const PlanoDesenvolvimento = () => {
-    const [novaMeta, setNovaMeta] = useState({ texto: '', tipo: 'curtoPrazo', concluida: false });
-    const [editandoMeta, setEditandoMeta] = useState(null);
-
-    // Função para atualizar nova meta
-    const updateNovaMeta = (campo, valor) => {
-      setNovaMeta(prev => ({ ...prev, [campo]: valor }));
-    };
-
-    const iniciarEdicaoMeta = (meta) => {
-      setEditandoMeta(meta.id);
-      setNovaMeta({
-        texto: meta.texto,
-        tipo: meta.tipo,
-        concluida: meta.concluida
-      });
-    };
-
-    const cancelarEdicaoMeta = () => {
-      setEditandoMeta(null);
-      setNovaMeta({ texto: '', tipo: 'curtoPrazo', concluida: false });
-    };
-
-    const salvarEdicaoMeta = async () => {
-      if (editandoMeta && novaMeta.texto.trim()) {
-        if (user && editandoMeta) {
-          // Atualizar no Firebase
-          try {
-            const metaRef = doc(db, 'metas_carreira', String(editandoMeta));
-            await updateDoc(metaRef, {
-              ...novaMeta,
-              updatedAt: new Date()
-            });
-          } catch (error) {
-            console.error('Erro ao atualizar meta:', error);
-          }
-        }
-        
-        // Atualizar estado local
-        const metasAtualizadas = { ...metas };
-        Object.keys(metasAtualizadas).forEach(tipo => {
-          metasAtualizadas[tipo] = metasAtualizadas[tipo].map(m => 
-            m.id === editandoMeta ? { ...m, ...novaMeta } : m
-          );
-        });
-        setMetas(metasAtualizadas);
-        localStorage.setItem('carreira_metas', JSON.stringify(metasAtualizadas));
-        
-        // Resetar formulário
-        cancelarEdicaoMeta();
-      }
-    };
-
-    const adicionarMeta = async () => {
-      if (novaMeta.texto.trim()) {
-        const metaData = { ...novaMeta, id: Date.now() };
-        
-        if (user) {
-          // Salvar no Firebase
-          const firebaseId = await salvarMetaFirebase(metaData);
-          if (firebaseId) {
-            metaData.id = firebaseId;
-          }
-        }
-        
-        // Atualizar estado local
-        const novasMetas = {
-          ...metas,
-          [novaMeta.tipo]: [...metas[novaMeta.tipo], metaData]
-        };
-        setMetas(novasMetas);
-        localStorage.setItem('carreira_metas', JSON.stringify(novasMetas));
-        setNovaMeta({ texto: '', tipo: 'curtoPrazo', concluida: false });
-      }
-    };
-
-    const toggleMeta = async (tipo, id) => {
-      if (user && id) {
-        // Atualizar no Firebase
-        try {
-          const metaRef = doc(db, 'metas_carreira', String(id));
-          const metaAtual = metas[tipo].find(m => m.id === id);
-          await updateDoc(metaRef, { 
-            concluida: !metaAtual.concluida,
-            updatedAt: new Date()
-          });
-        } catch (error) {
-          console.error('Erro ao atualizar meta:', error);
-        }
-      }
-      
-      // Atualizar estado local
-      const novasMetas = {
-        ...metas,
-        [tipo]: metas[tipo].map(meta => 
-          meta.id === id ? { ...meta, concluida: !meta.concluida } : meta
-        )
-      };
-      setMetas(novasMetas);
-      localStorage.setItem('carreira_metas', JSON.stringify(novasMetas));
-    };
-
-    const removerMeta = async (tipo, id) => {
-      console.log('🚨 === INICIANDO REMOÇÃO DE META ===');
-      console.log('🆔 ID para deletar:', id);
-      console.log('🆔 Tipo do ID:', typeof id);
-      console.log('📁 Tipo:', tipo);
-      console.log('👤 Usuário logado:', !!user);
-      console.log('🗂️ Total metas antes:', metas.curtoPrazo.length + metas.longoPrazo.length);
-      
-      // Validar se o ID existe nas metas locais
-      const metaLocal = metas[tipo].find(m => m.id === id);
-      if (!metaLocal) {
-        console.log('❌ ERRO: Meta não encontrada no estado local');
-        console.log('🔍 IDs disponíveis:', metas[tipo].map(m => m.id));
-        return;
-      }
-      
-      console.log('📋 Meta encontrada:', metaLocal);
-      
-      // PRIMEIRO: Deletar do Firebase se usuário logado
-      if (user && id) {
-        console.log('🔥 Tentando deletar meta do Firebase...');
-        try {
-          const sucesso = await deletarMetaFirebase(id);
-          console.log('🔥 Resultado do Firebase:', sucesso ? 'SUCESSO' : 'FALHA');
-          
-          if (!sucesso) {
-            console.log('❌ FALHA no Firebase - Continuando com exclusão local');
-            console.log('⚠️ A meta será removida localmente mesmo com falha no Firebase');
-          }
-        } catch (error) {
-          console.error('🔥 ERRO CRÍTICO no Firebase:', error);
-          console.log('⚠️ Continuando com exclusão local mesmo com erro no Firebase');
-        }
-      } else {
-        console.log('⚠️ PULANDO Firebase - Usuário não logado ou ID inválido');
-      }
-      
-      // SEGUNDO: Atualizar estado local
-      console.log('💾 Atualizando estado local...');
-      const novasMetas = {
-        ...metas,
-        [tipo]: metas[tipo].filter(meta => meta.id !== id)
-      };
-      console.log('🗂️ Total metas depois:', novasMetas.curtoPrazo.length + novasMetas.longoPrazo.length);
-      
-      setMetas(novasMetas);
-      localStorage.setItem('carreira_metas', JSON.stringify(novasMetas));
-      
-      console.log('✅ REMOÇÃO LOCAL DE META CONCLUÍDA');
-      console.log('⏳ Aguardando confirmação do listener Firebase...');
-      
-      // Opcional: Forçar uma verificação após um tempo
-      setTimeout(() => {
-        console.log('🔍 Verificação pós-exclusão - metas atuais:', metas.curtoPrazo.length + metas.longoPrazo.length);
-      }, 1000);
-    };
-
-    // Calcular estatísticas - Memoizado para performance
-    const estatisticasMetas = useMemo(() => {
-      const totalMetas = metas.curtoPrazo.length + metas.longoPrazo.length;
-      const metasConcluidas = metas.curtoPrazo.filter(m => m.concluida).length + metas.longoPrazo.filter(m => m.concluida).length;
-      const progressoGeral = totalMetas > 0 ? Math.round((metasConcluidas / totalMetas) * 100) : 0;
-      const progressoCurtoPrazo = metas.curtoPrazo.length > 0 ? Math.round((metas.curtoPrazo.filter(m => m.concluida).length / metas.curtoPrazo.length) * 100) : 0;
-      const progressoLongoPrazo = metas.longoPrazo.length > 0 ? Math.round((metas.longoPrazo.filter(m => m.concluida).length / metas.longoPrazo.length) * 100) : 0;
-      
-      return {
-        totalMetas,
-        metasConcluidas,
-        progressoGeral,
-        progressoCurtoPrazo,
-        progressoLongoPrazo
-      };
-    }, []);
-
-    return (
-      <div className="feature-content">
-        <div className="feature-header">
-          <h2><FaBullseye /> Plano de Desenvolvimento</h2>
-          <p>Trace suas metas e acompanhe seu crescimento profissional</p>
-        </div>
-
-        {/* Dashboard de Estatísticas */}
-        <div className="desenvolvimento-dashboard">
-          <div className="stats-overview">
-            <div className="stat-card main-stat">
-              <div className="stat-icon">
-                <FaChartBar />
-              </div>
-              <div className="stat-content">
-                <h3>Progresso Geral</h3>
-                <div className="stat-number">{estatisticasMetas.progressoGeral}%</div>
-                <div className="stat-detail">{estatisticasMetas.metasConcluidas} de {estatisticasMetas.totalMetas} metas concluídas</div>
-              </div>
-              <div className="progress-ring">
-                <svg width="60" height="60">
-                  <circle cx="30" cy="30" r="25" fill="none" stroke="#e2e8f0" strokeWidth="4"/>
-                  <circle 
-                    cx="30" 
-                    cy="30" 
-                    r="25" 
-                    fill="none" 
-                    stroke="#3b82f6" 
-                    strokeWidth="5"
-                    strokeDasharray={`${estatisticasMetas.progressoGeral * 1.57} 157`}
-                    strokeLinecap="round"
-                    transform="rotate(-90 30 30)"
-                  />
-                </svg>
-              </div>
-            </div>
-
-            <div className="stat-card curto-prazo">
-              <div className="stat-icon short-term">
-                <FaBolt />
-              </div>
-              <div className="stat-content">
-                <h3>Curto Prazo</h3>
-                <div className="stat-number">{metas.curtoPrazo.filter(m => m.concluida).length}/{metas.curtoPrazo.length}</div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{width: `${estatisticasMetas.progressoCurtoPrazo}%`}}></div>
-                </div>
-              </div>
-            </div>
-
-            <div className="stat-card longo-prazo">
-              <div className="stat-icon long-term">
-                <FaBullseye />
-              </div>
-              <div className="stat-content">
-                <h3>Longo Prazo</h3>
-                <div className="stat-number">{metas.longoPrazo.filter(m => m.concluida).length}/{metas.longoPrazo.length}</div>
-                <div className="progress-bar">
-                  <div className="progress-fill" style={{width: `${estatisticasMetas.progressoLongoPrazo}%`}}></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Formulário Nova Meta */}
-        <div className="meta-form-card">
-          <div className="form-header">
-            <h3><FaPlus /> {editandoMeta ? 'Editar Meta' : 'Adicionar Nova Meta'}</h3>
-            <p>{editandoMeta ? 'Modifique os detalhes da sua meta' : 'Defina objetivos claros para seu desenvolvimento profissional'}</p>
-          </div>
-          <div className="form-grid">
-            <input
-              type="text"
-              placeholder="Ex: Aprender Excel avançado, Conseguir estágio na área..."
-              value={novaMeta.texto}
-              onChange={(e) => updateNovaMeta('texto', e.target.value)}
-              className="meta-input"
-            />
-            <select
-              value={novaMeta.tipo}
-              onChange={(e) => updateNovaMeta('tipo', e.target.value)}
-              className="meta-select"
-            >
-              <option value="curtoPrazo">Curto Prazo (até 6 meses)</option>
-              <option value="longoPrazo">Longo Prazo (6+ meses)</option>
-            </select>
-            
-            <div className="form-actions">
-              {editandoMeta ? (
-                <>
-                  <button className="btn-primary btn-save-meta" onClick={salvarEdicaoMeta}>
-                    <FaCheck /> Salvar Alterações
-                  </button>
-                  <button className="btn-secondary btn-cancel-meta" onClick={cancelarEdicaoMeta}>
-                    <FaTimes /> Cancelar
-                  </button>
-                </>
-              ) : (
-                <button className="btn-primary btn-add-meta" onClick={adicionarMeta}>
-                  <FaPlus /> Adicionar Meta
-                </button>
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Seção de Metas */}
-        <div className="metas-container">
-          {/* Metas de Curto Prazo */}
-          <div className="metas-section curto-prazo">
-            <div className="section-header">
-              <div className="section-icon">
-                <FaBolt />
-              </div>
-              <div className="section-info">
-                <h3>Metas de Curto Prazo</h3>
-                <span className="meta-count">{metas.curtoPrazo.length} {metas.curtoPrazo.length === 1 ? 'meta' : 'metas'}</span>
-              </div>
-              <div className="section-progress">
-                {estatisticasMetas.progressoCurtoPrazo}%
-              </div>
-            </div>
-            
-            <div className="metas-list">
-              {metas.curtoPrazo.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon"><FaBolt /></div>
-                  <p>Nenhuma meta de curto prazo definida</p>
-                  <small>Comece definindo objetivos para os próximos 6 meses</small>
-                </div>
-              ) : (
-                metas.curtoPrazo.map(meta => (
-                  <div key={meta.id} className={`meta-item ${meta.concluida ? 'concluida' : ''}`}>
-                    <div className="meta-checkbox">
-                      <input
-                        type="checkbox"
-                        id={`curto-${meta.id}`}
-                        checked={meta.concluida}
-                        onChange={() => toggleMeta('curtoPrazo', meta.id)}
-                      />
-                      <label htmlFor={`curto-${meta.id}`} className="custom-checkbox">
-                        <FaCheck className="check-icon" />
-                      </label>
-                    </div>
-                    <div className="meta-content">
-                      <span className="meta-texto">{meta.texto}</span>
-                      {meta.concluida && <span className="meta-badge">Concluída</span>}
-                    </div>
-                    <div className="meta-actions">
-                      <button 
-                        className="btn-edit"
-                        onClick={() => iniciarEdicaoMeta(meta)}
-                        title="Editar meta"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button 
-                        className="btn-delete"
-                        onClick={() => removerMeta('curtoPrazo', meta.id)}
-                        title="Remover meta"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-
-          {/* Metas de Longo Prazo */}
-          <div className="metas-section longo-prazo">
-            <div className="section-header">
-              <div className="section-icon">
-                <FaBullseye />
-              </div>
-              <div className="section-info">
-                <h3>Metas de Longo Prazo</h3>
-                <span className="meta-count">{metas.longoPrazo.length} {metas.longoPrazo.length === 1 ? 'meta' : 'metas'}</span>
-              </div>
-              <div className="section-progress">
-                {estatisticasMetas.progressoLongoPrazo}%
-              </div>
-            </div>
-            
-            <div className="metas-list">
-              {metas.longoPrazo.length === 0 ? (
-                <div className="empty-state">
-                  <div className="empty-icon"><FaBullseye /></div>
-                  <p>Nenhuma meta de longo prazo definida</p>
-                  <small>Pense em objetivos para sua carreira futura</small>
-                </div>
-              ) : (
-                metas.longoPrazo.map(meta => (
-                  <div key={meta.id} className={`meta-item ${meta.concluida ? 'concluida' : ''}`}>
-                    <div className="meta-checkbox">
-                      <input
-                        type="checkbox"
-                        id={`longo-${meta.id}`}
-                        checked={meta.concluida}
-                        onChange={() => toggleMeta('longoPrazo', meta.id)}
-                      />
-                      <label htmlFor={`longo-${meta.id}`} className="custom-checkbox">
-                        <FaCheck className="check-icon" />
-                      </label>
-                    </div>
-                    <div className="meta-content">
-                      <span className="meta-texto">{meta.texto}</span>
-                      {meta.concluida && <span className="meta-badge">Concluída</span>}
-                    </div>
-                    <div className="meta-actions">
-                      <button 
-                        className="btn-edit"
-                        onClick={() => iniciarEdicaoMeta(meta)}
-                        title="Editar meta"
-                      >
-                        <FaEdit />
-                      </button>
-                      <button 
-                        className="btn-delete"
-                        onClick={() => removerMeta('longoPrazo', meta.id)}
-                        title="Remover meta"
-                      >
-                        <FaTrash />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        </div>
-
-        {/* Exemplos de Metas */}
-        <div className="exemplos-metas-card">
-          <div className="tips">
-            <h4><FaLightbulb /> Ideias para suas Metas:</h4>
-            <div className="dicas-cards">
-              <div className="dica-card">
-                <div className="dica-icon"><FaBolt /></div>
-                <h5>Curto Prazo</h5>
-                <p>Fazer curso de Excel, atualizar LinkedIn, participar de eventos</p>
-              </div>
-              <div className="dica-card">
-                <div className="dica-icon"><FaBullseye /></div>
-                <h5>Longo Prazo</h5>
-                <p>Conseguir primeiro emprego, fazer especialização, aprender inglês</p>
-              </div>
-              <div className="dica-card">
-                <div className="dica-icon"><FaBook /></div>
-                <h5>Capacitação</h5>
-                <p>Cursos online, certificações profissionais, projetos pessoais</p>
-              </div>
-              <div className="dica-card">
-                <div className="dica-icon"><FaNetworkWired /></div>
-                <h5>Networking</h5>
-                <p>Expandir rede de contatos, participar de comunidades profissionais</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Motivação */}
-        <div className="motivacao-card">
-          <div className="motivacao-content">
-            <div className="motivacao-icon">
-              <FaTrophy />
-            </div>
-            <div className="motivacao-text">
-              <h3>Continue assim!</h3>
-              <p>Cada meta concluída é um passo importante na sua jornada profissional. Mantenha o foco e celebre suas conquistas!</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
   return (
-    <div className="modulo-carreira">
-      <div className="carreira-container">
-        {/* Botão de volta ao dashboard */}
-        <div className="back-to-dashboard">
-          <button 
-            className="btn-back-dashboard" 
-            onClick={handleBackToDashboard}
-          >
-            <FaArrowLeft />
-            Voltar ao Dashboard
-          </button>
-        </div>
-
-        {/* Header com título */}
-        <div className="carreira-header">
-          <div className="header-icon">
-            <FaGraduationCap />
-          </div>
-          <h1 className="carreira-title">
-            <div className="title-decorative-icons">
-              <div className="decorative-icon left-icon">
-                <FaStar />
-              </div>
-              <div className="decorative-icon right-icon">
-                <FaTrophy />
-              </div>
-            </div>
-            Desenvolvimento de Carreira
-          </h1>
-          <p className="carreira-subtitle">
-            Desenvolva suas habilidades profissionais e construa uma carreira sólida
-          </p>
-        </div>
-
-        {/* Navegação por abas */}
-        <div className="carreira-navigation">
-          {tabs.map(tab => {
-            const IconeTab = tab.icone;
-            return (
-              <button
-                key={tab.id}
-                className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
-                onClick={() => handleTabChange(tab.id)}
-              >
-                <IconeTab />
-                {tab.nome}
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Status Firebase */}
-        <div className="firebase-status-message">
-          {loading ? (
-            <div className="status-loading">
-              <FaClock className="status-icon spinning" />
-              <span>Carregando dados...</span>
-            </div>
-          ) : user ? (
-            <div className="status-connected">
-              <FaCheck className="status-icon" />
-              <FaCloudUploadAlt className="status-icon-secondary" />
-              <span>Todos os dados estão salvos automaticamente no Firebase</span>
-            </div>
-          ) : (
-            <div className="status-offline">
-              <FaTimes className="status-icon" />
-              <span>Dados salvos localmente - Faça login para sincronizar</span>
-            </div>
-          )}
-        </div>
-
-        {/* Conteúdo da aba ativa */}
-        <div className="carreira-content">
-          {renderActiveTab()}
-        </div>
+    <motion.div
+      className={`hexagon-wrapper ${pulse && isActive ? (color === '#34d399' ? 'pulse-glow-green' : 'pulse-glow-red') : ''}`}
+      onClick={onClick}
+      whileHover={{ scale: 1.08 }}
+      whileTap={{ scale: 0.95 }}
+      style={{ width: '80px', height: '92px' }}
+    >
+      <svg viewBox="0 0 100 115" className="w-full h-full" style={{ filter: glowFilter }}>
+        <path
+          d="M 50 4 C 53.5 4, 89.2 24.6, 92.5 26.5 C 95.8 28.4, 98 32, 98 35.8 L 98 81.2 C 98 85, 95.8 88.6, 92.5 90.5 C 89.2 92.4, 53.5 111, 50 111 C 46.5 111, 10.8 92.4, 7.5 90.5 C 4.2 88.6, 2 85, 2 81.2 L 2 35.8 C 2 32, 4.2 28.4, 7.5 26.5 C 10.8 24.6, 46.5 4, 50 4 Z"
+          fill={isActive ? color : 'rgba(255, 255, 255, 0.08)'}
+          stroke={isActive ? '#ffffff' : 'rgba(255, 255, 255, 0.15)'}
+          strokeWidth="2.5"
+          className="transition-all duration-300"
+        />
+      </svg>
+      <div 
+        className="absolute inset-0 flex flex-col items-center justify-center z-10" 
+        style={{ color: isActive ? '#111827' : 'rgba(255, 255, 255, 0.6)' }}
+      >
+        {children}
       </div>
-    </div>
+    </motion.div>
   );
 };
 
-export default ModuloCarreira;
+export default function ModuloCarreira() {
+  const navigate = useNavigate();
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [introLoading, setIntroLoading] = useState(true);
+  const [firebaseConnected, setFirebaseConnected] = useState(false);
+  const [nome, setNome] = useState('');
+  const [foto, setFoto] = useState('');
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIntroLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Metas (Left side)
+  const [metas, setMetas] = useState([]);
+  
+  // Candidaturas (Right side)
+  const [candidaturas, setCandidaturas] = useState([]);
+  const [selectedCandidaturaId, setSelectedCandidaturaId] = useState('');
+  
+  // Selected candidacy computed properties
+  const selectedCandidatura = useMemo(() => {
+    return candidaturas.find(c => c.id === selectedCandidaturaId) || null;
+  }, [candidaturas, selectedCandidaturaId]);
+  
+  const [showAddCandidaturaForm, setShowAddCandidaturaForm] = useState(false);
+  
+  // Add Candidatura Form inputs
+  const [newEmpresa, setNewEmpresa] = useState('');
+  const [newVaga, setNewVaga] = useState('');
+  const [newTipoVaga, setNewTipoVaga] = useState('Estágio');
+  const [newModalidade, setNewModalidade] = useState('Remoto');
+  const [newSalario, setNewSalario] = useState('');
+  const [newLinkVaga, setNewLinkVaga] = useState('');
+  const [newLocalizacao, setNewLocalizacao] = useState('');
+  const [newRequisitos, setNewRequisitos] = useState('');
+  const [newObservacoes, setNewObservacoes] = useState('');
+
+  // Edit Candidatura Form inputs
+  const [isEditingCandidatura, setIsEditingCandidatura] = useState(false);
+  const [editEmpresa, setEditEmpresa] = useState('');
+  const [editVaga, setEditVaga] = useState('');
+  const [editTipoVaga, setEditTipoVaga] = useState('Estágio');
+  const [editModalidade, setEditModalidade] = useState('Remoto');
+  const [editSalario, setEditSalario] = useState('');
+  const [editLinkVaga, setEditLinkVaga] = useState('');
+  const [editLocalizacao, setEditLocalizacao] = useState('');
+  const [editRequisitos, setEditRequisitos] = useState('');
+  const [editObservacoes, setEditObservacoes] = useState('');
+
+  // Candidatura Notepad state
+  const [notesText, setNotesText] = useState('');
+  const [isSavingNotes, setIsSavingNotes] = useState(false);
+
+  // Sync Notepad and Reset Edit status on Selected Candidacy change
+  useEffect(() => {
+    if (selectedCandidatura) {
+      setNotesText(selectedCandidatura.observacoes || '');
+    } else {
+      setNotesText('');
+    }
+    setIsEditingCandidatura(false);
+  }, [selectedCandidaturaId, selectedCandidatura]);
+
+  const startEditCandidatura = () => {
+    if (!selectedCandidatura) return;
+    setEditEmpresa(selectedCandidatura.empresa || '');
+    setEditVaga(selectedCandidatura.vaga || '');
+    setEditTipoVaga(selectedCandidatura.tipoVaga || 'Estágio');
+    setEditModalidade(selectedCandidatura.modalidade || 'Remoto');
+    setEditSalario(selectedCandidatura.salario || '');
+    setEditLinkVaga(selectedCandidatura.linkVaga || '');
+    setEditLocalizacao(selectedCandidatura.localizacao || '');
+    setEditRequisitos(selectedCandidatura.requisitos || '');
+    setEditObservacoes(selectedCandidatura.observacoes || '');
+    setIsEditingCandidatura(true);
+  };
+
+  const handleSaveNotes = async () => {
+    if (!selectedCandidatura) return;
+    setIsSavingNotes(true);
+    try {
+      if (user) {
+        const docRef = doc(db, 'candidaturas', selectedCandidatura.id);
+        await updateDoc(docRef, { observacoes: notesText });
+      } else {
+        const updated = candidaturas.map(c => c.id === selectedCandidatura.id ? { ...c, observacoes: notesText } : c);
+        setCandidaturas(updated);
+        localStorage.setItem('carreira_candidaturas', JSON.stringify(updated));
+      }
+    } catch (error) {
+      console.error("Error saving notes: ", error);
+    } finally {
+      setIsSavingNotes(false);
+    }
+  };
+
+  const handleUpdateCandidacyDetails = async (e) => {
+    e.preventDefault();
+    if (!selectedCandidatura) return;
+    if (!editEmpresa || !editVaga) return;
+
+    const updatedFields = {
+      empresa: editEmpresa,
+      vaga: editVaga,
+      tipoVaga: editTipoVaga,
+      modalidade: editModalidade,
+      salario: editSalario,
+      linkVaga: editLinkVaga,
+      localizacao: editLocalizacao,
+      requisitos: editRequisitos,
+      observacoes: editObservacoes
+    };
+
+    try {
+      if (user) {
+        const docRef = doc(db, 'candidaturas', selectedCandidatura.id);
+        await updateDoc(docRef, updatedFields);
+      } else {
+        const updated = candidaturas.map(c => c.id === selectedCandidatura.id ? { ...c, ...updatedFields } : c);
+        setCandidaturas(updated);
+        localStorage.setItem('carreira_candidaturas', JSON.stringify(updated));
+      }
+      setIsEditingCandidatura(false);
+    } catch (err) {
+      console.error("Error updating candidacy: ", err);
+    }
+  };
+
+  // 1. Observe Authentication State
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((currentUser) => {
+      setUser(currentUser);
+      if (!currentUser) {
+        setLoading(false);
+        // Load data from localStorage
+        const localMetas = localStorage.getItem('carreira_metas');
+        const localCand = localStorage.getItem('carreira_candidaturas');
+        if (localMetas) setMetas(JSON.parse(localMetas));
+        if (localCand) {
+          const parsedCand = JSON.parse(localCand);
+          setCandidaturas(parsedCand);
+          if (parsedCand.length > 0) setSelectedCandidaturaId(parsedCand[0].id);
+        }
+      } else {
+        // Fetch User Info
+        const studentRef = doc(db, 'alunos', currentUser.uid);
+        onSnapshot(studentRef, (snapshot) => {
+          if (snapshot.exists()) {
+            const data = snapshot.data();
+            setNome(data.nomeCompleto || data.nome || 'Estudante');
+            setFoto(data.foto || '');
+          }
+        });
+      }
+    });
+    return unsubscribe;
+  }, []);
+
+  // 2. Load Real-time Data from Firebase when user is logged in
+  useEffect(() => {
+    if (!user) return;
+
+    setFirebaseConnected(true);
+
+    // Subscribe to Metas
+    const metasQuery = query(collection(db, 'carreira_metas'), where('userId', '==', user.uid));
+    const unsubMetas = onSnapshot(metasQuery, (snapshot) => {
+      const metasData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setMetas(metasData);
+      localStorage.setItem('carreira_metas', JSON.stringify(metasData));
+    }, (err) => {
+      console.error("Firestore Metas error: ", err);
+      setFirebaseConnected(false);
+    });
+
+    // Subscribe to Candidaturas
+    const candQuery = query(collection(db, 'candidaturas'), where('userId', '==', user.uid));
+    const unsubCand = onSnapshot(candQuery, (snapshot) => {
+      const candData = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setCandidaturas(candData);
+      localStorage.setItem('carreira_candidaturas', JSON.stringify(candData));
+      
+      // Auto select first candidacy if none selected
+      if (candData.length > 0 && !selectedCandidaturaId) {
+        setSelectedCandidaturaId(candData[0].id);
+      }
+    }, (err) => {
+      console.error("Firestore Candidaturas error: ", err);
+      setFirebaseConnected(false);
+    });
+
+    setLoading(false);
+
+    return () => {
+      unsubMetas();
+      unsubCand();
+    };
+  }, [user, selectedCandidaturaId]);
+
+  // Selected candidacy computed properties moved to top of component
+
+  // Timeline stage details
+  const FLOW_STAGES = [
+    { key: 'enviado', title: 'Candidatura / Inscrição', desc: 'Envio do currículo ou cadastro inicial', color: '#3b82f6', icon: Search },
+    { key: 'prova', title: 'Prova / Teste', desc: 'Testes técnicos ou provas de conhecimento', color: '#f59e0b', icon: Pencil },
+    { key: 'entrevista', title: 'Entrevista', desc: 'Bate-papo com RH ou entrevista técnica', color: '#10b981', icon: Handshake },
+    { key: 'aprovado', title: 'Concluiu / Passou', desc: 'Proposta recebida ou processo ganho!', color: '#34d399', icon: Trophy, pulse: true },
+    { key: 'reprovado', title: 'Não Passou / Pendente', desc: 'Processo encerrado ou em espera', color: '#ef4444', icon: X, pulse: true }
+  ];
+
+  // Helper to determine if a stage is active for the current candidacy
+  const getStageStatus = (stageKey) => {
+    if (!selectedCandidatura) return { isActive: false, isCompleted: false };
+    const currentFase = selectedCandidatura.fase;
+    
+    if (currentFase === 'reprovado') {
+      if (stageKey === 'reprovado') return { isActive: true, isCompleted: false };
+      // Otherwise, mark the previous states up to interview as completed
+      const completionMap = { 'enviado': true, 'prova': true, 'entrevista': true };
+      return { isActive: false, isCompleted: !!completionMap[stageKey] };
+    }
+
+    const stagesOrder = ['enviado', 'prova', 'entrevista', 'aprovado'];
+    const currentIndex = stagesOrder.indexOf(currentFase);
+    const stageIndex = stagesOrder.indexOf(stageKey);
+
+    if (stageKey === 'reprovado') return { isActive: false, isCompleted: false };
+    
+    return {
+      isActive: currentFase === stageKey,
+      isCompleted: stageIndex !== -1 && stageIndex < currentIndex
+    };
+  };
+
+  // 3. Handle Candidacy State Modifications
+  const handleUpdateCandidacyStage = async (candidacyId, newStage) => {
+    if (user) {
+      const docRef = doc(db, 'candidaturas', candidacyId);
+      await updateDoc(docRef, { fase: newStage });
+    } else {
+      const updated = candidaturas.map(c => c.id === candidacyId ? { ...c, fase: newStage } : c);
+      setCandidaturas(updated);
+      localStorage.setItem('carreira_candidaturas', JSON.stringify(updated));
+    }
+  };
+
+  const handleDeleteCandidacy = async (candidacyId) => {
+    if (window.confirm("Deseja realmente excluir este processo seletivo?")) {
+      if (user) {
+        await deleteDoc(doc(db, 'candidaturas', candidacyId));
+      } else {
+        const updated = candidaturas.filter(c => c.id !== candidacyId);
+        setCandidaturas(updated);
+        localStorage.setItem('carreira_candidaturas', JSON.stringify(updated));
+      }
+      setSelectedCandidaturaId('');
+    }
+  };
+
+  const handleAddCandidacy = async (e) => {
+    e.preventDefault();
+    if (!newEmpresa || !newVaga) return;
+
+    const newObj = {
+      empresa: newEmpresa,
+      vaga: newVaga,
+      tipoVaga: newTipoVaga,
+      modalidade: newModalidade,
+      salario: newSalario,
+      linkVaga: newLinkVaga,
+      localizacao: newLocalizacao,
+      requisitos: newRequisitos,
+      observacoes: newObservacoes,
+      fase: 'enviado',
+      dataEnvio: new Date().toISOString()
+    };
+
+    if (user) {
+      const docRef = await addDoc(collection(db, 'candidaturas'), {
+        ...newObj,
+        userId: user.uid
+      });
+      setSelectedCandidaturaId(docRef.id);
+    } else {
+      const generatedId = 'local_' + Date.now();
+      const updated = [...candidaturas, { ...newObj, id: generatedId }];
+      setCandidaturas(updated);
+      setSelectedCandidaturaId(generatedId);
+      localStorage.setItem('carreira_candidaturas', JSON.stringify(updated));
+    }
+
+    setNewEmpresa('');
+    setNewVaga('');
+    setNewTipoVaga('Estágio');
+    setNewModalidade('Remoto');
+    setNewSalario('');
+    setNewLinkVaga('');
+    setNewLocalizacao('');
+    setNewRequisitos('');
+    setNewObservacoes('');
+    setShowAddCandidaturaForm(false);
+  };
+
+  // 4. Handle Goals (Metas) State Modifications
+  const handleAddGoalPlaceholder = () => {
+    const newPlaceholder = {
+      id: 'temp_' + Date.now(),
+      isEditing: true,
+      tipo: 'objetivo',
+      valorTempo: { anos: '0', meses: '6', dias: '0' },
+      valorObjetivo: '',
+      plataforma: '',
+      instituicao: '',
+      dataAlvo: '',
+      tecnologias: '',
+      idiomaNivel: '',
+      detalhesNetworking: '',
+      texto: '',
+      concluida: false
+    };
+    setMetas(prev => [...prev, newPlaceholder]);
+  };
+
+  const handleSaveGoal = async (goal) => {
+    let finalTexto = goal.valorObjetivo || 'Objetivo indefinido';
+    
+    if (goal.tipo === 'tempo') {
+      const { anos, meses, dias } = goal.valorTempo || { anos: '0', meses: '0', dias: '0' };
+      const parts = [];
+      if (anos !== '0') parts.push(`${anos} ${anos === '1' ? 'Ano' : 'Anos'}`);
+      if (meses !== '0') parts.push(`${meses} ${meses === '1' ? 'Mês' : 'Meses'}`);
+      if (dias !== '0') parts.push(`${dias} ${dias === '1' ? 'Dia' : 'Dias'}`);
+      const durationStr = parts.length > 0 ? parts.join(', ') : '0 dias';
+      finalTexto = `${goal.valorObjetivo || 'Meta'} (Duração: ${durationStr})`;
+    }
+
+    const payload = {
+      tipo: goal.tipo,
+      texto: finalTexto,
+      valorTempo: goal.valorTempo || { anos: '0', meses: '6', dias: '0' },
+      valorObjetivo: goal.valorObjetivo || '',
+      plataforma: goal.plataforma || '',
+      instituicao: goal.instituicao || '',
+      dataAlvo: goal.dataAlvo || '',
+      tecnologias: goal.tecnologias || '',
+      idiomaNivel: goal.idiomaNivel || '',
+      detalhesNetworking: goal.detalhesNetworking || '',
+      concluida: goal.concluida || false
+    };
+
+    if (goal.id.toString().startsWith('temp_')) {
+      // Add new goal
+      if (user) {
+        await addDoc(collection(db, 'carreira_metas'), {
+          ...payload,
+          userId: user.uid
+        });
+      } else {
+        const finalId = 'local_' + Date.now();
+        const updated = [...metas.filter(m => m.id !== goal.id), { ...payload, id: finalId }];
+        setMetas(updated);
+        localStorage.setItem('carreira_metas', JSON.stringify(updated));
+      }
+    } else {
+      // Update existing goal
+      if (user) {
+        await updateDoc(doc(db, 'carreira_metas', goal.id), payload);
+      } else {
+        const updated = metas.map(m => m.id === goal.id ? { ...m, ...payload, isEditing: false } : m);
+        setMetas(updated);
+        localStorage.setItem('carreira_metas', JSON.stringify(updated));
+      }
+    }
+  };
+
+  const handleCancelGoalEdit = (goalId) => {
+    if (goalId.toString().startsWith('temp_')) {
+      setMetas(prev => prev.filter(m => m.id !== goalId));
+    } else {
+      setMetas(prev => prev.map(m => m.id === goalId ? { ...m, isEditing: false } : m));
+    }
+  };
+
+  const handleDeleteGoal = async (goalId) => {
+    if (user) {
+      await deleteDoc(doc(db, 'carreira_metas', goalId));
+    } else {
+      const updated = metas.filter(m => m.id !== goalId);
+      setMetas(updated);
+      localStorage.setItem('carreira_metas', JSON.stringify(updated));
+    }
+  };
+
+  const handleToggleGoalComplete = async (goal) => {
+    const updatedStatus = !goal.concluida;
+    if (user) {
+      await updateDoc(doc(db, 'carreira_metas', goal.id), { concluida: updatedStatus });
+    } else {
+      const updated = metas.map(m => m.id === goal.id ? { ...m, concluida: updatedStatus } : m);
+      setMetas(updated);
+      localStorage.setItem('carreira_metas', JSON.stringify(updated));
+    }
+  };
+
+  const handleUpdateGoalField = (goalId, field, value) => {
+    setMetas(prev => prev.map(m => {
+      if (m.id === goalId) {
+        if (field === 'valorTempo') {
+          return { ...m, valorTempo: { ...m.valorTempo, ...value } };
+        }
+        return { ...m, [field]: value };
+      }
+      return m;
+    }));
+  };
+
+  const handleEditGoal = (goal) => {
+    setMetas(prev => prev.map(m => m.id === goal.id ? { ...m, isEditing: true } : m));
+  };
+
+  // Compute connecting line height based on active candidacy stage
+  const activeLineHeight = useMemo(() => {
+    if (!selectedCandidatura) return '0%';
+    const stage = selectedCandidatura.fase;
+    if (stage === 'reprovado') return '75%'; // Down to interview stage
+    
+    const stagePositions = {
+      'enviado': '0%',
+      'prova': '25%',
+      'entrevista': '50%',
+      'aprovado': '75%'
+    };
+    return stagePositions[stage] || '0%';
+  }, [selectedCandidatura]);
+
+  const defaultAvatar = useMemo(() => {
+    if (!nome) return '';
+    return `https://ui-avatars.com/api/?name=${encodeURIComponent(nome)}&background=2563eb&color=ffffff`;
+  }, [nome]);
+
+  const isStillLoading = introLoading || loading;
+
+  const letters = "CARREIRA".split("");
+
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08
+      }
+    }
+  };
+
+  const letterVariants = {
+    hidden: { y: 25, opacity: 0 },
+    visible: {
+      y: 0,
+      opacity: 1,
+      transition: {
+        type: "spring",
+        damping: 10,
+        stiffness: 150
+      }
+    }
+  };
+
+  return (
+    <AnimatePresence mode="wait">
+      {isStillLoading ? (
+        <motion.div
+          key="loader"
+          initial={{ opacity: 1 }}
+          exit={{ 
+            opacity: 0,
+            scale: 1.02,
+            filter: "blur(5px)",
+            transition: { duration: 0.4, ease: "easeInOut" }
+          }}
+        >
+          <Loading title="CARREIRA" message="Preparando sua jornada profissional..." />
+        </motion.div>
+      ) : (
+        <motion.div
+          key="content"
+          className="carreira-page-wrapper"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+        >
+          {/* Background image & frosted overlay */}
+          <img src={CarreiraBg} alt="Background" className="carreira-bg-image" />
+          <div className="carreira-backdrop-overlay"></div>
+
+          <div className="carreira-content-container">
+            {/* Minimalist Top Nav Header */}
+            <header className="carreira-header">
+              <button className="carreira-back-btn" onClick={() => navigate('/dashboard')}>
+                <ArrowLeft size={16} /> Voltar ao Painel
+              </button>
+            </header>
+
+            {/* 3 Column Main Layout Grid */}
+            <div className="carreira-grid">
+              
+              {/* COLUMN 1: GOALS LIST (LEFT) */}
+              <div className="metas-col">
+                <div className="metas-title-container" id="metas-title-id">
+                  <span className="metas-subtitle-eyebrow">[DEFINA SEU FUTURO]</span>
+                  <h2 className="metas-main-title">Metas de Carreira</h2>
+                </div>
+
+                <div className="metas-list-container">
+                  <AnimatePresence initial={false}>
+                    {metas.map((goal) => {
+                      const getGoalIcon = (tipo) => {
+                        switch (tipo) {
+                          case 'tempo': return Clock;
+                          case 'estudo': return Code;
+                          case 'curso': return BookOpen;
+                          case 'certificacao': return Trophy;
+                          case 'projeto': return Briefcase;
+                          case 'idioma': return Globe;
+                          case 'networking': return Users;
+                          default: return Target;
+                        }
+                      };
+                      const IconComponent = getGoalIcon(goal.tipo);
+                      
+                      return (
+                        <motion.div 
+                          key={goal.id} 
+                          className="meta-item-row"
+                          initial={{ opacity: 0, y: 15 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.9 }}
+                          transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+                        >
+                          <div className="meta-icon-wrapper">
+                            <IconComponent size={18} />
+                          </div>
+
+                          <div className="meta-content-area">
+                            {goal.isEditing ? (
+                              <div className="flex flex-col gap-3 w-full">
+                                <input 
+                                  type="text"
+                                  placeholder="Título / Descrição da Meta (Ex: Aprender React)"
+                                  value={goal.valorObjetivo || ''}
+                                  onChange={(e) => handleUpdateGoalField(goal.id, 'valorObjetivo', e.target.value)}
+                                  className="meta-input-modern"
+                                  autoFocus
+                                />
+
+                                <div className="flex items-center gap-2">
+                                  <span className="meta-select-label">Tipo:</span>
+                                  <select 
+                                    value={goal.tipo}
+                                    onChange={(e) => handleUpdateGoalField(goal.id, 'tipo', e.target.value)}
+                                    className="meta-select-modern"
+                                  >
+                                    <option value="objetivo">Objetivo Geral</option>
+                                    <option value="estudo">Estudo Técnico</option>
+                                    <option value="curso">Curso / Treinamento</option>
+                                    <option value="certificacao">Certificação</option>
+                                    <option value="projeto">Projeto Prático</option>
+                                    <option value="idioma">Idioma</option>
+                                    <option value="networking">Networking</option>
+                                    <option value="tempo">Tempo de Estudo</option>
+                                  </select>
+                                </div>
+
+                                {goal.tipo === 'tempo' && (
+                                  <div className="meta-time-inputs">
+                                    <span className="meta-select-label">Estudar por:</span>
+                                    <select 
+                                      value={goal.valorTempo?.anos || '0'} 
+                                      onChange={(e) => handleUpdateGoalField(goal.id, 'valorTempo', { anos: e.target.value })}
+                                      className="meta-select-modern"
+                                    >
+                                      {[0,1,2,3,4,5].map(y => <option key={y} value={y}>{y} {y === 1 ? 'Ano' : 'Anos'}</option>)}
+                                    </select>
+                                    <select 
+                                      value={goal.valorTempo?.meses || '6'} 
+                                      onChange={(e) => handleUpdateGoalField(goal.id, 'valorTempo', { meses: e.target.value })}
+                                      className="meta-select-modern"
+                                    >
+                                      {[0,1,2,3,4,5,6,7,8,9,10,11].map(m => <option key={m} value={m}>{m} {m === 1 ? 'Mês' : 'Meses'}</option>)}
+                                    </select>
+                                    <select 
+                                      value={goal.valorTempo?.dias || '0'} 
+                                      onChange={(e) => handleUpdateGoalField(goal.id, 'valorTempo', { dias: e.target.value })}
+                                      className="meta-select-modern"
+                                    >
+                                      {[0,5,10,15,20,25].map(d => <option key={d} value={d}>{d} {d === 1 ? 'Dia' : 'Dias'}</option>)}
+                                    </select>
+                                  </div>
+                                )}
+
+                                {goal.tipo === 'estudo' && (
+                                  <input 
+                                    type="text"
+                                    placeholder="Tecnologias (ex: TypeScript, Docker)"
+                                    value={goal.tecnologias || ''}
+                                    onChange={(e) => handleUpdateGoalField(goal.id, 'tecnologias', e.target.value)}
+                                    className="meta-input-modern"
+                                  />
+                                )}
+
+                                {goal.tipo === 'curso' && (
+                                  <input 
+                                    type="text"
+                                    placeholder="Plataforma / Escola (ex: Udemy, Alura, Coursera)"
+                                    value={goal.plataforma || ''}
+                                    onChange={(e) => handleUpdateGoalField(goal.id, 'plataforma', e.target.value)}
+                                    className="meta-input-modern"
+                                  />
+                                )}
+
+                                {goal.tipo === 'certificacao' && (
+                                  <div className="flex flex-col gap-2 w-full">
+                                    <input 
+                                      type="text"
+                                      placeholder="Órgão Emissor / Sigla (ex: AWS, Google, Scrum Alliance)"
+                                      value={goal.instituicao || ''}
+                                      onChange={(e) => handleUpdateGoalField(goal.id, 'instituicao', e.target.value)}
+                                      className="meta-input-modern"
+                                    />
+                                    <div className="flex items-center gap-2">
+                                      <span className="meta-select-label">Data Limite:</span>
+                                      <input 
+                                        type="date"
+                                        value={goal.dataAlvo || ''}
+                                        onChange={(e) => handleUpdateGoalField(goal.id, 'dataAlvo', e.target.value)}
+                                        className="meta-select-modern"
+                                        style={{ width: 'auto', background: 'rgba(255,255,255,0.05)', color: '#fff', border: '1px solid rgba(255,255,255,0.15)' }}
+                                      />
+                                    </div>
+                                  </div>
+                                )}
+
+                                {goal.tipo === 'projeto' && (
+                                  <input 
+                                    type="text"
+                                    placeholder="Tecnologias do Projeto (ex: React Native, Firebase)"
+                                    value={goal.tecnologias || ''}
+                                    onChange={(e) => handleUpdateGoalField(goal.id, 'tecnologias', e.target.value)}
+                                    className="meta-input-modern"
+                                  />
+                                )}
+
+                                {goal.tipo === 'idioma' && (
+                                  <input 
+                                    type="text"
+                                    placeholder="Nível Alvo (ex: Inglês Avançado, Fluência, B2)"
+                                    value={goal.idiomaNivel || ''}
+                                    onChange={(e) => handleUpdateGoalField(goal.id, 'idiomaNivel', e.target.value)}
+                                    className="meta-input-modern"
+                                  />
+                                )}
+
+                                {goal.tipo === 'networking' && (
+                                  <input 
+                                    type="text"
+                                    placeholder="Eventos, LinkedIn ou pessoas de interesse"
+                                    value={goal.detalhesNetworking || ''}
+                                    onChange={(e) => handleUpdateGoalField(goal.id, 'detalhesNetworking', e.target.value)}
+                                    className="meta-input-modern"
+                                  />
+                                )}
+
+                                <div className="flex gap-2">
+                                  <button 
+                                    className="add-candidacy-btn-action save" 
+                                    onClick={() => handleSaveGoal(goal)}
+                                  >
+                                    Salvar
+                                  </button>
+                                  <button 
+                                    className="add-candidacy-btn-action cancel" 
+                                    onClick={() => handleCancelGoalEdit(goal.id)}
+                                  >
+                                    Cancelar
+                                  </button>
+                                </div>
+                              </div>
+                            ) : (
+                              <>
+                                <div className="flex flex-col">
+                                  <span 
+                                    className={`font-medium cursor-pointer transition-colors duration-200 ${goal.concluida ? 'text-gray-500 line-through' : 'text-white'}`}
+                                    onClick={() => handleToggleGoalComplete(goal)}
+                                  >
+                                    {goal.valorObjetivo || goal.texto}
+                                  </span>
+                                  
+                                  {goal.tipo === 'tempo' && (
+                                    <span className="text-[11px] text-gray-400 font-light mt-0.5">
+                                      Duração: {
+                                        (() => {
+                                          const { anos, meses, dias } = goal.valorTempo || { anos: '0', meses: '0', dias: '0' };
+                                          const parts = [];
+                                          if (anos && anos !== '0') parts.push(`${anos} ${anos === '1' ? 'ano' : 'anos'}`);
+                                          if (meses && meses !== '0') parts.push(`${meses} ${meses === '1' ? 'mês' : 'meses'}`);
+                                          if (dias && dias !== '0') parts.push(`${dias} ${dias === '1' ? 'dia' : 'dias'}`);
+                                          return parts.length > 0 ? parts.join(', ') : 'não especificada';
+                                        })()
+                                      }
+                                    </span>
+                                  )}
+
+                                  {goal.tipo === 'estudo' && goal.tecnologias && (
+                                    <span className="text-[11px] text-blue-400 font-light mt-0.5">
+                                      Techs: <strong className="text-gray-300">{goal.tecnologias}</strong>
+                                    </span>
+                                  )}
+
+                                  {goal.tipo === 'curso' && goal.plataforma && (
+                                    <span className="text-[11px] text-indigo-400 font-light mt-0.5">
+                                      Plataforma: <strong className="text-gray-300">{goal.plataforma}</strong>
+                                    </span>
+                                  )}
+
+                                  {goal.tipo === 'certificacao' && (goal.instituicao || goal.dataAlvo) && (
+                                    <span className="text-[11px] text-yellow-400 font-light mt-0.5">
+                                      {goal.instituicao && <>Órgão: <strong className="text-gray-300">{goal.instituicao}</strong></>}
+                                      {goal.instituicao && goal.dataAlvo && ' | '}
+                                      {goal.dataAlvo && <>Data Limite: <strong className="text-gray-300">{
+                                        (() => {
+                                          try {
+                                            const parts = goal.dataAlvo.split('-');
+                                            if (parts.length === 3) {
+                                              return `${parts[2]}/${parts[1]}/${parts[0]}`;
+                                            }
+                                            return goal.dataAlvo;
+                                          } catch(e) {
+                                            return goal.dataAlvo;
+                                          }
+                                        })()
+                                      }</strong></>}
+                                    </span>
+                                  )}
+
+                                  {goal.tipo === 'projeto' && goal.tecnologias && (
+                                    <span className="text-[11px] text-emerald-400 font-light mt-0.5">
+                                      Techs: <strong className="text-gray-300">{goal.tecnologias}</strong>
+                                    </span>
+                                  )}
+
+                                  {goal.tipo === 'idioma' && goal.idiomaNivel && (
+                                    <span className="text-[11px] text-purple-400 font-light mt-0.5">
+                                      Nível: <strong className="text-gray-300">{goal.idiomaNivel}</strong>
+                                    </span>
+                                  )}
+
+                                  {goal.tipo === 'networking' && goal.detalhesNetworking && (
+                                    <span className="text-[11px] text-pink-400 font-light mt-0.5">
+                                      Foco: <strong className="text-gray-300">{goal.detalhesNetworking}</strong>
+                                    </span>
+                                  )}
+
+                                  <div className="flex flex-wrap gap-1.5 mt-1.5">
+                                    <span className="text-[9px] uppercase tracking-wider bg-white/5 text-gray-400 font-semibold px-2 py-0.5 rounded border border-white/5 flex items-center gap-1">
+                                      <IconComponent size={10} />
+                                      {
+                                        goal.tipo === 'objetivo' ? 'Geral' :
+                                        goal.tipo === 'estudo' ? 'Estudo' :
+                                        goal.tipo === 'curso' ? 'Curso' :
+                                        goal.tipo === 'certificacao' ? 'Certificação' :
+                                        goal.tipo === 'projeto' ? 'Projeto' :
+                                        goal.tipo === 'idioma' ? 'Idioma' :
+                                        goal.tipo === 'networking' ? 'Networking' :
+                                        goal.tipo === 'tempo' ? 'Tempo' : 'Geral'
+                                      }
+                                    </span>
+                                    {goal.concluida && (
+                                      <span className="text-[9px] uppercase tracking-wider bg-green-500/20 text-green-400 font-bold px-2 py-0.5 rounded border border-green-500/30">
+                                        Concluída
+                                      </span>
+                                    )}
+                                  </div>
+                                </div>
+                                
+                                <div className="meta-actions-wrapper">
+                                  <button className="meta-btn-action" onClick={() => handleEditGoal(goal)}>Editar</button>
+                                  <button className="meta-btn-action delete" onClick={() => handleDeleteGoal(goal.id)}>Excluir</button>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        </motion.div>
+                      );
+                    })}
+                  </AnimatePresence>
+
+                  {metas.length === 0 && (
+                    <div className="text-gray-500 text-sm py-4 italic">
+                      Nenhuma meta cadastrada. Adicione sua primeira meta de carreira abaixo.
+                    </div>
+                  )}
+
+                  <button className="meta-btn-add" onClick={handleAddGoalPlaceholder}>
+                    <Plus size={16} /> ADICIONAR NOVA META
+                  </button>
+                </div>
+              </div>
+
+              {/* COLUMN 2: DOMINANT HERO TITLE (CENTER) */}
+              <div className="center-title-col">
+                <motion.h1 
+                  className="giant-title-text"
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
+                  whileHover={{ 
+                    scale: 1.04, 
+                    textShadow: '0 25px 50px rgba(0, 0, 0, 0.8)',
+                    transition: { duration: 0.3 }
+                  }}
+                >
+                  Carreira
+                </motion.h1>
+                
+                <motion.p 
+                  className="center-subtitle-text"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.4, duration: 0.8 }}
+                >
+                  Você faz a sua carreira, da maneira como quiser.
+                </motion.p>
+              </div>
+
+              {/* COLUMN 3: FLOW COLUMN / CANDIDACIES (RIGHT) */}
+              <div className="flow-col">
+                <div className="candidacy-selector-container">
+                  <div className="flex justify-between items-center gap-3">
+                    <span className="candidacy-selector-label">[PROCESSOS SELETIVOS]</span>
+                    {!showAddCandidaturaForm && (
+                      <button 
+                        onClick={() => setShowAddCandidaturaForm(true)}
+                        className="candidacy-btn-new-process"
+                      >
+                        <Plus size={14} /> Novo Processo
+                      </button>
+                    )}
+                  </div>
+                  
+                  {candidaturas.length > 0 ? (
+                    <div className="flex gap-2">
+                      <select 
+                        value={selectedCandidaturaId}
+                        onChange={(e) => setSelectedCandidaturaId(e.target.value)}
+                        className="candidacy-dropdown"
+                      >
+                        {candidaturas.map(c => (
+                          <option key={c.id} value={c.id}>
+                            {c.empresa} — {c.vaga}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  ) : (
+                    !showAddCandidaturaForm && (
+                      <div className="flow-empty-state">
+                        <span className="flow-empty-title">Acompanhe Seus Processos</span>
+                        <span className="flow-empty-desc">
+                          Registre e atualize as etapas das suas candidaturas a vagas de estágio ou emprego.
+                        </span>
+                        <button className="flow-empty-btn" onClick={() => setShowAddCandidaturaForm(true)}>
+                          Registrar Candidatura
+                        </button>
+                      </div>
+                    )
+                  )}
+
+                  {/* Inline adding form */}
+                  {showAddCandidaturaForm && (
+                    <motion.form 
+                      onSubmit={handleAddCandidacy}
+                      className="add-candidacy-inline"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <div className="add-candidacy-inputs">
+                        <div className="grid grid-cols-2 gap-2">
+                          <input 
+                            type="text" 
+                            placeholder="Empresa (Ex: Google)"
+                            value={newEmpresa}
+                            onChange={(e) => setNewEmpresa(e.target.value)}
+                            className="add-candidacy-input"
+                            required
+                          />
+                          <input 
+                            type="text" 
+                            placeholder="Vaga (Ex: Dev React)"
+                            value={newVaga}
+                            onChange={(e) => setNewVaga(e.target.value)}
+                            className="add-candidacy-input"
+                            required
+                          />
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] text-gray-400 font-semibold uppercase">Tipo de Contrato</span>
+                            <select 
+                              value={newTipoVaga} 
+                              onChange={(e) => setNewTipoVaga(e.target.value)} 
+                              className="add-candidacy-input"
+                            >
+                              <option value="Estágio">Estágio</option>
+                              <option value="CLT">CLT</option>
+                              <option value="PJ">PJ</option>
+                              <option value="Trainee">Trainee</option>
+                              <option value="Freelance">Freelance</option>
+                            </select>
+                          </div>
+                          
+                          <div className="flex flex-col gap-1">
+                            <span className="text-[10px] text-gray-400 font-semibold uppercase">Modalidade</span>
+                            <select 
+                              value={newModalidade} 
+                              onChange={(e) => setNewModalidade(e.target.value)} 
+                              className="add-candidacy-input"
+                            >
+                              <option value="Remoto">Remoto</option>
+                              <option value="Híbrido">Híbrido</option>
+                              <option value="Presencial">Presencial</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <input 
+                            type="text" 
+                            placeholder="Salário / Bolsa"
+                            value={newSalario}
+                            onChange={(e) => setNewSalario(e.target.value)}
+                            className="add-candidacy-input"
+                          />
+                          <input 
+                            type="text" 
+                            placeholder="Local (Cidade/UF)"
+                            value={newLocalizacao}
+                            onChange={(e) => setNewLocalizacao(e.target.value)}
+                            className="add-candidacy-input"
+                          />
+                        </div>
+
+                        <input 
+                          type="text" 
+                          placeholder="Link da Vaga (URL)"
+                          value={newLinkVaga}
+                          onChange={(e) => setNewLinkVaga(e.target.value)}
+                          className="add-candidacy-input"
+                        />
+
+                        <input 
+                          type="text" 
+                          placeholder="Requisitos principais (React, Docker, etc.)"
+                          value={newRequisitos}
+                          onChange={(e) => setNewRequisitos(e.target.value)}
+                          className="add-candidacy-input"
+                        />
+
+                        <textarea 
+                          placeholder="Anotações / Observações iniciais..."
+                          value={newObservacoes}
+                          onChange={(e) => setNewObservacoes(e.target.value)}
+                          className="add-candidacy-input h-16 resize-none"
+                        />
+                      </div>
+                      <div className="add-candidacy-buttons">
+                        <button type="submit" className="add-candidacy-btn-action save">Salvar Vaga</button>
+                        <button 
+                          type="button" 
+                          onClick={() => setShowAddCandidaturaForm(false)} 
+                          className="add-candidacy-btn-action cancel"
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </motion.form>
+                  )}
+                </div>
+
+                {/* Details Panel of Selected Candidacy */}
+                {selectedCandidatura && (
+                  <motion.div 
+                    className="candidacy-details-card"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    {isEditingCandidatura ? (
+                      /* EDIT MODE FORM */
+                      <form onSubmit={handleUpdateCandidacyDetails} className="candidacy-edit-form flex flex-col gap-3">
+                        <div className="flex justify-between items-center border-b border-white/10 pb-2">
+                          <span className="text-xs text-blue-400 font-bold uppercase tracking-wider">Editar Detalhes da Vaga</span>
+                          <button type="button" onClick={() => setIsEditingCandidatura(false)} className="text-gray-400 hover:text-white">
+                            <X size={16} />
+                          </button>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase">Empresa</label>
+                            <input 
+                              type="text" 
+                              value={editEmpresa} 
+                              onChange={(e) => setEditEmpresa(e.target.value)} 
+                              className="add-candidacy-input" 
+                              required 
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase">Vaga</label>
+                            <input 
+                              type="text" 
+                              value={editVaga} 
+                              onChange={(e) => setEditVaga(e.target.value)} 
+                              className="add-candidacy-input" 
+                              required 
+                            />
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase">Contrato</label>
+                            <select 
+                              value={editTipoVaga} 
+                              onChange={(e) => setEditTipoVaga(e.target.value)} 
+                              className="add-candidacy-input"
+                            >
+                              <option value="Estágio">Estágio</option>
+                              <option value="CLT">CLT</option>
+                              <option value="PJ">PJ</option>
+                              <option value="Trainee">Trainee</option>
+                              <option value="Freelance">Freelance</option>
+                            </select>
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase">Modalidade</label>
+                            <select 
+                              value={editModalidade} 
+                              onChange={(e) => setEditModalidade(e.target.value)} 
+                              className="add-candidacy-input"
+                            >
+                              <option value="Remoto">Remoto</option>
+                              <option value="Híbrido">Híbrido</option>
+                              <option value="Presencial">Presencial</option>
+                            </select>
+                          </div>
+                        </div>
+
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase">Salário / Bolsa</label>
+                            <input 
+                              type="text" 
+                              value={editSalario} 
+                              onChange={(e) => setEditSalario(e.target.value)} 
+                              className="add-candidacy-input" 
+                            />
+                          </div>
+                          <div className="flex flex-col gap-1">
+                            <label className="text-[10px] text-gray-400 font-semibold uppercase">Local</label>
+                            <input 
+                              type="text" 
+                              value={editLocalizacao} 
+                              onChange={(e) => setEditLocalizacao(e.target.value)} 
+                              className="add-candidacy-input" 
+                            />
+                          </div>
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-gray-400 font-semibold uppercase">Link da Vaga</label>
+                          <input 
+                            type="text" 
+                            value={editLinkVaga} 
+                            onChange={(e) => setEditLinkVaga(e.target.value)} 
+                            className="add-candidacy-input" 
+                          />
+                        </div>
+
+                        <div className="flex flex-col gap-1">
+                          <label className="text-[10px] text-gray-400 font-semibold uppercase">Requisitos / Skills</label>
+                          <input 
+                            type="text" 
+                            value={editRequisitos} 
+                            onChange={(e) => setEditRequisitos(e.target.value)} 
+                            className="add-candidacy-input" 
+                          />
+                        </div>
+
+                        <div className="flex gap-2 justify-end mt-2">
+                          <button type="submit" className="add-candidacy-btn-action save">Salvar Alterações</button>
+                          <button type="button" onClick={() => setIsEditingCandidatura(false)} className="add-candidacy-btn-action cancel">Cancelar</button>
+                        </div>
+                      </form>
+                    ) : (
+                      /* VIEW MODE */
+                      <div className="candidacy-view-details flex flex-col gap-3">
+                        <div className="flex justify-between items-start gap-4">
+                          <div>
+                            <h3 className="text-base font-bold text-white leading-tight">{selectedCandidatura.vaga}</h3>
+                            <span className="text-xs text-gray-400">{selectedCandidatura.empresa}</span>
+                          </div>
+                          
+                          <div className="flex gap-1.5">
+                            <button 
+                              onClick={startEditCandidatura}
+                              className="p-1.5 text-gray-400 hover:text-white bg-white/5 hover:bg-white/10 rounded transition-colors"
+                              title="Editar Vaga"
+                            >
+                              <Pencil size={13} />
+                            </button>
+                            <button 
+                              onClick={() => handleDeleteCandidacy(selectedCandidatura.id)}
+                              className="p-1.5 text-gray-400 hover:text-red-400 bg-white/5 hover:bg-red-500/10 rounded transition-colors"
+                              title="Excluir Vaga"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Badges Row */}
+                        <div className="flex flex-wrap gap-1.5 my-1">
+                          <span className={`text-[10px] font-bold px-2 py-0.5 rounded border ${
+                            selectedCandidatura.tipoVaga === 'Estágio' 
+                              ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                              : 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20'
+                          }`}>
+                            {selectedCandidatura.tipoVaga || 'Estágio'}
+                          </span>
+                          
+                          <span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-purple-500/10 text-purple-400 border-purple-500/20">
+                            {selectedCandidatura.modalidade || 'Remoto'}
+                          </span>
+
+                          {selectedCandidatura.salario && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-amber-500/10 text-amber-400 border-amber-500/20">
+                              {selectedCandidatura.salario.startsWith('R$') ? selectedCandidatura.salario : `R$ ${selectedCandidatura.salario}`}
+                            </span>
+                          )}
+
+                          {selectedCandidatura.localizacao && (
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded border bg-gray-500/10 text-gray-300 border-gray-500/20">
+                              {selectedCandidatura.localizacao}
+                            </span>
+                          )}
+                        </div>
+
+                        {selectedCandidatura.requisitos && (
+                          <div className="text-[11px] text-gray-400 bg-white/5 border border-white/5 p-2 rounded">
+                            <span className="font-semibold text-gray-300 uppercase tracking-wider block text-[9px] mb-1">Requisitos Principais</span>
+                            {selectedCandidatura.requisitos}
+                          </div>
+                        )}
+
+                        {selectedCandidatura.linkVaga && (
+                          <a 
+                            href={selectedCandidatura.linkVaga.startsWith('http') ? selectedCandidatura.linkVaga : `https://${selectedCandidatura.linkVaga}`} 
+                            target="_blank" 
+                            rel="noopener noreferrer" 
+                            className="candidacy-link-btn flex items-center justify-center gap-1.5 py-1.5 text-xs text-blue-400 bg-blue-500/5 hover:bg-blue-500/10 border border-blue-500/20 hover:border-blue-500/30 rounded font-semibold transition-all mt-1"
+                          >
+                            <Link size={12} /> Acessar Link da Vaga
+                          </a>
+                        )}
+
+                        {/* Quick Notes / Notepad */}
+                        <div className="flex flex-col gap-1.5 mt-2 border-t border-white/5 pt-3">
+                          <div className="flex justify-between items-center">
+                            <span className="text-[9px] font-bold text-gray-300 uppercase tracking-wider flex items-center gap-1">
+                              <FileText size={11} className="text-blue-400" /> Bloco de Notas / Lembretes
+                            </span>
+                            
+                            <button 
+                              onClick={handleSaveNotes} 
+                              className="text-[9px] font-bold text-blue-400 hover:text-blue-300 bg-blue-500/10 hover:bg-blue-500/20 px-2 py-0.5 rounded border border-blue-500/20 transition-all"
+                              disabled={isSavingNotes}
+                            >
+                              {isSavingNotes ? 'Salvando...' : 'Salvar Notas'}
+                            </button>
+                          </div>
+
+                          <textarea 
+                            value={notesText} 
+                            onChange={(e) => setNotesText(e.target.value)} 
+                            placeholder="Anote datas de entrevistas, contatos de recrutadores, feedback, etc..." 
+                            className="add-candidacy-input h-20 resize-none font-sans text-xs"
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </motion.div>
+                )}
+
+                {/* Vertical continuous timeline */}
+                {selectedCandidatura && (
+                  <div className="flow-timeline-container">
+                    {/* Connecting lines */}
+                    <div className="flow-timeline-line"></div>
+                    <div 
+                      className="flow-timeline-line-active" 
+                      style={{ height: activeLineHeight }}
+                    ></div>
+
+                    {/* Render hexagonal checkpoints */}
+                    {FLOW_STAGES.map((stage, idx) => {
+                      const { isActive, isCompleted } = getStageStatus(stage.key);
+                      const Icon = stage.icon;
+                      
+                      // Compute if we show controls near this hexagon
+                      const showControls = isActive && stage.key !== 'aprovado' && stage.key !== 'reprovado';
+                      
+                      // Map transition flows
+                      const getNextStageKey = () => {
+                        const order = ['enviado', 'prova', 'entrevista', 'aprovado'];
+                        const currentIdx = order.indexOf(stage.key);
+                        return order[currentIdx + 1];
+                      };
+
+                      return (
+                        <div key={stage.key} className="flow-step-node">
+                          <RoundedHexagon 
+                            color={stage.color} 
+                            isActive={isActive || isCompleted}
+                            onClick={() => handleUpdateCandidacyStage(selectedCandidatura.id, stage.key)}
+                            pulse={stage.pulse}
+                          >
+                            {isCompleted ? <Check size={26} strokeWidth={3} className="text-white" /> : <Icon size={26} />}
+                          </RoundedHexagon>
+
+                          <div className="hexagon-label-content">
+                            <span className="hexagon-step-status" style={{ color: (isActive || isCompleted) ? stage.color : 'rgba(255, 255, 255, 0.3)' }}>
+                              {isActive ? 'Atual' : isCompleted ? 'Concluído' : 'Aguardando'}
+                            </span>
+                            
+                            <h4 className="hexagon-step-title">{stage.title}</h4>
+                            <span className="hexagon-step-desc">{stage.desc}</span>
+
+                            {/* Interactive Buttons Inline */}
+                            {showControls && (
+                              <div className="flow-control-buttons">
+                                <button 
+                                  className="flow-control-btn next"
+                                  onClick={() => handleUpdateCandidacyStage(selectedCandidatura.id, getNextStageKey())}
+                                >
+                                  Próximo Passo
+                                </button>
+                                <button 
+                                  className="flow-control-btn reject"
+                                  onClick={() => handleUpdateCandidacyStage(selectedCandidatura.id, 'reprovado')}
+                                >
+                                  Reprovado
+                                </button>
+                              </div>
+                            )}
+
+                            {/* Reset / Action if reached approved or reproved terminal states */}
+                            {isActive && (stage.key === 'aprovado' || stage.key === 'reprovado') && (
+                              <div className="flow-control-buttons">
+                                <button 
+                                  className="flow-control-btn"
+                                  style={{ borderColor: 'rgba(255,255,255,0.2)' }}
+                                  onClick={() => handleUpdateCandidacyStage(selectedCandidatura.id, 'enviado')}
+                                >
+                                  Reiniciar Fluxo
+                                </button>
+                                <button 
+                                  className="flow-control-btn delete"
+                                  onClick={() => handleDeleteCandidacy(selectedCandidatura.id)}
+                                >
+                                  Excluir Vaga
+                                </button>
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+
+            </div>
+
+            {/* Sync Status Footer */}
+            <footer className="carreira-footer-status">
+              <div className={`status-indicator-dot ${firebaseConnected && user ? 'online' : 'offline'}`}></div>
+              <span>
+                {firebaseConnected && user 
+                  ? "Sincronizado na Nuvem (Firebase Firestore)" 
+                  : "Salvando localmente no navegador (Sem conexão ou offline)"}
+              </span>
+            </footer>
+          </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
