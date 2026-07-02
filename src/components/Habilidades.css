@@ -187,6 +187,9 @@
     padding: 0 2rem;
     gap: 2.5rem;
   }
+  .modulo-habilidades-wrapper {
+    padding-bottom: 7.5rem;
+  }
 }
 
 /* Left Column: Radar Panel */
@@ -199,8 +202,10 @@
 .habilidades-radar-card {
   background-color: #111111;
   border-radius: 50%;
-  width: 380px;
-  height: 380px;
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  aspect-ratio: 1 / 1;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -208,13 +213,6 @@
   margin: 0 auto;
   box-shadow: 0 25px 60px rgba(0, 0, 0, 0.25);
   border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-@media (max-width: 480px) {
-  .habilidades-radar-card {
-    width: 320px;
-    height: 320px;
-  }
 }
 
 /* Right Column: Constellation Container */

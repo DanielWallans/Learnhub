@@ -1138,7 +1138,7 @@
   }
   
   .biblioteca-conteudo-central {
-    padding: 24px;
+    padding: 24px 24px 120px 24px;
   }
   
   /* Transforma a sidebar direita em um painel que se empilha ou vira modal */
@@ -1148,7 +1148,7 @@
     position: relative;
     border-left: none;
     border-top: 1px solid var(--book-navy-border);
-    padding: 32px 24px;
+    padding: 32px 24px 120px 24px;
   }
 }
 

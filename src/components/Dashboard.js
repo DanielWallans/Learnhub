@@ -362,6 +362,7 @@ const Dashboard = () => {
         {/* Top AppBar */}
         <header className="flex items-center justify-between px-6 py-4 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-b border-outline-variant/30 sticky top-0 z-40 transition-colors duration-300">
           <div className="flex items-center gap-6">
+            <span className="font-display text-xl font-extrabold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent md:hidden">LearnHub</span>
             <div className="relative hidden lg:block">
               <FaSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm" />
               <input 
@@ -372,7 +373,24 @@ const Dashboard = () => {
             </div>
           </div>
 
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            {/* Mobile Quick Actions */}
+            <button 
+              onClick={handleOpenBugReport}
+              className="md:hidden p-1.5 text-amber-500 hover:bg-surface-container-high dark:hover:bg-surface-container rounded-full transition-colors flex items-center justify-center"
+              title="Reportar Bug"
+            >
+              <span className="material-symbols-outlined text-[20px]">bug_report</span>
+            </button>
+
+            <button 
+              onClick={handleLogout}
+              className="md:hidden p-1.5 text-error hover:bg-error/10 rounded-full transition-colors flex items-center justify-center"
+              title="Sair"
+            >
+              <span className="material-symbols-outlined text-[20px]">logout</span>
+            </button>
+
             {/* Profile controls */}
             <div className="flex items-center gap-3">
               <div 

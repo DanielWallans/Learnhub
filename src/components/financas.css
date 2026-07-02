@@ -321,6 +321,13 @@
   .dashboard-sub-grid {
     grid-template-columns: 1fr;
   }
+  .dashboard-nav-sidebar {
+    display: none !important;
+  }
+  .dashboard-main-container {
+    margin-left: 0 !important;
+    padding: 1.5rem 1rem 7.5rem 1rem !important;
+  }
 }
 
 .dashboard-left-graphs-col {

@@ -894,11 +894,34 @@ const Leitura = () => {
           </div>
         </aside>
 
-        {/* ===================================================
-           COLUNA CENTRAL - Conteúdo (BookBase Center Area)
-           =================================================== */}
         <main className="biblioteca-conteudo-central">
           
+          {/* Mobile Tabs Selector */}
+          <div className="flex lg:hidden items-center gap-2 mb-6 bg-slate-100 dark:bg-slate-900/60 p-1.5 rounded-2xl border border-slate-200/10">
+            <button 
+              onClick={() => { setSecaoAtiva('library'); setFiltroCategoria('Todas'); }}
+              className={`flex-1 py-3 px-4 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
+                secaoAtiva === 'library' 
+                  ? 'bg-primary text-white shadow-md' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+              }`}
+            >
+              <LayoutGrid size={14} />
+              <span>Minha Biblioteca</span>
+            </button>
+            <button 
+              onClick={() => { setSecaoAtiva('favourites'); setFiltroCategoria('Todas'); }}
+              className={`flex-1 py-3 px-4 text-xs font-bold rounded-xl transition-all flex items-center justify-center gap-2 ${
+                secaoAtiva === 'favourites' 
+                  ? 'bg-primary text-white shadow-md' 
+                  : 'text-slate-500 dark:text-slate-400 hover:text-slate-700'
+              }`}
+            >
+              <Heart size={14} />
+              <span>Favoritos</span>
+            </button>
+          </div>
+
           {/* Top Bar (Busca e Botão de Cadastro) */}
           <div className="conteudo-central-topbar">
             <div className="search-bar-container">

@@ -34,7 +34,7 @@ function AppLayout() {
     { name: 'Biblioteca', url: '/leitura', icon: BookOpen }
   ];
 
-  const isStudentPage = ['/dashboard', '/financas'].includes(location.pathname);
+  const isStudentPage = ['/dashboard', '/carreira', '/financas', '/habilidades', '/leitura'].includes(location.pathname);
   const showStudentNavBar = currentUser && isStudentPage;
 
   return (
