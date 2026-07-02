@@ -412,7 +412,7 @@ const Dashboard = () => {
         </header>
 
         {/* Main Content Area */}
-        <main className="p-6 lg:p-10 flex-1 flex flex-col">
+        <main className="p-4 sm:p-6 lg:p-10 flex-1 flex flex-col">
           
           {/* Header Section */}
           <section className="mb-10">
@@ -440,13 +440,13 @@ const Dashboard = () => {
 
           {/* Bento Grid */}
           <motion.section 
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
             variants={containerVariants}
             initial="hidden"
             animate="visible"
           >
             <motion.div 
-              className="lg:col-span-2 group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-[32px] overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-500 flex flex-col md:flex-row shadow-sm cursor-pointer"
+              className="lg:col-span-2 group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-2xl sm:rounded-[32px] overflow-hidden hover:shadow-xl dark:hover:shadow-primary/5 transition-all duration-500 flex flex-col md:flex-row shadow-sm cursor-pointer"
               variants={itemVariants}
               onClick={() => navigate('/leitura')}
             >
@@ -472,7 +472,7 @@ const Dashboard = () => {
                   {livroAtivoDashboard ? 'Lendo Agora' : 'Mais Acessado'}
                 </div>
               </div>
-              <div className="md:w-1/2 p-8 flex flex-col justify-between">
+              <div className="md:w-1/2 p-5 sm:p-8 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center gap-2 mb-3">
                     <span className="material-symbols-outlined text-primary text-lg">school</span>
@@ -518,7 +518,7 @@ const Dashboard = () => {
 
             {/* Standard Module Card 3 - Habilidades (occupies 1 column) */}
             <motion.div 
-              className="group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-[32px] p-6 flex flex-col hover:shadow-lg dark:hover:shadow-primary/5 transition-all duration-300 shadow-sm cursor-pointer"
+              className="group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-2xl sm:rounded-[32px] p-5 sm:p-6 flex flex-col hover:shadow-lg dark:hover:shadow-primary/5 transition-all duration-300 shadow-sm cursor-pointer"
               variants={itemVariants}
               onClick={() => navigate('/habilidades')}
             >
@@ -563,7 +563,7 @@ const Dashboard = () => {
 
             {/* Standard Module Card 2 - Finanças (Large Card now, occupies 2 columns) */}
             <motion.div 
-              className="lg:col-span-2 group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-[32px] p-8 flex flex-col hover:shadow-lg dark:hover:shadow-tertiary/5 transition-all duration-300 shadow-sm cursor-pointer"
+              className="lg:col-span-2 group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-2xl sm:rounded-[32px] p-5 sm:p-8 flex flex-col hover:shadow-lg dark:hover:shadow-tertiary/5 transition-all duration-300 shadow-sm cursor-pointer"
               variants={itemVariants}
               onClick={() => navigate('/financas')}
             >
@@ -657,7 +657,7 @@ const Dashboard = () => {
 
             {/* Standard Module Card 1 - Carreira (occupies 1 column) */}
             <motion.div 
-              className="group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-[32px] p-6 flex flex-col hover:shadow-lg dark:hover:shadow-secondary/5 transition-all duration-300 shadow-sm cursor-pointer"
+              className="group bg-surface-container-lowest dark:bg-inverse-surface/40 border border-outline-variant/30 rounded-2xl sm:rounded-[32px] p-5 sm:p-6 flex flex-col hover:shadow-lg dark:hover:shadow-secondary/5 transition-all duration-300 shadow-sm cursor-pointer"
               variants={itemVariants}
               onClick={() => navigate('/carreira')}
             >
@@ -703,7 +703,7 @@ const Dashboard = () => {
 
           {/* Stats Widgets */}
           <motion.section 
-            className="mt-12 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6"
+            className="mt-8 sm:mt-12 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5, duration: 0.6 }}
